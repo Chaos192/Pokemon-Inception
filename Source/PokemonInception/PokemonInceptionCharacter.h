@@ -11,6 +11,7 @@ class APokemonInceptionCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+private:
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
@@ -18,6 +19,11 @@ class APokemonInceptionCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
+
+	class UAIPerceptionStimuliSourceComponent* stimulus;
+
+	void SetupStimulus();
+
 public:
 	APokemonInceptionCharacter();
 
