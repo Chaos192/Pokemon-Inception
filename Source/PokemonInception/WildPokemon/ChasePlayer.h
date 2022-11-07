@@ -7,8 +7,6 @@
 #include "BehaviorTree/BehaviorTreeTypes.h"
 #include "GameFramework/Pawn.h"
 #include "WildPokemon.h"
-//#include "BehaviorTree/BehaviorTreeComponent.h" 
-//#include "UObject/ObjectGlobals.h"
 #include "ChasePlayer.generated.h"
 
 UCLASS(Blueprintable)

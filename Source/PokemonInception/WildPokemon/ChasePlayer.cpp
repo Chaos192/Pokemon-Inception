@@ -6,10 +6,7 @@
 #include "WildPokemon_AIController.h"
 #include "BB_Keys.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
-//#include "Runtime/NavigationSystem/Public/NavigationSystem.h"
-//#include "GameFramework/Character.h"
-//#include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
-//#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+
 
 UChasePlayer::UChasePlayer()
 {

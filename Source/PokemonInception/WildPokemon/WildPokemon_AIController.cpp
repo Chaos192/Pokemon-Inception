@@ -6,7 +6,7 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "UObject/ConstructorHelpers.h"
-#include "PokemonInceptionCharacter.h"
+#include "../Player/PokemonInceptionCharacter.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "BB_Keys.h"
 #include "Runtime/Engine/Classes/Engine/World.h"

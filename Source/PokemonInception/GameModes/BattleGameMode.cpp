@@ -4,7 +4,7 @@
 #include "BattleGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
-#include "BattleHUD.h"
+#include "../UI/BattleHUD.h"
 
 
 void ABattleGameMode::Run()

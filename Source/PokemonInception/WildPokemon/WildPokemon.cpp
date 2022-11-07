@@ -2,7 +2,7 @@
 
 
 #include "WildPokemon.h"
-#include "PokemonInceptionCharacter.h"
+#include "../Player/PokemonInceptionCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"

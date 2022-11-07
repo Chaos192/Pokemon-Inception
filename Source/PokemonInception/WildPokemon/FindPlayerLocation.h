@@ -7,7 +7,6 @@
 #include "GameFramework/Pawn.h"
 #include "BehaviorTree/BehaviorTreeComponent.h" 
 #include "BehaviorTree/BehaviorTreeTypes.h"
-//#include "UObject/ObjectGlobals.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "FindPlayerLocation.generated.h"
 

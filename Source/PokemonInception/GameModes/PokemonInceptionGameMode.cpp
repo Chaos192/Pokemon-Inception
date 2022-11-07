@@ -1,7 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "PokemonInceptionGameMode.h"
-#include "PokemonInceptionCharacter.h"
+#include "../Player/PokemonInceptionCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 APokemonInceptionGameMode::APokemonInceptionGameMode()
