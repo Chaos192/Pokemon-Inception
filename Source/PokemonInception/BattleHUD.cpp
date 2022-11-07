@@ -37,5 +37,4 @@ void ABattleHUD::ShowOptions()
 void ABattleHUD::Clear()
 {
 	UWidgetLayoutLibrary::RemoveAllWidgets(this);
-	PlayerOwner->bShowMouseCursor = false;
 }
