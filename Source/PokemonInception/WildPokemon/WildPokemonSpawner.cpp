@@ -24,5 +24,8 @@ void AWildPokemonSpawner::Generate()
 	AWildPokemon* SpawnedPokemon = nullptr;
 	SpawnedPokemon = GetWorld()->SpawnActor<AWildPokemon>(PokemonToSpawn, GetActorLocation(), Rotation, SpawnInfo);
 
+	int index = (FMath::RandHelper(SpawnablePokemon.Num()));
+	SpawnedPokemon->Init(SpawnablePokemon[index]);
+
 }
 

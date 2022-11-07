@@ -23,6 +23,9 @@ protected:
 	float SpawnTime = 10;
 
 	UPROPERTY(EditAnywhere)
+	TArray<TSubclassOf<class APokemon00_Base>> SpawnablePokemon;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AWildPokemon> PokemonToSpawn;
 
 	FTimerHandle SpawnHandle;
