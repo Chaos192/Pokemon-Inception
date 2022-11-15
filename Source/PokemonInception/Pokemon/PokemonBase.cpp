@@ -6,40 +6,34 @@
 // Sets default values
 APokemonBase::APokemonBase()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
-// Called when the game starts or when spawned
+
 void APokemonBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	MaxHP = ((Level/100 + 1) * BaseHP + Level);
+	CurrHP = MaxHP;
+
+	Attack = (int)(((Level/50 + 1) * BaseAttack) / 1.5f);
+	Defence = (int)(((Level / 50 + 1) * BaseDefence) / 1.5f);
+	Speed = (int)(((Level / 50 + 1) * BaseSpeed) / 1.5f);
+
+	if (Level == 1) {
+		EXP = 0;
+	}
+	else {
+		EXP = Level * Level * Level;
+	}
+
+	RequiredExp = (Level + 1) * (Level + 1) * (Level + 1) - EXP;
 }
 
-// Called every frame
-void APokemonBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-// Called to bind functionality to input
 void APokemonBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
 
-USkeletalMesh* APokemonBase::GetPokemonMesh()
-{
-	return AlternateMeshAsset;
-
-}
-
-FString APokemonBase::GetMeshReference()
-{
-	return MeshReference;
-}
 

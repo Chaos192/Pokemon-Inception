@@ -11,45 +11,62 @@ class POKEMONINCEPTION_API APokemonBase : public ACharacter
 {
 	GENERATED_BODY()
 
-public:
-	// Sets default values for this character's properties
-	APokemonBase();
+private:
+	UPROPERTY(VisibleAnywhere)
+	int MaxHP = 0;
 
-	USkeletalMesh* GetPokemonMesh();
-	FString GetMeshReference();
+	UPROPERTY(VisibleAnywhere)
+	int CurrHP = 0;
+
+	UPROPERTY(VisibleAnywhere)
+	int Attack = 0;
+
+	UPROPERTY(VisibleAnywhere)
+	int Defence = 0;
+
+	UPROPERTY(VisibleAnywhere)
+	int Speed = 0;
+
+	UPROPERTY(VisibleAnywhere)
+	int EXP = 0;
+
+	UPROPERTY(VisibleAnywhere)
+	int CurrExp = 0;
+
+	UPROPERTY(VisibleAnywhere)
+	int RequiredExp = 0;
 
 protected:
 	virtual void BeginPlay() override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	USkeletalMesh* AlternateMeshAsset;
 
 	UPROPERTY(EditAnywhere)
 	FString Name;
 
 	UPROPERTY(EditAnywhere)
-	int MaxHp = 1;
-
-	UPROPERTY(VisibleAnywhere)
-	int CurrHp;
+	FString Nickname;
 
 	UPROPERTY(EditAnywhere)
-	int Attack = 1;
+	float BaseHP = 1;
 
 	UPROPERTY(EditAnywhere)
-	int Defence = 1;
+	float BaseAttack = 1;
+
+	UPROPERTY(EditAnywhere)
+	float BaseDefence = 1;
 	
 	UPROPERTY(EditAnywhere)
-	int Speed = 1;
+	float BaseSpeed = 1;
 
 	UPROPERTY(EditAnywhere)
-	FString MeshReference;
+	int Level = 1;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UPROPERTY(EditAnywhere)
+	int LevelToEvolve = 1;
 
-	// Called to bind functionality to input
+
+public:
+	APokemonBase();
+
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 };
