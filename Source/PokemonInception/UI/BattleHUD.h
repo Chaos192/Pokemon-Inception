@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
 #include "BattleStartWidget.h"
+#include "TextBoxWidget.h"
 #include "BattleHUD.generated.h"
 
 
@@ -18,16 +19,25 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UBattleStartWidget> BattleStartWidgetClass;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UTextBoxWidget> TextBoxWidgetClass;
+
 	UPROPERTY()
 	class UBattleStartWidget* BattleStartWidget;
+
+	UPROPERTY()
+	class UTextBoxWidget* TextBoxWidget;
 	
 	void Clear();
 
-	virtual void BeginPlay()override;
+	virtual void BeginPlay() override;
 	
 public:
 
 	UFUNCTION()
-	void ShowOptions();
+	void ShowWidget(class UUserWidget* Widget);
+
+	UFUNCTION()
+	void ShowText(FString Message, class UUserWidget* NextWidget);
 
 };

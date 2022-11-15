@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "../Pokemon/Pokemon00_Base.h"
 #include "WildPokemon.generated.h"
 
 UCLASS()
@@ -21,7 +20,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY()
-	TSubclassOf<class APokemon00_Base> Pokemon;
+	TSubclassOf<class APokemonBase> Pokemon;
 
 	UPROPERTY()
 	FVector OriginPoint;
@@ -35,7 +34,7 @@ public:
 
 	FVector GetOriginPoint();
 
-	void Init(TSubclassOf<class APokemon00_Base> PokemonToEncounter);
+	void Init(TSubclassOf<class APokemonBase> PokemonToEncounter);
 
 private:
 	UFUNCTION()

@@ -57,9 +57,6 @@ APokemonInceptionCharacter::APokemonInceptionCharacter()
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	SetupStimulus();
-
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -71,6 +68,7 @@ void APokemonInceptionCharacter::SetupPlayerInputComponent(class UInputComponent
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("Menu", IE_Pressed, this, &APokemonInceptionCharacter::TogglePause).bExecuteWhenPaused = true;
 
 	PlayerInputComponent->BindAxis("Move Forward / Backward", this, &APokemonInceptionCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("Move Right / Left", this, &APokemonInceptionCharacter::MoveRight);
@@ -96,6 +94,12 @@ void APokemonInceptionCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVe
 void APokemonInceptionCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
 {
 	StopJumping();
+}
+
+void APokemonInceptionCharacter::TogglePause()
+{
+	PauseDelegate.Broadcast();
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Opened pause"));
 }
 
 void APokemonInceptionCharacter::TurnAtRate(float Rate)

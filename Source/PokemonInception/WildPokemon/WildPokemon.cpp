@@ -3,9 +3,11 @@
 
 #include "WildPokemon.h"
 #include "../Player/PokemonInceptionCharacter.h"
+#include "../Pokemon/PokemonBase.h"
 #include "Components/CapsuleComponent.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "UObject/ConstructorHelpers.h"
 
 
 AWildPokemon::AWildPokemon()
@@ -13,7 +15,17 @@ AWildPokemon::AWildPokemon()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	GetMesh()->SetSkeletalMesh(Cast<USkeletalMesh>((Cast<APokemon00_Base>(Pokemon))->GetPokemonMesh()), false);
+	/*
+	static auto SkeletalMeshName = Cast<APokemonBase>(Pokemon)->GetMeshReference();
+	static auto SkeletalMeshFinder = ConstructorHelpers::FObjectFinder<USkeletalMesh>(TEXT("%SkeletalMeshName"));
+
+	if (SkeletalMeshFinder.Succeeded()) {
+		auto MeshComponent = GetMesh();
+		MeshComponent->SetSkeletalMesh(SkeletalMeshFinder.Object);
+		MeshComponent->SetRelativeLocation(FVector(0.f, 0.f, -95.f));
+		MeshComponent->SetRelativeRotation(FRotator(0.f, 270.f, 0.f));
+	}
+	*/
 
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AWildPokemon::OnBeginOverlap);
 	bUseControllerRotationYaw = false;
@@ -45,9 +57,10 @@ FVector AWildPokemon::GetOriginPoint()
 	return OriginPoint;
 }
 
-void AWildPokemon::Init(TSubclassOf<class APokemon00_Base> PokemonToEncounter)
+void AWildPokemon::Init(TSubclassOf<class APokemonBase> PokemonToEncounter)
 {
 	Pokemon = PokemonToEncounter;
+	//GetMesh()->SetSkeletalMesh(Cast<APokemonBase>(Pokemon)->GetPokemonMesh(), false);
 }
 
 void AWildPokemon::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
