@@ -21,11 +21,10 @@ void AWildPokemonSpawner::BeginPlay()
 
 void AWildPokemonSpawner::Generate()
 {
+	int index = (FMath::RandHelper(PokemonToSpawn.Num()));
+	Rotation.Yaw = (FMath::RandRange(0, 360));
+
 	AWildPokemon* SpawnedPokemon = nullptr;
-	SpawnedPokemon = GetWorld()->SpawnActor<AWildPokemon>(PokemonToSpawn, GetActorLocation(), Rotation, SpawnInfo);
-
-	int index = (FMath::RandHelper(SpawnablePokemon.Num()));
-	SpawnedPokemon->Init(SpawnablePokemon[index]);
-
+	SpawnedPokemon = GetWorld()->SpawnActor<AWildPokemon>(PokemonToSpawn[index], GetActorLocation(), Rotation, SpawnInfo);
 }
 

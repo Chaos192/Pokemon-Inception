@@ -13,7 +13,6 @@ class POKEMONINCEPTION_API AWildPokemonSpawner : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	AWildPokemonSpawner();
 
 protected:
@@ -23,10 +22,7 @@ protected:
 	float SpawnTime = 10;
 
 	UPROPERTY(EditAnywhere)
-	TArray<TSubclassOf<class APokemonBase>> SpawnablePokemon;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class AWildPokemon> PokemonToSpawn;
+	TArray<TSubclassOf<class AWildPokemon>> PokemonToSpawn;
 
 	FTimerHandle SpawnHandle;
 

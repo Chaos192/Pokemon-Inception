@@ -6,6 +6,7 @@
 #include "GameFramework/Controller.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/WorldSettings.h"
 
 AOverworldGameMode::AOverworldGameMode()
 {
@@ -14,6 +15,44 @@ AOverworldGameMode::AOverworldGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+}
+
+void AOverworldGameMode::OnScreenMessage(FString MessageToDisplay)
+{
+	OnScreenMessageDelegate.Broadcast(MessageToDisplay);
+}
+
+void AOverworldGameMode::DisplayMessage(FString MessageToDisplay)
+{
+	UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->CustomTimeDilation = 0;
+	TempMessage = "";
+	Message = MessageToDisplay;
+	Iterator = 0;
+
+	GetWorldTimerManager().SetTimer(MessageTimer, this, &AOverworldGameMode::IterateMessage, 0.05, true);
+}
+
+void AOverworldGameMode::IterateMessage()
+{
+	TempMessage = Message.Mid(0, Iterator);
+	Iterator++;
+	MessageUpdate.Broadcast(TempMessage);
+
+	if (TempMessage == Message) {
+		GetWorldTimerManager().ClearTimer(MessageTimer);
+		GetWorldTimerManager().SetTimer(MessageTimer, this, &AOverworldGameMode::EndMessage, 1, false);
+	}
+}
+
+void AOverworldGameMode::EndMessage()
+{
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	Hud->PlayerOwner->SetInputMode(FInputModeGameOnly());
+	Hud->Clear();
+
+	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	
+	Player->CustomTimeDilation = 1;
 }
 
 void AOverworldGameMode::BeginPlay()

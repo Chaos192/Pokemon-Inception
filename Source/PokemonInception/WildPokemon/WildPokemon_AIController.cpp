@@ -18,7 +18,7 @@
 
 AWildPokemon_AIController::AWildPokemon_AIController(FObjectInitializer const& ObjectInitializer)
 {
-	static ConstructorHelpers::FObjectFinder<UBehaviorTree>obj(TEXT("BehaviorTree'/Game/AI/WildPokemon/BT_WildPokemon.BT_WildPokemon'"));
+	static ConstructorHelpers::FObjectFinder<UBehaviorTree>obj(TEXT("BehaviorTree'/Game/AI/WildPokemon/BehaviourTree/BT_WildPokemon.BT_WildPokemon'"));
 	if (obj.Succeeded()) {
 		BTree = obj.Object;
 	}

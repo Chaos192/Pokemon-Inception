@@ -28,13 +28,15 @@ private:
 	int Speed = 0;
 
 	UPROPERTY(VisibleAnywhere)
-	int EXP = 0;
+	int Exp = 0;
 
 	UPROPERTY(VisibleAnywhere)
 	int CurrExp = 0;
 
 	UPROPERTY(VisibleAnywhere)
 	int RequiredExp = 0;
+
+	bool IsFainted = false;
 
 protected:
 	virtual void BeginPlay() override;
@@ -63,9 +65,42 @@ protected:
 	UPROPERTY(EditAnywhere)
 	int LevelToEvolve = 1;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<APokemonBase> EvolvedFormClass;
+
+	UPROPERTY()
+	class APokemonBase* EvolvedForm;
 
 public:
 	APokemonBase();
+
+	UFUNCTION()
+	void CalculateStats();
+
+	UFUNCTION()
+	void SetLevel(int LevelToSet);
+
+	UFUNCTION()
+	void GainExp(int GainedExp);
+
+	UFUNCTION()
+	void LevelUp();
+	
+	UFUNCTION()
+	void Evolve();
+
+	UFUNCTION()
+	void RecieveDamage(int Damage);
+
+	UFUNCTION()
+	void RestoreHP(int RestoredHP);
+
+	UFUNCTION()
+	bool IsPokemonFainted();
+
+	UFUNCTION()
+	void RecoverStatus();
+
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 

@@ -57,6 +57,7 @@ APokemonInceptionCharacter::APokemonInceptionCharacter()
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	SetupStimulus();
+	SetTickableWhenPaused(true);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -86,6 +87,11 @@ void APokemonInceptionCharacter::SetupPlayerInputComponent(class UInputComponent
 	PlayerInputComponent->BindTouch(IE_Released, this, &APokemonInceptionCharacter::TouchStopped);
 }
 
+void APokemonInceptionCharacter::Interact()
+{
+	InteractDelegate.ExecuteIfBound();
+}
+
 void APokemonInceptionCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
 {
 	Jump();
@@ -112,6 +118,11 @@ void APokemonInceptionCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * TurnRateGamepad * GetWorld()->GetDeltaSeconds());
+}
+
+void APokemonInceptionCharacter::ObtainPokemon(APokemonBase* AddedPokemon)
+{
+	PokemonTeam.Add(AddedPokemon);
 }
 
 void APokemonInceptionCharacter::MoveForward(float Value)

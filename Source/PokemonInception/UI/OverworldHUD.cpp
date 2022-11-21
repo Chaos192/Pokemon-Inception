@@ -9,6 +9,8 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "../GameModes/OverworldGameMode.h"
 #include "Engine/Engine.h"
+#include "../Player/PokemonInceptionCharacter.h"
+
 
 void AOverworldHUD::BeginPlay()
 {
@@ -17,6 +19,11 @@ void AOverworldHUD::BeginPlay()
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
 	MenuWidget = CreateWidget<UMenuWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MenuWidgetClass);
+	TextBoxWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TextBoxWidgetClass);
+	OnScreenMessageWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), OnScreenMessageWidgetClass);
+
+	GameMode->MessageUpdate.AddDynamic(TextBoxWidget, &UTextBoxWidget::ReturnMessage);
+	GameMode->OnScreenMessageDelegate.AddDynamic(OnScreenMessageWidget, &UTextBoxWidget::ReturnMessage);
 
 	MenuWidget->PokedexClicked.AddDynamic(GameMode, &AOverworldGameMode::Pokedex);
 	MenuWidget->PokemonClicked.AddDynamic(GameMode, &AOverworldGameMode::Pokemon);
@@ -33,6 +40,28 @@ void AOverworldHUD::ShowMenu()
 		MenuWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeGameAndUI());
+	}
+}
+
+void AOverworldHUD::OnScreenMessage(FString Message)
+{
+	Clear();
+	if (PlayerOwner && OnScreenMessageWidget) {
+		OnScreenMessageWidget->AddToViewport();
+		PlayerOwner->SetInputMode(FInputModeGameOnly());
+	}
+}
+
+void AOverworldHUD::ShowText(FString Message)
+{
+	Clear();
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	if (PlayerOwner && TextBoxWidget) {
+		TextBoxWidget->AddToViewport();
+		PlayerOwner->bShowMouseCursor = false;
+		PlayerOwner->SetInputMode(FInputModeUIOnly());
+		GameMode->DisplayMessage(Message);
 	}
 }
 

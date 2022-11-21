@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "../Pokemon/PokemonBase.h"
 #include "PokemonInceptionCharacter.generated.h"
 
+DECLARE_DELEGATE(FInteractSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPauseSignature);
 
 UCLASS(config=Game)
@@ -27,6 +29,8 @@ private:
 public:
 	APokemonInceptionCharacter();
 
+	void ObtainPokemon(APokemonBase* AddedPokemon);
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Input)
 	float TurnRateGamepad;
 
@@ -34,8 +38,11 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 	FPauseSignature PauseDelegate;
+	FInteractSignature InteractDelegate;
 
 protected:
+	UPROPERTY(VisibleAnywhere)
+	TArray<APokemonBase*> PokemonTeam;
 
 	void MoveForward(float Value);
 
@@ -53,5 +60,7 @@ protected:
 	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION()
+		void Interact();
 };
 
