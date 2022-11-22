@@ -18,40 +18,40 @@ class AOverworldGameMode : public AGameModeBase
 public:
 	AOverworldGameMode();
 
-	//UFUNCTION()
-	//	void OnScreenMessage(FString MessageToDisplay);
+	UFUNCTION()
+	void OnScreenMessage(FString MessageToDisplay);
 
 	UFUNCTION()
-		void DisplayMessage(FString MessageToDisplay);
+	void DisplayMessage(FString MessageToDisplay);
 
 	UFUNCTION()
-		void IterateMessage();
+	void IterateMessage();
 
 	UFUNCTION()
 	void EndMessage();
 
 	UFUNCTION()
-		void Pokedex();
+	void Pokedex();
 
 	UFUNCTION()
-		void Pokemon();
+	void Pokemon();
 
 	UFUNCTION()
-		void Bag();
+	void Bag();
 
 	UFUNCTION()
-		void TrainerCard();
+	void TrainerCard();
 
 	UFUNCTION()
-		void Save();
+	void Save();
 
 	UFUNCTION()
-		void Settings();
+	void Settings();
 
 	FEndTextSignature RemoveText;
 	FGamePauseSignature OnGamePaused;
 	FTextSignature MessageUpdate;
-	//FTextSignature OnScreenMessageDelegate;
+	FTextSignature OnScreenMessageDelegate;
 
 protected:
 	virtual void BeginPlay() override;

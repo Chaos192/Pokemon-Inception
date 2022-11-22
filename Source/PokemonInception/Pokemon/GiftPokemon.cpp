@@ -29,7 +29,7 @@ void AGiftPokemon::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
 	if (Player != nullptr) {
 		//Player->InteractDelegate.Unbind();
 		//Player->InteractDelegate.BindUFunction(this, FName("GetPokemon"));
-		//hud->OnScreenMessage("Press 'E' to pick up");
+		hud->OnScreenMessage("Press 'E' to pick up");
 	}
 }
 
@@ -40,7 +40,7 @@ void AGiftPokemon::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 
 	if (Player != nullptr) {
 		//Player->InteractDelegate.Unbind();
-		//hud->Clear();
+		hud->Clear();
 	}
 }
 

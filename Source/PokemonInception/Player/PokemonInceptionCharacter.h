@@ -7,7 +7,7 @@
 #include "../Pokemon/PokemonBase.h"
 #include "PokemonInceptionCharacter.generated.h"
 
-//DECLARE_DELEGATE(FInteractSignature);
+//DECLARE_DYNAMIC_DELEGATE(FInteractSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPauseSignature);
 
 UCLASS(config=Game)
@@ -61,6 +61,6 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	//UFUNCTION()
-	//	void Interact();
+	//void Interact();
 };
 

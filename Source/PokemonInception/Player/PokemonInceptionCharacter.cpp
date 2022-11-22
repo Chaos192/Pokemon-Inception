@@ -91,7 +91,7 @@ void APokemonInceptionCharacter::SetupPlayerInputComponent(class UInputComponent
 /*
 void APokemonInceptionCharacter::Interact()
 {
-	//InteractDelegate.ExecuteIfBound();
+	InteractDelegate.ExecuteIfBound();
 }
 */
 
