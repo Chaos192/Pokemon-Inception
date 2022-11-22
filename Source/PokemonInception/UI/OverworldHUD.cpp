@@ -46,9 +46,12 @@ void AOverworldHUD::ShowMenu()
 void AOverworldHUD::OnScreenMessage(FString Message)
 {
 	Clear();
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
 	if (PlayerOwner && OnScreenMessageWidget) {
 		OnScreenMessageWidget->AddToViewport();
 		PlayerOwner->SetInputMode(FInputModeGameOnly());
+		GameMode->OnScreenMessage(Message);
 	}
 }
 

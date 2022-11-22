@@ -13,6 +13,7 @@ public class PokemonInception : ModuleRules
 			"CoreUObject", 
 			"Engine", 
 			"InputCore", 
+			"UMG",
 			"HeadMountedDisplay", 
 			"AIModule", 
 			"GameplayTasks", 

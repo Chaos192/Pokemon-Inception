@@ -22,8 +22,6 @@ public:
 	class UBoxComponent* Box = nullptr;
 
 protected:
-	virtual void BeginPlay() override;
-
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class APokemonBase> Pokemon;
 
