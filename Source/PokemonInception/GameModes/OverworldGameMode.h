@@ -18,8 +18,8 @@ class AOverworldGameMode : public AGameModeBase
 public:
 	AOverworldGameMode();
 
-	UFUNCTION()
-		void OnScreenMessage(FString MessageToDisplay);
+	//UFUNCTION()
+	//	void OnScreenMessage(FString MessageToDisplay);
 
 	UFUNCTION()
 		void DisplayMessage(FString MessageToDisplay);
@@ -28,7 +28,7 @@ public:
 		void IterateMessage();
 
 	UFUNCTION()
-		void EndMessage();
+	void EndMessage();
 
 	UFUNCTION()
 		void Pokedex();
@@ -51,10 +51,11 @@ public:
 	FEndTextSignature RemoveText;
 	FGamePauseSignature OnGamePaused;
 	FTextSignature MessageUpdate;
-	FTextSignature OnScreenMessageDelegate;
+	//FTextSignature OnScreenMessageDelegate;
 
 protected:
 	virtual void BeginPlay() override;
+	
 	FTimerHandle MessageTimer;
 
 private:

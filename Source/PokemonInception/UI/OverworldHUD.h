@@ -22,8 +22,8 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UTextBoxWidget> TextBoxWidgetClass;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UTextBoxWidget> OnScreenMessageWidgetClass;
+	//UPROPERTY(EditAnywhere)
+	//TSubclassOf<UTextBoxWidget> OnScreenMessageWidgetClass;
 
 	UPROPERTY()
 	class UMenuWidget* MenuWidget;
@@ -31,8 +31,8 @@ protected:
 	UPROPERTY()
 	class UTextBoxWidget* TextBoxWidget;
 
-	UPROPERTY()
-	class UTextBoxWidget* OnScreenMessageWidget;
+	//UPROPERTY()
+	//class UTextBoxWidget* OnScreenMessageWidget;
 
 	virtual void BeginPlay()override;
 	
@@ -42,8 +42,8 @@ public:
 	UFUNCTION()
 	void ShowMenu();
 
-	UFUNCTION()
-	void OnScreenMessage(FString Message);
+	//UFUNCTION()
+	//void OnScreenMessage(FString Message);
 
 	UFUNCTION()
 	void ShowText(FString Message);

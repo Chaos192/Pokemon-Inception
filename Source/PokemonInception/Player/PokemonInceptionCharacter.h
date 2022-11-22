@@ -7,7 +7,7 @@
 #include "../Pokemon/PokemonBase.h"
 #include "PokemonInceptionCharacter.generated.h"
 
-DECLARE_DELEGATE(FInteractSignature);
+//DECLARE_DELEGATE(FInteractSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPauseSignature);
 
 UCLASS(config=Game)
@@ -38,7 +38,7 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 	FPauseSignature PauseDelegate;
-	FInteractSignature InteractDelegate;
+	//FInteractSignature InteractDelegate;
 
 protected:
 	UPROPERTY(VisibleAnywhere)
@@ -60,7 +60,7 @@ protected:
 	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UFUNCTION()
-		void Interact();
+	//UFUNCTION()
+	//	void Interact();
 };
 

@@ -17,11 +17,12 @@ AOverworldGameMode::AOverworldGameMode()
 	}
 }
 
+/*
 void AOverworldGameMode::OnScreenMessage(FString MessageToDisplay)
 {
 	OnScreenMessageDelegate.Broadcast(MessageToDisplay);
 }
-
+*/
 void AOverworldGameMode::DisplayMessage(FString MessageToDisplay)
 {
 	UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->CustomTimeDilation = 0;

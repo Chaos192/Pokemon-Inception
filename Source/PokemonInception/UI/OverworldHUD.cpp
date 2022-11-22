@@ -20,10 +20,10 @@ void AOverworldHUD::BeginPlay()
 
 	MenuWidget = CreateWidget<UMenuWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MenuWidgetClass);
 	TextBoxWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TextBoxWidgetClass);
-	OnScreenMessageWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), OnScreenMessageWidgetClass);
+	//OnScreenMessageWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), OnScreenMessageWidgetClass);
 
 	GameMode->MessageUpdate.AddDynamic(TextBoxWidget, &UTextBoxWidget::ReturnMessage);
-	GameMode->OnScreenMessageDelegate.AddDynamic(OnScreenMessageWidget, &UTextBoxWidget::ReturnMessage);
+	//GameMode->OnScreenMessageDelegate.AddDynamic(OnScreenMessageWidget, &UTextBoxWidget::ReturnMessage);
 
 	MenuWidget->PokedexClicked.AddDynamic(GameMode, &AOverworldGameMode::Pokedex);
 	MenuWidget->PokemonClicked.AddDynamic(GameMode, &AOverworldGameMode::Pokemon);
@@ -43,6 +43,7 @@ void AOverworldHUD::ShowMenu()
 	}
 }
 
+/*
 void AOverworldHUD::OnScreenMessage(FString Message)
 {
 	Clear();
@@ -54,6 +55,7 @@ void AOverworldHUD::OnScreenMessage(FString Message)
 		GameMode->OnScreenMessage(Message);
 	}
 }
+*/
 
 void AOverworldHUD::ShowText(FString Message)
 {

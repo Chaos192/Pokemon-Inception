@@ -27,8 +27,9 @@ void AGiftPokemon::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
 	AOverworldHUD* hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 
 	if (Player != nullptr) {
-		Player->InteractDelegate.BindUFunction(this, FName("GetPokemon"));
-		hud->OnScreenMessage("Press 'E' to pick up");
+		//Player->InteractDelegate.Unbind();
+		//Player->InteractDelegate.BindUFunction(this, FName("GetPokemon"));
+		//hud->OnScreenMessage("Press 'E' to pick up");
 	}
 }
 
@@ -38,8 +39,8 @@ void AGiftPokemon::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 	AOverworldHUD* hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 
 	if (Player != nullptr) {
-		Player->InteractDelegate.Unbind();
-		hud->Clear();
+		//Player->InteractDelegate.Unbind();
+		//hud->Clear();
 	}
 }
 
