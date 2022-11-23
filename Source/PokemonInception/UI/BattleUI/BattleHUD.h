@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
 #include "BattleStartWidget.h"
-#include "TextBoxWidget.h"
+#include "../TextBoxWidget.h"
 #include "BattleHUD.generated.h"
 
 

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
-#include "ButtonClick.h"
+#include "../ButtonClick.h"
 #include "MenuWidget.generated.h"
 
 

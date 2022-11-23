@@ -108,7 +108,6 @@ void APokemonInceptionCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVe
 void APokemonInceptionCharacter::TogglePause()
 {
 	PauseDelegate.Broadcast();
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Opened pause"));
 }
 
 void APokemonInceptionCharacter::TurnAtRate(float Rate)

@@ -30,24 +30,6 @@ public:
 	UFUNCTION()
 	void EndMessage();
 
-	UFUNCTION()
-	void Pokedex();
-
-	UFUNCTION()
-	void Pokemon();
-
-	UFUNCTION()
-	void Bag();
-
-	UFUNCTION()
-	void TrainerCard();
-
-	UFUNCTION()
-	void Save();
-
-	UFUNCTION()
-	void Settings();
-
 	FEndTextSignature RemoveText;
 	FGamePauseSignature OnGamePaused;
 	FTextSignature MessageUpdate;

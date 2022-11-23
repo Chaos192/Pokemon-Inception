@@ -5,7 +5,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
 #include "../Player/PokemonInceptionCharacter.h"
-#include "../UI/OverworldHUD.h"
+#include "../UI/OverworldUI/OverworldHUD.h"
 #include "Kismet/GameplayStatics.h"
 
 AGiftPokemon::AGiftPokemon()

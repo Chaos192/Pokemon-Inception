@@ -5,7 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
 #include "Blueprint/UserWidget.h"
-#include "../UI/BattleHUD.h"
+#include "../UI/BattleUI/BattleHUD.h"
 
 
 void ABattleGameMode::DisplayMessage(FString MessageToDisplay, UUserWidget* Widget)

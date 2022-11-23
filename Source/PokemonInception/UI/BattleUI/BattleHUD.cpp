@@ -7,7 +7,7 @@
 #include "GameFramework/PlayerController.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
-#include "../GameModes/BattleGameMode.h"
+#include "../../GameModes/BattleGameMode.h"
 #include "Engine/Engine.h"
 
 void ABattleHUD::BeginPlay()
