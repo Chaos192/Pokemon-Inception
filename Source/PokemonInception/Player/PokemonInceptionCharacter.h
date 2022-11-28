@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "../Pokemon/PokemonBase.h"
+#include "../Items/ItemBase.h"
 #include "PokemonInceptionCharacter.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPauseSignature);
@@ -30,6 +31,8 @@ public:
 
 	void ObtainPokemon(APokemonBase* AddedPokemon);
 
+	void ObtainItem(UItemBase* AddedItem);
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Input)
 	float TurnRateGamepad;
 
@@ -41,6 +44,9 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere)
 	TArray<APokemonBase*> PokemonTeam;
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<UItemBase*> Inventory;
 
 	void MoveForward(float Value);
 

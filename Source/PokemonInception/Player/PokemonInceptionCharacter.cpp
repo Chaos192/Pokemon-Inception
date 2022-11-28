@@ -120,6 +120,11 @@ void APokemonInceptionCharacter::ObtainPokemon(APokemonBase* AddedPokemon)
 	PokemonTeam.Add(AddedPokemon);
 }
 
+void APokemonInceptionCharacter::ObtainItem(UItemBase* AddedItem)
+{
+	Inventory.Add(AddedItem);
+}
+
 void APokemonInceptionCharacter::MoveForward(float Value)
 {
 	if ((Controller != nullptr) && (Value != 0.0f))
