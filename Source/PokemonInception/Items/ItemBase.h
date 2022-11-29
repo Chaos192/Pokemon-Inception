@@ -15,6 +15,8 @@ class POKEMONINCEPTION_API UItemBase : public UObject
 public:
 	UItemBase();
 
+	FString GetName();
+
 protected:
 	UPROPERTY(EditAnywhere)
 	FString Name;

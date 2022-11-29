@@ -6,3 +6,8 @@
 UItemBase::UItemBase()
 {
 }
+
+FString UItemBase::GetName()
+{
+    return Name;
+}

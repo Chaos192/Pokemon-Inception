@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "ItemBase.h"
+#include "ItemBaseStruct.h"
 #include "../Player/PokemonInceptionCharacter.h"
 #include "GiftItem.generated.h"
 
@@ -22,8 +22,8 @@ public:
 	class UBoxComponent* Box = nullptr;
 
 protected:
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UItemBase> Item;
+	//UPROPERTY(EditAnywhere)
+	//UItemBaseStruct* Item;
 
 private:
 	UFUNCTION()

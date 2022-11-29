@@ -22,7 +22,7 @@ void AGiftItem::GetItem(UPrimitiveComponent* OverlappedComponent, AActor* OtherA
 	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 
 	if (Player != nullptr) {
-		Player->ObtainItem(Cast<UItemBase>(Item));
+		//Player->ObtainItem(Cast<FItemBaseStruct>(Item));
 		//hud->ShowText("You recieved a Pokemon");
 		Destroy();
 	}

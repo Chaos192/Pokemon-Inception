@@ -120,7 +120,7 @@ void APokemonInceptionCharacter::ObtainPokemon(APokemonBase* AddedPokemon)
 	PokemonTeam.Add(AddedPokemon);
 }
 
-void APokemonInceptionCharacter::ObtainItem(UItemBase* AddedItem)
+void APokemonInceptionCharacter::ObtainItem(FItemBaseStruct AddedItem)
 {
 	Inventory.Add(AddedItem);
 }
