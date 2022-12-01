@@ -10,6 +10,7 @@
 #include "../../GameModes/OverworldGameMode.h"
 #include "Engine/Engine.h"
 #include "../../Player/PokemonInceptionCharacter.h"
+#include "../../Player/PlayerCharacterController.h"
 
 
 void AOverworldHUD::BeginPlay()

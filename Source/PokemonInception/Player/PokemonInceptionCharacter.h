@@ -29,8 +29,6 @@ private:
 public:
 	APokemonInceptionCharacter();
 
-	virtual void Tick(float DeltaTime) override;
-
 	void ObtainPokemon(APokemonBase* AddedPokemon);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Input)
@@ -44,8 +42,6 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere)
 	TArray<APokemonBase*> PokemonTeam;
-
-	void LookForInteractables();
 
 	void MoveForward(float Value);
 

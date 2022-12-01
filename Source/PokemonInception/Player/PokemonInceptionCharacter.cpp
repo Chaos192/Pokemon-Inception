@@ -63,13 +63,6 @@ APokemonInceptionCharacter::APokemonInceptionCharacter()
 	SetTickableWhenPaused(true);
 }
 
-void APokemonInceptionCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	LookForInteractables();
-}
-
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -128,35 +121,6 @@ void APokemonInceptionCharacter::LookUpAtRate(float Rate)
 void APokemonInceptionCharacter::ObtainPokemon(APokemonBase* AddedPokemon)
 {
 	PokemonTeam.Add(AddedPokemon);
-}
-
-void APokemonInceptionCharacter::LookForInteractables()
-{
-	FHitResult HitResult;
-
-	FVector StartTrace = FollowCamera->GetComponentLocation();
-	FVector EndTrace = (FollowCamera->GetForwardVector() * 300) + StartTrace;
-
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(this);
-
-	APlayerCharacterController* cont = Cast<APlayerCharacterController>(GetController());
-	AOverworldHUD* Hud = Cast<AOverworldHUD>(cont->GetHUD());
-
-	if (GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_Visibility, QueryParams) && cont)
-	{
-		if (AInteractable* Interactable = Cast<AInteractable>(HitResult.GetActor()))
-		{
-			cont->CurrentInteratable = Interactable;
-
-			Hud->OnScreenMessage("Press E to " + Interactable->Action);
-			
-			return;
-		}
-	}
-
-	cont->CurrentInteratable = nullptr;
-	Hud->Clear();
 }
 
 void APokemonInceptionCharacter::MoveForward(float Value)

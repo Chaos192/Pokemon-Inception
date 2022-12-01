@@ -7,6 +7,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/WorldSettings.h"
+#include "../Player/PlayerCharacterController.h"
 
 AOverworldGameMode::AOverworldGameMode()
 {

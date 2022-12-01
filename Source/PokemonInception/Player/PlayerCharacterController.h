@@ -18,9 +18,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<FItemBaseStruct> Inventory;
 
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
-	class AInteractable* CurrentInteratable;
-
 	UFUNCTION()
 	void ObtainItem(FName ItemID);
 
