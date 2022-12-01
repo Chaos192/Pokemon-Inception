@@ -27,8 +27,15 @@ void AGiftPokemon::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
 	AOverworldHUD* hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 
 	if (Player != nullptr) {
-		//Player->InteractDelegate.Unbind();
-		//Player->InteractDelegate.BindUFunction(this, FName("GetPokemon"));
+		/*
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Collide!"));
+
+		if (Player->Inventory.IsEmpty() == false) {
+			hud->OnScreenMessage(Player->Inventory[0]->GetName());
+		}
+		Player->InteractDelegate.Unbind();
+		Player->InteractDelegate.BindUFunction(this, FName("GetPokemon"));
+		*/
 		hud->OnScreenMessage("Press 'E' to pick up");
 	}
 }

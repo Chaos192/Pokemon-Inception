@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "Engine/DataTable.h"
 #include "OverworldGameMode.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEndTextSignature);
@@ -30,6 +31,8 @@ public:
 	UFUNCTION()
 	void EndMessage();
 
+	class UDataTable* GetItemDT();
+
 	FEndTextSignature RemoveText;
 	FGamePauseSignature OnGamePaused;
 	FTextSignature MessageUpdate;
@@ -37,6 +40,9 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UDataTable* ItemDT;
 	
 	FTimerHandle MessageTimer;
 

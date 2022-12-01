@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "../Pokemon/PokemonBase.h"
+#include "../Items/ItemBaseStruct.h"
 #include "PokemonInceptionCharacter.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPauseSignature);
@@ -28,6 +29,8 @@ private:
 public:
 	APokemonInceptionCharacter();
 
+	virtual void Tick(float DeltaTime) override;
+
 	void ObtainPokemon(APokemonBase* AddedPokemon);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Input)
@@ -41,6 +44,8 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere)
 	TArray<APokemonBase*> PokemonTeam;
+
+	void LookForInteractables();
 
 	void MoveForward(float Value);
 

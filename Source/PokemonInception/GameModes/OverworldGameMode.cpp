@@ -64,6 +64,12 @@ void AOverworldGameMode::EndMessage()
 	Player->CustomTimeDilation = 1;
 }
 
+UDataTable* AOverworldGameMode::GetItemDT()
+{
+	return ItemDT;
+}
+
+
 void AOverworldGameMode::TogglePause()
 {
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
