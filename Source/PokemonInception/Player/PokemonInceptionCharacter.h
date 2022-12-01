@@ -29,9 +29,9 @@ private:
 public:
 	APokemonInceptionCharacter();
 
-	void ObtainPokemon(APokemonBase* AddedPokemon);
+	virtual void Tick(float DeltaTime) override;
 
-	void ObtainItem(FItemBaseStruct AddedItem);
+	void ObtainPokemon(APokemonBase* AddedPokemon);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Input)
 	float TurnRateGamepad;
@@ -45,8 +45,7 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TArray<APokemonBase*> PokemonTeam;
 
-	UPROPERTY(VisibleAnywhere)
-	TArray<FItemBaseStruct> Inventory;
+	void LookForInteractables();
 
 	void MoveForward(float Value);
 

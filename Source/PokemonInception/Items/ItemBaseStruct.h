@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "../Interactables/ItemPickup.h"
 #include "ItemBaseStruct.generated.h"
+
 
 USTRUCT(BlueprintType)
 struct FItemBaseStruct : public FTableRowBase
@@ -15,11 +17,23 @@ struct FItemBaseStruct : public FTableRowBase
 	FName ItemID;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName Name;
+	FText Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText Description;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int Value;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UTexture2D* Image;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<AItemPickup> Pickup;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bUsable;
+
+	//constructor
+	//operator overload
 };
