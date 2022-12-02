@@ -81,6 +81,8 @@ protected:
 public:
 	void Clear();
 
+	void ClearOnScreenMessage();
+
 	UFUNCTION()
 	void ShowMenu();
 

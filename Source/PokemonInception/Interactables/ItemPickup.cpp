@@ -3,13 +3,15 @@
 
 #include "ItemPickup.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/BoxComponent.h"
 #include "../Player/PlayerCharacterController.h"
 
 AItemPickup::AItemPickup()
 {
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	Box->SetupAttachment(Mesh);
 
-	Action = "Pick up";
+	Action = "pick up";
 	ItemID = FName("None");
 }
 

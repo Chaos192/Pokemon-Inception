@@ -29,9 +29,6 @@ struct FItemBaseStruct : public FTableRowBase
 	UTexture2D* Image;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<AItemPickup> Pickup;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bUsable;
 
 	//constructor

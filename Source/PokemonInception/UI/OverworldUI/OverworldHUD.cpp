@@ -169,3 +169,8 @@ void AOverworldHUD::Clear()
 {
 	UWidgetLayoutLibrary::RemoveAllWidgets(this);
 }
+
+void AOverworldHUD::ClearOnScreenMessage()
+{
+	OnScreenMessageWidget->RemoveFromViewport();
+}

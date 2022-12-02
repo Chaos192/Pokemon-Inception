@@ -21,9 +21,10 @@ AOverworldGameMode::AOverworldGameMode()
 void AOverworldGameMode::BeginPlay()
 {
 	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-	Player->PauseDelegate.AddDynamic(this, &AOverworldGameMode::TogglePause);
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Player->Controller);
+	
+	PlayerController->PauseDelegate.AddDynamic(this, &AOverworldGameMode::TogglePause);
 
-	APlayerController* PlayerController = Cast<APlayerController>(Player->Controller);
 	OnGamePaused.AddDynamic(Cast<AOverworldHUD>(PlayerController->GetHUD()), &AOverworldHUD::TogglePause);
 }
 

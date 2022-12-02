@@ -12,6 +12,11 @@ class POKEMONINCEPTION_API AInteractable : public AActor
 	GENERATED_BODY()
 	
 public:	
+	AInteractable();
+
+	UPROPERTY(EditAnywhere)
+	class UBoxComponent* Box = nullptr;
+
 	virtual void Interact(APlayerController* Controller){};
 
 	UPROPERTY(EditDefaultsOnly)
@@ -19,5 +24,11 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 };

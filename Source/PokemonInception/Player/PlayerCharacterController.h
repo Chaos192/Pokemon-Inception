@@ -8,6 +8,7 @@
 #include "../Items/ItemBaseStruct.h"
 #include "PlayerCharacterController.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPauseSignature);
 
 UCLASS()
 class POKEMONINCEPTION_API APlayerCharacterController : public APlayerController
@@ -19,10 +20,14 @@ public:
 	TArray<FItemBaseStruct> Inventory;
 
 	UFUNCTION()
-	void ObtainItem(FName ItemID);
+	void ObtainItem(FName ID);
+
+	FPauseSignature PauseDelegate;
 
 protected:
 	void Interact();
+
+	void TogglePause();
 
 	virtual void SetupInputComponent() override;
 };

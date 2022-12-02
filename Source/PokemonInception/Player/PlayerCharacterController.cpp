@@ -45,13 +45,17 @@ void APlayerCharacterController::Interact()
 	}
 }
 
-void APlayerCharacterController::ObtainItem(FName ItemID)
+void APlayerCharacterController::TogglePause()
+{
+	PauseDelegate.Broadcast();
+}
+
+void APlayerCharacterController::ObtainItem(FName ID)
 {
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
 	UDataTable* ItemTable = GameMode->GetItemDT();
 
-	FItemBaseStruct* AddedItem = ItemTable->FindRow<FItemBaseStruct>("ItemID", "");
-
+	FItemBaseStruct* AddedItem = ItemTable->FindRow<FItemBaseStruct>(ID, "");
 
 	if (AddedItem) {
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Recieving item!"));
@@ -63,4 +67,5 @@ void APlayerCharacterController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 	InputComponent->BindAction("Interact", IE_Pressed, this, &APlayerCharacterController::Interact);
+	InputComponent->BindAction("Menu", IE_Pressed, this, &APlayerCharacterController::TogglePause).bExecuteWhenPaused = true;
 }

@@ -8,7 +8,6 @@
 #include "../Items/ItemBaseStruct.h"
 #include "PokemonInceptionCharacter.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPauseSignature);
 
 UCLASS(config=Game)
 class APokemonInceptionCharacter : public ACharacter
@@ -37,7 +36,6 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-	FPauseSignature PauseDelegate;
 
 protected:
 	UPROPERTY(VisibleAnywhere)
@@ -54,8 +52,6 @@ protected:
 	void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
 
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
-
-	void TogglePause();
 	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 };

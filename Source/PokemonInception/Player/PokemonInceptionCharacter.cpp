@@ -72,7 +72,6 @@ void APokemonInceptionCharacter::SetupPlayerInputComponent(class UInputComponent
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-	PlayerInputComponent->BindAction("Menu", IE_Pressed, this, &APokemonInceptionCharacter::TogglePause).bExecuteWhenPaused = true;
 
 	PlayerInputComponent->BindAxis("Move Forward / Backward", this, &APokemonInceptionCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("Move Right / Left", this, &APokemonInceptionCharacter::MoveRight);
@@ -99,11 +98,6 @@ void APokemonInceptionCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVe
 void APokemonInceptionCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
 {
 	StopJumping();
-}
-
-void APokemonInceptionCharacter::TogglePause()
-{
-	PauseDelegate.Broadcast();
 }
 
 void APokemonInceptionCharacter::TurnAtRate(float Rate)
