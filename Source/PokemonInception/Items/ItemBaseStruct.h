@@ -31,6 +31,10 @@ struct FItemBaseStruct : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bUsable;
 
-	//constructor
-	//operator overload
+	bool operator==(const FItemBaseStruct& Item) const {
+		if (ItemID == Item.ItemID) {
+			return true;
+		}
+		else return false;
+	}
 };

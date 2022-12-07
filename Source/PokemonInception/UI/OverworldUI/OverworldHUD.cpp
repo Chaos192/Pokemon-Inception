@@ -31,6 +31,7 @@ void AOverworldHUD::BeginPlay()
 
 	GameMode->MessageUpdate.AddDynamic(TextBoxWidget, &UTextBoxWidget::ReturnMessage);
 	GameMode->OnScreenMessageDelegate.AddDynamic(OnScreenMessageWidget, &UTextBoxWidget::ReturnMessage);
+	GameMode->ItemSlotDelegate.AddDynamic(BagWidget, &UBagWidget::AddToWrapBox);
 
 	MenuWidget->PokedexClicked.AddDynamic(this, &AOverworldHUD::ShowPokedex);
 	MenuWidget->PokemonClicked.AddDynamic(this, &AOverworldHUD::ShowPokemon);
@@ -84,8 +85,11 @@ void AOverworldHUD::ShowPokemon()
 void AOverworldHUD::ShowBag()
 {
 	Clear();
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
 	if (PlayerOwner && BagWidget) {
+		BagWidget->ClearWrapBox();
+		GameMode->FillBagWidget();
 		BagWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
@@ -173,4 +177,9 @@ void AOverworldHUD::Clear()
 void AOverworldHUD::ClearOnScreenMessage()
 {
 	OnScreenMessageWidget->RemoveFromViewport();
+}
+
+TSubclassOf<UItemSlotWidget> AOverworldHUD::GetItemSlotWidgetClass()
+{
+	return ItemSlotWidgetClass;
 }

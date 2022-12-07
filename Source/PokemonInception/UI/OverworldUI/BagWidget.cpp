@@ -8,6 +8,18 @@ void UBagWidget::OnBackClicked()
 	BackClicked.Broadcast();
 }
 
+void UBagWidget::AddToWrapBox(UItemSlotWidget* ItemWidget)
+{
+	WrapBox->AddChildToWrapBox(ItemWidget);
+}
+
+void UBagWidget::ClearWrapBox()
+{
+	if (WrapBox->HasAnyChildren()) {
+		WrapBox->ClearChildren();
+	}
+}
+
 void UBagWidget::NativeConstruct()
 {
 	Super::NativeConstruct();

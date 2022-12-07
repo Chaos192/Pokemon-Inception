@@ -27,7 +27,7 @@ void AInteractable::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 
 	if (Player) {
-		Hud->OnScreenMessage("Press E to " + Action);
+		//Hud->OnScreenMessage("Press E to " + Action);
 	}
 }
 
@@ -37,7 +37,7 @@ void AInteractable::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 
 	if (Player) {
-		Hud->ClearOnScreenMessage();
+		//Hud->ClearOnScreenMessage();
 	}
 }
 

@@ -11,6 +11,7 @@
 #include "TrainerCardWidget.h"
 #include "SaveWidget.h"
 #include "SettingsWidget.h"
+#include "ItemSlotWidget.h"
 #include "../TextBoxWidget.h"
 #include "OverworldHUD.generated.h"
 
@@ -49,6 +50,9 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<USettingsWidget> SettingsWidgetClass;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UItemSlotWidget> ItemSlotWidgetClass;
+
 	UPROPERTY()
 	class UMenuWidget* MenuWidget;
 
@@ -82,6 +86,8 @@ public:
 	void Clear();
 
 	void ClearOnScreenMessage();
+
+	TSubclassOf<UItemSlotWidget> GetItemSlotWidgetClass();
 
 	UFUNCTION()
 	void ShowMenu();

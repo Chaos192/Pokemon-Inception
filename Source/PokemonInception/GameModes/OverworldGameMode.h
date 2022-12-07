@@ -10,6 +10,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEndTextSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTextSignature, FString, String);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGamePauseSignature, bool, bIsPaused);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FItemSlotSignature, UItemSlotWidget*, ItemSlot);
 
 UCLASS(minimalapi)
 class AOverworldGameMode : public AGameModeBase
@@ -17,8 +18,6 @@ class AOverworldGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 public:
-	AOverworldGameMode();
-
 	UFUNCTION()
 	void OnScreenMessage(FString MessageToDisplay);
 
@@ -31,18 +30,25 @@ public:
 	UFUNCTION()
 	void EndMessage();
 
-	class UDataTable* GetItemDT();
+	UFUNCTION()
+	void FillBagWidget();
+
+	TArray<class UDataTable*> GetItemDT() const;
 
 	FEndTextSignature RemoveText;
+
 	FGamePauseSignature OnGamePaused;
+
 	FTextSignature MessageUpdate;
 	FTextSignature OnScreenMessageDelegate;
+
+	FItemSlotSignature ItemSlotDelegate;
 
 protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditDefaultsOnly)
-	class UDataTable* ItemDT;
+	TArray<class UDataTable*> ItemDT;
 	
 	FTimerHandle MessageTimer;
 

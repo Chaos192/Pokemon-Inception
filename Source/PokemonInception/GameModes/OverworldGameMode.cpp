@@ -9,14 +9,6 @@
 #include "GameFramework/WorldSettings.h"
 #include "../Player/PlayerCharacterController.h"
 
-AOverworldGameMode::AOverworldGameMode()
-{
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter"));
-	if (PlayerPawnBPClass.Class != NULL)
-	{
-		DefaultPawnClass = PlayerPawnBPClass.Class;
-	}
-}
 
 void AOverworldGameMode::BeginPlay()
 {
@@ -66,11 +58,50 @@ void AOverworldGameMode::EndMessage()
 	Player->CustomTimeDilation = 1;
 }
 
-UDataTable* AOverworldGameMode::GetItemDT()
+void AOverworldGameMode::FillBagWidget()
+{
+	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Player->Controller);
+
+	TArray<FItemBaseStruct> Inventory = PlayerController->GetInventory();
+
+	TArray<FItemBaseStruct> UniqueItems;
+	TArray<int> ItemCount;
+
+	for (FItemBaseStruct Item : Inventory) {
+		if (UniqueItems.Contains(Item) == false) {
+			UniqueItems.Add(Item);
+		}
+	}
+
+	for (FItemBaseStruct Item : UniqueItems) {
+		int Count = 0;
+
+		for (FItemBaseStruct ItemToSearch : Inventory) {
+			if (Item == ItemToSearch) {
+				Count++;
+			}
+		}
+
+		ItemCount.Add(Count);
+	}
+
+	for (int i = 0; i < UniqueItems.Num(); i++) {
+		AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+		UItemSlotWidget* ItemSlotWidget = CreateWidget<UItemSlotWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetItemSlotWidgetClass());
+
+		ItemSlotWidget->SetItemName(UniqueItems[i].Name);
+		ItemSlotWidget->SetItemImage(UniqueItems[i].Image);
+		ItemSlotWidget->SetItemCount(ItemCount[i]);
+
+		ItemSlotDelegate.Broadcast(ItemSlotWidget);
+	}
+}
+
+TArray<class UDataTable*> AOverworldGameMode::GetItemDT() const
 {
 	return ItemDT;
 }
-
 
 void AOverworldGameMode::TogglePause()
 {

@@ -22,6 +22,8 @@ public:
 	UFUNCTION()
 	void ObtainItem(FName ID);
 
+	TArray<FItemBaseStruct> GetInventory() const;
+
 	FPauseSignature PauseDelegate;
 
 protected:

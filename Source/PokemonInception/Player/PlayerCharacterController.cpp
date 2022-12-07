@@ -53,14 +53,26 @@ void APlayerCharacterController::TogglePause()
 void APlayerCharacterController::ObtainItem(FName ID)
 {
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
-	UDataTable* ItemTable = GameMode->GetItemDT();
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(GetHUD());
 
-	FItemBaseStruct* AddedItem = ItemTable->FindRow<FItemBaseStruct>(ID, "");
+	TArray<UDataTable*> ItemTables = GameMode->GetItemDT();
+	FItemBaseStruct* AddedItem = nullptr;
 
-	if (AddedItem) {
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Recieving item!"));
-		Inventory.Add(*AddedItem);
+	for (UDataTable* ItemTable : ItemTables) {
+		AddedItem = ItemTable->FindRow<FItemBaseStruct>(ID, "");
+
+		if (AddedItem) {
+			Hud->OnScreenMessage("You got a " + AddedItem->Name.ToString() + "!");
+			Inventory.Add(*AddedItem);
+
+			return;
+		}
 	}
+}
+
+TArray<FItemBaseStruct> APlayerCharacterController::GetInventory() const
+{
+	return Inventory;
 }
 
 void APlayerCharacterController::SetupInputComponent()

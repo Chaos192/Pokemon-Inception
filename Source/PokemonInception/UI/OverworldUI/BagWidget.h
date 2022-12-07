@@ -5,12 +5,12 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
+#include "Components/WrapBox.h"
+#include "ItemSlotWidget.h"
 #include "../ButtonClick.h"
 #include "BagWidget.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class POKEMONINCEPTION_API UBagWidget : public UUserWidget
 {
@@ -22,10 +22,19 @@ private:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-		class UButton* Back;
+	class UButton* Back;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UWrapBox* WrapBox;
 
 	virtual void NativeConstruct() override;
 
 public:
+	UFUNCTION()
+	void AddToWrapBox(UItemSlotWidget* ItemWidget);
+
+	UFUNCTION()
+	void ClearWrapBox();
+
 	FButtonClicked BackClicked;
 };
