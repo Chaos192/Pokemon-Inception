@@ -6,23 +6,23 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
 #include "Components/WrapBox.h"
-#include "ItemSlotWidget.h"
+#include "ItemShopSlotWidget.h"
 #include "../ButtonClick.h"
-#include "BagWidget.generated.h"
+#include "ShopWidget.generated.h"
 
 
 UCLASS()
-class POKEMONINCEPTION_API UBagWidget : public UUserWidget
+class POKEMONINCEPTION_API UShopWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
 private:
 	UFUNCTION()
-	void OnBackClicked();
+	void OnExitClicked();
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Back;
+	class UButton* Exit;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UWrapBox* WrapBox;
@@ -31,9 +31,10 @@ protected:
 
 public:
 	UFUNCTION()
-	void AddToWrapBox(UItemSlotWidget* ItemWidget);
+	void DisplayInShop(UItemShopSlotWidget* ItemWidget);
 
-	void ClearWrapBox();
+	UFUNCTION()
+	void ClearShop();
 
-	FButtonClicked BackClicked;
+	FButtonClicked ExitClicked;
 };

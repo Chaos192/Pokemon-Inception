@@ -12,25 +12,26 @@
 void APlayerCharacterController::Interact()
 {
 	APokemonInceptionCharacter* PlayerOwner = Cast<APokemonInceptionCharacter>(GetPawn());
-
+	//if (PlayerOwner == nullptr) {
+	//	return;
+	//}
+	
 	FHitResult HitResult;
 
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(PlayerOwner);
 
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
-	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_WorldDynamic));
+	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Destructible));
 
 	FVector BoxHalfSize = FVector(50, 50, 100);
 	FRotator PlayerFaceDirection = PlayerOwner->GetActorRotation();
 	FVector BoxLocation = PlayerOwner->GetActorLocation();
 
 	BoxLocation += PlayerFaceDirection.Vector() * BoxHalfSize.Y;
-	
 
 	FRotator BoxDirection = PlayerFaceDirection;
 	BoxDirection.Yaw += 90;
-
 
 	if (UKismetSystemLibrary::BoxTraceSingleForObjects(GetWorld(), BoxLocation, BoxLocation, BoxHalfSize, BoxDirection,
 		ObjectTypes, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true,
@@ -53,7 +54,14 @@ void APlayerCharacterController::TogglePause()
 void APlayerCharacterController::ObtainItem(FName ID)
 {
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
+	if (GameMode == nullptr) {
+		return;
+	}
+
 	AOverworldHUD* Hud = Cast<AOverworldHUD>(GetHUD());
+	if (GameMode == nullptr) {
+		return;
+	}
 
 	TArray<UDataTable*> ItemTables = GameMode->GetItemDT();
 	FItemBaseStruct* AddedItem = nullptr;

@@ -3,13 +3,11 @@
 
 #include "ItemPickup.h"
 #include "Components/StaticMeshComponent.h"
-#include "Components/BoxComponent.h"
 #include "../Player/PlayerCharacterController.h"
 
 AItemPickup::AItemPickup()
 {
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	Box->SetupAttachment(Mesh);
 
 	Action = "pick up";
 	ItemID = FName("None");
@@ -18,6 +16,8 @@ AItemPickup::AItemPickup()
 void AItemPickup::Interact(APlayerController* Controller)
 {
 	APlayerCharacterController* cont = Cast<APlayerCharacterController>(Controller);
-	cont->ObtainItem(ItemID);
-	Destroy();
+	if (cont != nullptr) {
+		cont->ObtainItem(ItemID);
+		Destroy();
+	}	
 }

@@ -13,7 +13,14 @@
 void AOverworldGameMode::BeginPlay()
 {
 	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	if (Player == nullptr) {
+		return;
+	}
+
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Player->Controller);
+	if (PlayerController == nullptr) {
+		return;
+	}
 	
 	PlayerController->PauseDelegate.AddDynamic(this, &AOverworldGameMode::TogglePause);
 

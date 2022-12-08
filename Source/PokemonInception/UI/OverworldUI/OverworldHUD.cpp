@@ -86,6 +86,9 @@ void AOverworldHUD::ShowBag()
 {
 	Clear();
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
 
 	if (PlayerOwner && BagWidget) {
 		BagWidget->ClearWrapBox();
@@ -133,6 +136,9 @@ void AOverworldHUD::OnScreenMessage(FString Message)
 {
 	Clear();
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
 
 	if (PlayerOwner && OnScreenMessageWidget) {
 		OnScreenMessageWidget->AddToViewport();
@@ -146,6 +152,9 @@ void AOverworldHUD::ShowText(FString Message)
 {
 	Clear();
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
 
 	if (PlayerOwner && TextBoxWidget) {
 		TextBoxWidget->AddToViewport();
