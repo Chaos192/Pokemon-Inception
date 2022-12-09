@@ -33,7 +33,6 @@ public:
 	UFUNCTION()
 	void DisplayInShop(UItemShopSlotWidget* ItemWidget);
 
-	UFUNCTION()
 	void ClearShop();
 
 	FButtonClicked ExitClicked;

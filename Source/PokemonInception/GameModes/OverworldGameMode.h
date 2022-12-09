@@ -31,6 +31,9 @@ public:
 	void EndMessage();
 
 	UFUNCTION()
+	void EndOnScreenMessage();
+
+	UFUNCTION()
 	void FillBagWidget();
 
 	TArray<class UDataTable*> GetItemDT() const;
@@ -51,6 +54,7 @@ protected:
 	TArray<class UDataTable*> ItemDT;
 	
 	FTimerHandle MessageTimer;
+	FTimerHandle ScreenMessageTimer;
 
 private:
 	UFUNCTION()

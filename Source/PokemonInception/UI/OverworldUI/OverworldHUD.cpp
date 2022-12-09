@@ -28,6 +28,7 @@ void AOverworldHUD::BeginPlay()
 	TrainerCardWidget = CreateWidget<UTrainerCardWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TrainerCardWidgetClass);
 	SaveWidget = CreateWidget<USaveWidget>(UGameplayStatics::GetGameInstance(GetWorld()), SaveWidgetClass);
 	SettingsWidget = CreateWidget<USettingsWidget>(UGameplayStatics::GetGameInstance(GetWorld()), SettingsWidgetClass);
+	ShopWidget = CreateWidget<UShopWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ShopWidgetClass);
 
 	GameMode->MessageUpdate.AddDynamic(TextBoxWidget, &UTextBoxWidget::ReturnMessage);
 	GameMode->OnScreenMessageDelegate.AddDynamic(OnScreenMessageWidget, &UTextBoxWidget::ReturnMessage);
@@ -46,6 +47,7 @@ void AOverworldHUD::BeginPlay()
 	TrainerCardWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ShowMenu);
 	SaveWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ShowMenu);
 	SettingsWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ShowMenu);
+	ShopWidget->ExitClicked.AddDynamic(this, &AOverworldHUD::ClearShop);
 
 }
 
@@ -132,6 +134,18 @@ void AOverworldHUD::ShowSettings()
 	}
 }
 
+void AOverworldHUD::ShowShop()
+{
+	Clear();
+
+	if (PlayerOwner && ShopWidget) {
+		ShopWidget->AddToViewport();
+		PlayerOwner->bShowMouseCursor = true;
+		PlayerOwner->SetInputMode(FInputModeUIOnly());
+		PlayerOwner->SetPause(true);
+	}
+}
+
 void AOverworldHUD::OnScreenMessage(FString Message)
 {
 	Clear();
@@ -186,6 +200,14 @@ void AOverworldHUD::Clear()
 void AOverworldHUD::ClearOnScreenMessage()
 {
 	OnScreenMessageWidget->RemoveFromViewport();
+}
+
+void AOverworldHUD::ClearShop()
+{
+	Clear();
+	PlayerOwner->SetInputMode(FInputModeGameOnly());
+	PlayerOwner->bShowMouseCursor = false;
+	PlayerOwner->SetPause(false);
 }
 
 TSubclassOf<UItemSlotWidget> AOverworldHUD::GetItemSlotWidgetClass()

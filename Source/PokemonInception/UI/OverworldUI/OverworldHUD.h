@@ -11,6 +11,7 @@
 #include "TrainerCardWidget.h"
 #include "SaveWidget.h"
 #include "SettingsWidget.h"
+#include "ShopWidget.h"
 #include "ItemSlotWidget.h"
 #include "../TextBoxWidget.h"
 #include "OverworldHUD.generated.h"
@@ -51,6 +52,9 @@ protected:
 	TSubclassOf<USettingsWidget> SettingsWidgetClass;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<UShopWidget> ShopWidgetClass;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UItemSlotWidget> ItemSlotWidgetClass;
 
 	UPROPERTY()
@@ -80,12 +84,18 @@ protected:
 	UPROPERTY()
 	class USettingsWidget* SettingsWidget;
 
+	UPROPERTY()
+	class UShopWidget* ShopWidget;
+
 	virtual void BeginPlay()override;
 	
 public:
 	void Clear();
 
 	void ClearOnScreenMessage();
+
+	UFUNCTION()
+	void ClearShop();
 
 	TSubclassOf<UItemSlotWidget> GetItemSlotWidgetClass();
 
@@ -109,6 +119,9 @@ public:
 
 	UFUNCTION()
 	void ShowSettings();
+
+	UFUNCTION()
+	void ShowShop();
 
 	UFUNCTION()
 	void OnScreenMessage(FString Message);

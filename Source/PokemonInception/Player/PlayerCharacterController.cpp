@@ -23,6 +23,7 @@ void APlayerCharacterController::Interact()
 
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Destructible));
+	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
 
 	FVector BoxHalfSize = FVector(50, 50, 100);
 	FRotator PlayerFaceDirection = PlayerOwner->GetActorRotation();
@@ -34,7 +35,7 @@ void APlayerCharacterController::Interact()
 	BoxDirection.Yaw += 90;
 
 	if (UKismetSystemLibrary::BoxTraceSingleForObjects(GetWorld(), BoxLocation, BoxLocation, BoxHalfSize, BoxDirection,
-		ObjectTypes, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true,
+		ObjectTypes, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true,
 		FLinearColor(1, 0, 0), FLinearColor(0, 1, 0), 1.f) == false) 
 	{
 		return;
@@ -59,7 +60,7 @@ void APlayerCharacterController::ObtainItem(FName ID)
 	}
 
 	AOverworldHUD* Hud = Cast<AOverworldHUD>(GetHUD());
-	if (GameMode == nullptr) {
+	if (Hud == nullptr) {
 		return;
 	}
 

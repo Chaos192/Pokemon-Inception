@@ -30,6 +30,7 @@ void AOverworldGameMode::BeginPlay()
 void AOverworldGameMode::OnScreenMessage(FString MessageToDisplay)
 {
 	OnScreenMessageDelegate.Broadcast(MessageToDisplay);
+	GetWorldTimerManager().SetTimer(ScreenMessageTimer, this, &AOverworldGameMode::EndOnScreenMessage, 1, false);
 }
 
 void AOverworldGameMode::DisplayMessage(FString MessageToDisplay)
@@ -63,6 +64,14 @@ void AOverworldGameMode::EndMessage()
 	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 	
 	Player->CustomTimeDilation = 1;
+}
+
+void AOverworldGameMode::EndOnScreenMessage()
+{
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	if (Hud != nullptr) {
+		Hud->ClearOnScreenMessage();
+	}
 }
 
 void AOverworldGameMode::FillBagWidget()
