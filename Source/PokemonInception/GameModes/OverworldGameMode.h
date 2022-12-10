@@ -5,12 +5,15 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "Engine/DataTable.h"
+#include "../UI/OverworldUI/ShopWidget.h"
+#include "../UI/OverworldUI/ItemShopSlotWidget.h"
 #include "OverworldGameMode.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEndTextSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTextSignature, FString, String);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGamePauseSignature, bool, bIsPaused);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FItemSlotSignature, UItemSlotWidget*, ItemSlot);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FShopSlotSignature, UItemShopSlotWidget*, ItemShopSlot);
 
 UCLASS(minimalapi)
 class AOverworldGameMode : public AGameModeBase
@@ -36,6 +39,12 @@ public:
 	UFUNCTION()
 	void FillBagWidget();
 
+	UFUNCTION()
+	void InitShop(TArray<FName> ItemsToSell);
+
+	UFUNCTION()
+	void RefreshShopSlot(UItemShopSlotWidget* Slot);
+
 	TArray<class UDataTable*> GetItemDT() const;
 
 	FEndTextSignature RemoveText;
@@ -46,6 +55,7 @@ public:
 	FTextSignature OnScreenMessageDelegate;
 
 	FItemSlotSignature ItemSlotDelegate;
+	FShopSlotSignature ItemShopSlotDelegate;
 
 protected:
 	virtual void BeginPlay() override;

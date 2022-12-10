@@ -114,6 +114,75 @@ void AOverworldGameMode::FillBagWidget()
 	}
 }
 
+void AOverworldGameMode::InitShop(TArray<FName> ItemsToSell)
+{
+	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Player->Controller);
+
+	TArray<FItemBaseStruct> Inventory = PlayerController->GetInventory();
+
+	TArray<FItemBaseStruct> ItemsInShop;
+	TArray<int> ItemCount;
+
+
+	for (FName ItemID : ItemsToSell) 
+	{
+		for (UDataTable* ItemTable : ItemDT) 
+		{
+			FItemBaseStruct* Item = ItemTable->FindRow<FItemBaseStruct>(ItemID, "");
+
+			if(Item) 
+			{
+				ItemsInShop.Add(*Item);
+			}
+		}
+	}
+
+	for (FItemBaseStruct Item : ItemsInShop)
+	{
+		
+		if (Inventory.Contains(Item) == false) 
+		{
+			ItemCount.Add(0);
+		}
+		else 
+		{
+			int Count = 0;
+
+			for (FItemBaseStruct ItemToSearch : Inventory)
+			{
+				if (Item == ItemToSearch) 
+				{
+					Count++;
+				}
+			}
+
+			ItemCount.Add(Count);
+		}
+	}
+
+	for (int i = 0; i < ItemsInShop.Num(); i++) {
+		AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+		UItemShopSlotWidget* ShopSlotWidget = CreateWidget<UItemShopSlotWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetItemShopSlotWidgetClass());
+
+		ShopSlotWidget->SetItemName(ItemsInShop[i].Name);
+		ShopSlotWidget->SetItemImage(ItemsInShop[i].Image);
+		ShopSlotWidget->SetItemCount(ItemCount[i]);
+
+		ItemShopSlotDelegate.Broadcast(ShopSlotWidget);
+	}
+}
+
+void AOverworldGameMode::RefreshShopSlot(UItemShopSlotWidget* Slot)
+{
+	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Player->Controller);
+
+	TArray<FItemBaseStruct> Inventory = PlayerController->GetInventory();
+
+	//if(Inventory.Contains(Slot))
+}
+
 TArray<class UDataTable*> AOverworldGameMode::GetItemDT() const
 {
 	return ItemDT;

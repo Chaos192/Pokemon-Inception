@@ -13,6 +13,7 @@
 #include "SettingsWidget.h"
 #include "ShopWidget.h"
 #include "ItemSlotWidget.h"
+#include "ItemShopSlotWidget.h"
 #include "../TextBoxWidget.h"
 #include "OverworldHUD.generated.h"
 
@@ -57,6 +58,9 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UItemSlotWidget> ItemSlotWidgetClass;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UItemShopSlotWidget> ItemShopSlotWidgetClass;
+
 	UPROPERTY()
 	class UMenuWidget* MenuWidget;
 
@@ -98,6 +102,8 @@ public:
 	void ClearShop();
 
 	TSubclassOf<UItemSlotWidget> GetItemSlotWidgetClass();
+
+	TSubclassOf<UItemShopSlotWidget> GetItemShopSlotWidgetClass();
 
 	UFUNCTION()
 	void ShowMenu();

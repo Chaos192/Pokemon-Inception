@@ -5,12 +5,12 @@
 
 void UItemShopSlotWidget::OnBuyClicked()
 {
-	//BuyClicked.Broadcast();
+	BuyClicked.Broadcast();
 }
 
 void UItemShopSlotWidget::OnSellClicked()
 {
-	//SellClicked.Broadcast();
+	SellClicked.Broadcast();
 }
 
 void UItemShopSlotWidget::SetItemName(FText Name)
@@ -26,6 +26,22 @@ void UItemShopSlotWidget::SetItemImage(UTexture2D* Image)
 void UItemShopSlotWidget::SetItemCount(int Count)
 {
 	ItemCount->SetText(FText::FromString(FString::FromInt(Count)));
+}
+
+void UItemShopSlotWidget::SetBuyState(bool enabled)
+{
+	if (enabled) {
+		Buy->OnClicked.AddDynamic(this, &UItemShopSlotWidget::OnBuyClicked);
+	}
+	Buy->OnClicked.RemoveDynamic(this, &UItemShopSlotWidget::OnBuyClicked);
+}
+
+void UItemShopSlotWidget::SetSellState(bool enabled)
+{
+	if (enabled) {
+		Sell->OnClicked.AddDynamic(this, &UItemShopSlotWidget::OnSellClicked);
+	}
+	Sell->OnClicked.RemoveDynamic(this, &UItemShopSlotWidget::OnSellClicked);
 }
 
 void UItemShopSlotWidget::NativeConstruct()

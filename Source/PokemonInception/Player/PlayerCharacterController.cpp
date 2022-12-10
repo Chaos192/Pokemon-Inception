@@ -79,9 +79,32 @@ void APlayerCharacterController::ObtainItem(FName ID)
 	}
 }
 
+void APlayerCharacterController::BuyItem(FItemBaseStruct Item)
+{
+}
+
+void APlayerCharacterController::SellItem(FItemBaseStruct Item)
+{
+}
+
 TArray<FItemBaseStruct> APlayerCharacterController::GetInventory() const
 {
 	return Inventory;
+}
+
+int APlayerCharacterController::GetMoney() const
+{
+	return money;
+}
+
+void APlayerCharacterController::RecieveMoney(int AddedMoney)
+{
+	money += AddedMoney;
+}
+
+void APlayerCharacterController::LoseMoney(int LostMoney)
+{
+	money -= LostMoney;
 }
 
 void APlayerCharacterController::SetupInputComponent()

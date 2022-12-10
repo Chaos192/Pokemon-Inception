@@ -13,6 +13,11 @@ void UShopWidget::DisplayInShop(UItemShopSlotWidget* ItemWidget)
 	WrapBox->AddChildToWrapBox(ItemWidget);
 }
 
+void UShopWidget::ShowText(FText Message)
+{
+	TextBox->SetText(Message);
+}
+
 void UShopWidget::ClearShop()
 {
 	if (WrapBox->HasAnyChildren()) {

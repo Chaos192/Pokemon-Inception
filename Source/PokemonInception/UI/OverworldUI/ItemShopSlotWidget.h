@@ -6,7 +6,7 @@
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "Components/Button.h"
-//#include "../ButtonClick.h"
+#include "../ButtonClick.h"
 #include "Blueprint/UserWidget.h"
 #include "ItemShopSlotWidget.generated.h"
 
@@ -51,6 +51,10 @@ public:
 	UFUNCTION()
 	void SetItemCount(int Count);
 
-	//FButtonClicked BuyClicked;
-	//FButtonClicked SellClicked;
+	void SetBuyState(bool enabled);
+
+	void SetSellState(bool enabled);
+
+	FButtonClicked BuyClicked;
+	FButtonClicked SellClicked;
 };

@@ -214,3 +214,8 @@ TSubclassOf<UItemSlotWidget> AOverworldHUD::GetItemSlotWidgetClass()
 {
 	return ItemSlotWidgetClass;
 }
+
+TSubclassOf<UItemShopSlotWidget> AOverworldHUD::GetItemShopSlotWidgetClass()
+{
+	return ItemShopSlotWidgetClass;
+}

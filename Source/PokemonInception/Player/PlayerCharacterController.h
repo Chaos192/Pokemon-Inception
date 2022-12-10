@@ -22,11 +22,26 @@ public:
 	UFUNCTION()
 	void ObtainItem(FName ID);
 
+	UFUNCTION()
+	void BuyItem(FItemBaseStruct Item);
+
+	UFUNCTION()
+	void SellItem(FItemBaseStruct Item);
+
 	TArray<FItemBaseStruct> GetInventory() const;
+
+	int GetMoney() const;
+
+	void RecieveMoney(int AddedMoney);
+
+	void LoseMoney(int LostMoney);
 
 	FPauseSignature PauseDelegate;
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	int money;
+
 	void Interact();
 
 	void TogglePause();
