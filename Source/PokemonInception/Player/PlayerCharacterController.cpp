@@ -12,9 +12,6 @@
 void APlayerCharacterController::Interact()
 {
 	APokemonInceptionCharacter* PlayerOwner = Cast<APokemonInceptionCharacter>(GetPawn());
-	//if (PlayerOwner == nullptr) {
-	//	return;
-	//}
 	
 	FHitResult HitResult;
 
@@ -52,39 +49,14 @@ void APlayerCharacterController::TogglePause()
 	PauseDelegate.Broadcast();
 }
 
-void APlayerCharacterController::ObtainItem(FName ID)
+void APlayerCharacterController::ObtainItem(FItemBaseStruct Item)
 {
-	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
-	if (GameMode == nullptr) {
-		return;
-	}
-
-	AOverworldHUD* Hud = Cast<AOverworldHUD>(GetHUD());
-	if (Hud == nullptr) {
-		return;
-	}
-
-	TArray<UDataTable*> ItemTables = GameMode->GetItemDT();
-	FItemBaseStruct* AddedItem = nullptr;
-
-	for (UDataTable* ItemTable : ItemTables) {
-		AddedItem = ItemTable->FindRow<FItemBaseStruct>(ID, "");
-
-		if (AddedItem) {
-			Hud->OnScreenMessage("You got a " + AddedItem->Name.ToString() + "!");
-			Inventory.Add(*AddedItem);
-
-			return;
-		}
-	}
+	Inventory.Add(Item);
 }
 
-void APlayerCharacterController::BuyItem(FItemBaseStruct Item)
+void APlayerCharacterController::LoseItem(FItemBaseStruct Item)
 {
-}
-
-void APlayerCharacterController::SellItem(FItemBaseStruct Item)
-{
+	Inventory.Remove(Item);
 }
 
 TArray<FItemBaseStruct> APlayerCharacterController::GetInventory() const

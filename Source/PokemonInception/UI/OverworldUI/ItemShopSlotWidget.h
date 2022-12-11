@@ -7,6 +7,7 @@
 #include "Components/Image.h"
 #include "Components/Button.h"
 #include "../ButtonClick.h"
+#include "../../Items/ItemBaseStruct.h"
 #include "Blueprint/UserWidget.h"
 #include "ItemShopSlotWidget.generated.h"
 
@@ -24,6 +25,8 @@ private:
 	void OnSellClicked();
 
 protected:
+	FItemBaseStruct Item;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UTextBlock* ItemName;
 
@@ -42,6 +45,10 @@ protected:
 	virtual void NativeConstruct() override;
 
 public:
+	void SetItem(FItemBaseStruct ItemStruct);
+
+	FItemBaseStruct GetItem();
+
 	UFUNCTION()
 	void SetItemName(FText Name);
 

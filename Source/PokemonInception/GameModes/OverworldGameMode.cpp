@@ -76,8 +76,7 @@ void AOverworldGameMode::EndOnScreenMessage()
 
 void AOverworldGameMode::FillBagWidget()
 {
-	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Player->Controller);
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
 	TArray<FItemBaseStruct> Inventory = PlayerController->GetInventory();
 
@@ -116,14 +115,11 @@ void AOverworldGameMode::FillBagWidget()
 
 void AOverworldGameMode::InitShop(TArray<FName> ItemsToSell)
 {
-	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Player->Controller);
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
 	TArray<FItemBaseStruct> Inventory = PlayerController->GetInventory();
 
 	TArray<FItemBaseStruct> ItemsInShop;
-	TArray<int> ItemCount;
-
 
 	for (FName ItemID : ItemsToSell) 
 	{
@@ -137,37 +133,17 @@ void AOverworldGameMode::InitShop(TArray<FName> ItemsToSell)
 			}
 		}
 	}
-
-	for (FItemBaseStruct Item : ItemsInShop)
-	{
-		
-		if (Inventory.Contains(Item) == false) 
-		{
-			ItemCount.Add(0);
-		}
-		else 
-		{
-			int Count = 0;
-
-			for (FItemBaseStruct ItemToSearch : Inventory)
-			{
-				if (Item == ItemToSearch) 
-				{
-					Count++;
-				}
-			}
-
-			ItemCount.Add(Count);
-		}
-	}
-
+	
 	for (int i = 0; i < ItemsInShop.Num(); i++) {
 		AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 		UItemShopSlotWidget* ShopSlotWidget = CreateWidget<UItemShopSlotWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetItemShopSlotWidgetClass());
 
 		ShopSlotWidget->SetItemName(ItemsInShop[i].Name);
 		ShopSlotWidget->SetItemImage(ItemsInShop[i].Image);
-		ShopSlotWidget->SetItemCount(ItemCount[i]);
+		ShopSlotWidget->SetItemCount(0);
+		ShopSlotWidget->SetItem(ItemsInShop[i]);
+
+		RefreshShopSlot(ShopSlotWidget);
 
 		ItemShopSlotDelegate.Broadcast(ShopSlotWidget);
 	}
@@ -175,12 +151,54 @@ void AOverworldGameMode::InitShop(TArray<FName> ItemsToSell)
 
 void AOverworldGameMode::RefreshShopSlot(UItemShopSlotWidget* Slot)
 {
-	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Player->Controller);
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
 	TArray<FItemBaseStruct> Inventory = PlayerController->GetInventory();
 
-	//if(Inventory.Contains(Slot))
+	FItemBaseStruct Item = Slot->GetItem();
+
+	int Count = 0;
+
+	if (Inventory.Contains(Item)) {
+
+		for (FItemBaseStruct ItemToSearch : Inventory)
+		{
+			if (Item == ItemToSearch)
+			{
+				Count++;
+			}
+		}
+
+		Slot->SetItemCount(Count);
+		Slot->SetSellState(true);
+	}
+	else {
+		Slot->SetItemCount(Count);
+		Slot->SetSellState(false);
+	}
+
+
+	if (PlayerController->GetMoney() >= Item.Value)
+	{
+		Slot->SetBuyState(true);
+	}
+	else {
+		Slot->SetBuyState(false);
+	}
+}
+
+void AOverworldGameMode::BuyItem(FItemBaseStruct Item)
+{
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	PlayerController->ObtainItem(Item);
+	PlayerController->LoseMoney(Item.Value);
+}
+
+void AOverworldGameMode::SellItem(FItemBaseStruct Item)
+{
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	PlayerController->LoseItem(Item);
+	PlayerController->RecieveMoney(Item.Value);
 }
 
 TArray<class UDataTable*> AOverworldGameMode::GetItemDT() const

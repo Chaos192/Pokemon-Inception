@@ -50,3 +50,13 @@ void UItemShopSlotWidget::NativeConstruct()
 	Buy->OnClicked.AddDynamic(this, &UItemShopSlotWidget::OnBuyClicked);
 	Sell->OnClicked.AddDynamic(this, &UItemShopSlotWidget::OnSellClicked);
 }
+
+void UItemShopSlotWidget::SetItem(FItemBaseStruct ItemStruct)
+{
+	Item = ItemStruct;
+}
+
+FItemBaseStruct UItemShopSlotWidget::GetItem()
+{
+	return Item;
+}

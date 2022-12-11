@@ -20,13 +20,10 @@ public:
 	TArray<FItemBaseStruct> Inventory;
 
 	UFUNCTION()
-	void ObtainItem(FName ID);
+	void ObtainItem(FItemBaseStruct Item);
 
 	UFUNCTION()
-	void BuyItem(FItemBaseStruct Item);
-
-	UFUNCTION()
-	void SellItem(FItemBaseStruct Item);
+	void LoseItem(FItemBaseStruct Item);
 
 	TArray<FItemBaseStruct> GetInventory() const;
 
