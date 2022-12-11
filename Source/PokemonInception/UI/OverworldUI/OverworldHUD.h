@@ -127,7 +127,7 @@ public:
 	void ShowSettings();
 
 	UFUNCTION()
-	void ShowShop();
+	void ShowShop(TArray<FName> ItemsToSell);
 
 	UFUNCTION()
 	void OnScreenMessage(FString Message);

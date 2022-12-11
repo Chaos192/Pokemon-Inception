@@ -5,12 +5,14 @@
 
 void UItemShopSlotWidget::OnBuyClicked()
 {
-	BuyClicked.Broadcast();
+	BuyClicked.Broadcast(Item);
+	RefreshDelegate.Broadcast(this);
 }
 
 void UItemShopSlotWidget::OnSellClicked()
 {
-	SellClicked.Broadcast();
+	SellClicked.Broadcast(Item);
+	RefreshDelegate.Broadcast(this);
 }
 
 void UItemShopSlotWidget::SetItemName(FText Name)

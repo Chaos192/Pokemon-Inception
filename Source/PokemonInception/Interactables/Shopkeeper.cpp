@@ -20,8 +20,7 @@ void AShopkeeper::Interact(APlayerController* Controller)
 {
 	AOverworldHUD* Hud = Cast<AOverworldHUD>(Controller->GetHUD());
 	if (Hud != nullptr) {
-		Hud->ShowShop();
+		Hud->ShowShop(ItemsToSell);
 	}
-
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Opening shop"));
 }

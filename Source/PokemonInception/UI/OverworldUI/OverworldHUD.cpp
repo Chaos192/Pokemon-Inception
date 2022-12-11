@@ -33,6 +33,7 @@ void AOverworldHUD::BeginPlay()
 	GameMode->MessageUpdate.AddDynamic(TextBoxWidget, &UTextBoxWidget::ReturnMessage);
 	GameMode->OnScreenMessageDelegate.AddDynamic(OnScreenMessageWidget, &UTextBoxWidget::ReturnMessage);
 	GameMode->ItemSlotDelegate.AddDynamic(BagWidget, &UBagWidget::AddToWrapBox);
+	GameMode->ItemShopSlotDelegate.AddDynamic(ShopWidget, &UShopWidget::DisplayInShop);
 
 	MenuWidget->PokedexClicked.AddDynamic(this, &AOverworldHUD::ShowPokedex);
 	MenuWidget->PokemonClicked.AddDynamic(this, &AOverworldHUD::ShowPokemon);
@@ -134,11 +135,16 @@ void AOverworldHUD::ShowSettings()
 	}
 }
 
-void AOverworldHUD::ShowShop()
+void AOverworldHUD::ShowShop(TArray<FName> ItemsToSell)
 {
 	Clear();
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
 
 	if (PlayerOwner && ShopWidget) {
+		GameMode->InitShop(ItemsToSell);
 		ShopWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
@@ -205,6 +211,7 @@ void AOverworldHUD::ClearOnScreenMessage()
 void AOverworldHUD::ClearShop()
 {
 	Clear();
+	ShopWidget->ClearShop();
 	PlayerOwner->SetInputMode(FInputModeGameOnly());
 	PlayerOwner->bShowMouseCursor = false;
 	PlayerOwner->SetPause(false);

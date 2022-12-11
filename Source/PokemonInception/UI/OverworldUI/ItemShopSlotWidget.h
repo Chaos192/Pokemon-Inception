@@ -11,6 +11,7 @@
 #include "Blueprint/UserWidget.h"
 #include "ItemShopSlotWidget.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FShopSlotRefresh, UItemShopSlotWidget*, ItemShopSlot);
 
 UCLASS()
 class POKEMONINCEPTION_API UItemShopSlotWidget : public UUserWidget
@@ -62,6 +63,8 @@ public:
 
 	void SetSellState(bool enabled);
 
-	FButtonClicked BuyClicked;
-	FButtonClicked SellClicked;
+	FShopSignature BuyClicked;
+	FShopSignature SellClicked;
+
+	FShopSlotRefresh RefreshDelegate;
 };
