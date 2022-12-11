@@ -32,18 +32,22 @@ void UItemShopSlotWidget::SetItemCount(int Count)
 
 void UItemShopSlotWidget::SetBuyState(bool enabled)
 {
+	Buy->OnClicked.RemoveDynamic(this, &UItemShopSlotWidget::OnBuyClicked);
+
 	if (enabled) {
 		Buy->OnClicked.AddDynamic(this, &UItemShopSlotWidget::OnBuyClicked);
+		return;
 	}
-	Buy->OnClicked.RemoveDynamic(this, &UItemShopSlotWidget::OnBuyClicked);
 }
 
 void UItemShopSlotWidget::SetSellState(bool enabled)
 {
+	Sell->OnClicked.RemoveDynamic(this, &UItemShopSlotWidget::OnSellClicked);
+
 	if (enabled) {
 		Sell->OnClicked.AddDynamic(this, &UItemShopSlotWidget::OnSellClicked);
+		return;
 	}
-	Sell->OnClicked.RemoveDynamic(this, &UItemShopSlotWidget::OnSellClicked);
 }
 
 void UItemShopSlotWidget::NativeConstruct()

@@ -13,9 +13,9 @@ void UShopWidget::DisplayInShop(UItemShopSlotWidget* ItemWidget)
 	WrapBox->AddChildToWrapBox(ItemWidget);
 }
 
-void UShopWidget::ShowText(FText Message)
+void UShopWidget::ShowText(FString Message)
 {
-	TextBox->SetText(Message);
+	TextBox->SetText(FText::FromString(Message));
 }
 
 void UShopWidget::ClearShop()

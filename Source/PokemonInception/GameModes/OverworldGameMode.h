@@ -53,6 +53,7 @@ public:
 
 	FTextSignature MessageUpdate;
 	FTextSignature OnScreenMessageDelegate;
+	FTextSignature ShopMessageDelegate;
 
 	FItemSlotSignature ItemSlotDelegate;
 	FShopSlotSignature ItemShopSlotDelegate;

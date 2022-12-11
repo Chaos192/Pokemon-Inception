@@ -38,7 +38,7 @@ public:
 	void DisplayInShop(UItemShopSlotWidget* ItemWidget);
 
 	UFUNCTION()
-	void ShowText(FText Message);
+	void ShowText(FString Message);
 
 	void ClearShop();
 

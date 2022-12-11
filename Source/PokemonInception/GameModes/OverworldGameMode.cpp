@@ -143,6 +143,10 @@ void AOverworldGameMode::InitShop(TArray<FName> ItemsToSell)
 		ShopSlotWidget->SetItemCount(0);
 		ShopSlotWidget->SetItem(ItemsInShop[i]);
 
+		ShopSlotWidget->BuyClicked.AddDynamic(this, &AOverworldGameMode::BuyItem);
+		ShopSlotWidget->SellClicked.AddDynamic(this, &AOverworldGameMode::SellItem);
+		ShopSlotWidget->RefreshDelegate.AddDynamic(this, &AOverworldGameMode::RefreshShopSlot);
+
 		RefreshShopSlot(ShopSlotWidget);
 
 		ItemShopSlotDelegate.Broadcast(ShopSlotWidget);
@@ -185,6 +189,8 @@ void AOverworldGameMode::RefreshShopSlot(UItemShopSlotWidget* Slot)
 	else {
 		Slot->SetBuyState(false);
 	}
+
+	ShopMessageDelegate.Broadcast("You currently have " + FString::FromInt(PlayerController->GetMoney()) + "$");
 }
 
 void AOverworldGameMode::BuyItem(FItemBaseStruct Item)
