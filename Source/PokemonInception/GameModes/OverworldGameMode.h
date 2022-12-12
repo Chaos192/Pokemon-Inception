@@ -43,7 +43,7 @@ public:
 	void InitShop(TArray<FName> ItemsToSell);
 
 	UFUNCTION()
-	void RefreshShopSlot(UItemShopSlotWidget* Slot);
+	void RefreshShop();
 
 	TArray<class UDataTable*> GetItemDT() const;
 
@@ -82,6 +82,8 @@ private:
 	FString Message = "";
 	FString TempMessage = "";
 	int Iterator = 0;
+
+	TArray<UItemShopSlotWidget*> ShopSlots;
 };
 
 

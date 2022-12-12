@@ -6,13 +6,11 @@
 void UItemShopSlotWidget::OnBuyClicked()
 {
 	BuyClicked.Broadcast(Item);
-	RefreshDelegate.Broadcast(this);
 }
 
 void UItemShopSlotWidget::OnSellClicked()
 {
 	SellClicked.Broadcast(Item);
-	RefreshDelegate.Broadcast(this);
 }
 
 void UItemShopSlotWidget::SetItemName(FText Name)
@@ -53,8 +51,8 @@ void UItemShopSlotWidget::SetSellState(bool enabled)
 void UItemShopSlotWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	Buy->OnClicked.AddDynamic(this, &UItemShopSlotWidget::OnBuyClicked);
-	Sell->OnClicked.AddDynamic(this, &UItemShopSlotWidget::OnSellClicked);
+	//Buy->OnClicked.AddDynamic(this, &UItemShopSlotWidget::OnBuyClicked);
+	//Sell->OnClicked.AddDynamic(this, &UItemShopSlotWidget::OnSellClicked);
 }
 
 void UItemShopSlotWidget::SetItem(FItemBaseStruct ItemStruct)

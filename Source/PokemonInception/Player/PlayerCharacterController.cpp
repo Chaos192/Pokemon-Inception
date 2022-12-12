@@ -56,7 +56,7 @@ void APlayerCharacterController::ObtainItem(FItemBaseStruct Item)
 
 void APlayerCharacterController::LoseItem(FItemBaseStruct Item)
 {
-	Inventory.Remove(Item);
+	Inventory.RemoveSingle(Item);
 }
 
 TArray<FItemBaseStruct> APlayerCharacterController::GetInventory() const
