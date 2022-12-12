@@ -20,13 +20,25 @@ public:
 	TArray<FItemBaseStruct> Inventory;
 
 	UFUNCTION()
-	void ObtainItem(FName ID);
+	void ObtainItem(FItemBaseStruct Item);
+
+	UFUNCTION()
+	void LoseItem(FItemBaseStruct Item);
 
 	TArray<FItemBaseStruct> GetInventory() const;
+
+	int GetMoney() const;
+
+	void RecieveMoney(int AddedMoney);
+
+	void LoseMoney(int LostMoney);
 
 	FPauseSignature PauseDelegate;
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	int money;
+
 	void Interact();
 
 	void TogglePause();

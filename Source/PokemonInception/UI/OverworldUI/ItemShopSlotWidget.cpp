@@ -5,12 +5,12 @@
 
 void UItemShopSlotWidget::OnBuyClicked()
 {
-	//BuyClicked.Broadcast();
+	BuyClicked.Broadcast(Item);
 }
 
 void UItemShopSlotWidget::OnSellClicked()
 {
-	//SellClicked.Broadcast();
+	SellClicked.Broadcast(Item);
 }
 
 void UItemShopSlotWidget::SetItemName(FText Name)
@@ -28,9 +28,39 @@ void UItemShopSlotWidget::SetItemCount(int Count)
 	ItemCount->SetText(FText::FromString(FString::FromInt(Count)));
 }
 
+void UItemShopSlotWidget::SetBuyState(bool enabled)
+{
+	Buy->OnClicked.RemoveDynamic(this, &UItemShopSlotWidget::OnBuyClicked);
+
+	if (enabled) {
+		Buy->OnClicked.AddDynamic(this, &UItemShopSlotWidget::OnBuyClicked);
+		return;
+	}
+}
+
+void UItemShopSlotWidget::SetSellState(bool enabled)
+{
+	Sell->OnClicked.RemoveDynamic(this, &UItemShopSlotWidget::OnSellClicked);
+
+	if (enabled) {
+		Sell->OnClicked.AddDynamic(this, &UItemShopSlotWidget::OnSellClicked);
+		return;
+	}
+}
+
 void UItemShopSlotWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	Buy->OnClicked.AddDynamic(this, &UItemShopSlotWidget::OnBuyClicked);
-	Sell->OnClicked.AddDynamic(this, &UItemShopSlotWidget::OnSellClicked);
+	//Buy->OnClicked.AddDynamic(this, &UItemShopSlotWidget::OnBuyClicked);
+	//Sell->OnClicked.AddDynamic(this, &UItemShopSlotWidget::OnSellClicked);
+}
+
+void UItemShopSlotWidget::SetItem(FItemBaseStruct ItemStruct)
+{
+	Item = ItemStruct;
+}
+
+FItemBaseStruct UItemShopSlotWidget::GetItem()
+{
+	return Item;
 }

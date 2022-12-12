@@ -30,6 +30,7 @@ void AOverworldGameMode::BeginPlay()
 void AOverworldGameMode::OnScreenMessage(FString MessageToDisplay)
 {
 	OnScreenMessageDelegate.Broadcast(MessageToDisplay);
+	GetWorldTimerManager().SetTimer(ScreenMessageTimer, this, &AOverworldGameMode::EndOnScreenMessage, 1, false);
 }
 
 void AOverworldGameMode::DisplayMessage(FString MessageToDisplay)
@@ -65,10 +66,17 @@ void AOverworldGameMode::EndMessage()
 	Player->CustomTimeDilation = 1;
 }
 
+void AOverworldGameMode::EndOnScreenMessage()
+{
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	if (Hud != nullptr) {
+		Hud->ClearOnScreenMessage();
+	}
+}
+
 void AOverworldGameMode::FillBagWidget()
 {
-	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Player->Controller);
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
 	TArray<FItemBaseStruct> Inventory = PlayerController->GetInventory();
 
@@ -103,6 +111,108 @@ void AOverworldGameMode::FillBagWidget()
 
 		ItemSlotDelegate.Broadcast(ItemSlotWidget);
 	}
+}
+
+void AOverworldGameMode::InitShop(TArray<FName> ItemsToSell)
+{
+	ShopSlots.Empty();
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+	TArray<FItemBaseStruct> Inventory = PlayerController->GetInventory();
+
+	TArray<FItemBaseStruct> ItemsInShop;
+
+	for (FName ItemID : ItemsToSell) 
+	{
+		for (UDataTable* ItemTable : ItemDT) 
+		{
+			FItemBaseStruct* Item = ItemTable->FindRow<FItemBaseStruct>(ItemID, "");
+
+			if(Item) 
+			{
+				ItemsInShop.Add(*Item);
+			}
+		}
+	}
+	
+	for (int i = 0; i < ItemsInShop.Num(); i++) {
+		AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+		UItemShopSlotWidget* ShopSlotWidget = CreateWidget<UItemShopSlotWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetItemShopSlotWidgetClass());
+
+		ShopSlotWidget->SetItemName(ItemsInShop[i].Name);
+		ShopSlotWidget->SetItemImage(ItemsInShop[i].Image);
+		ShopSlotWidget->SetItemCount(0);
+		ShopSlotWidget->SetItem(ItemsInShop[i]);
+
+		ShopSlotWidget->BuyClicked.AddDynamic(this, &AOverworldGameMode::BuyItem);
+		ShopSlotWidget->SellClicked.AddDynamic(this, &AOverworldGameMode::SellItem);
+
+		ShopSlots.Add(ShopSlotWidget);
+
+		ItemShopSlotDelegate.Broadcast(ShopSlotWidget);
+	}
+
+	RefreshShop();
+}
+
+void AOverworldGameMode::RefreshShop()
+{
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	TArray<FItemBaseStruct> Inventory = PlayerController->GetInventory();
+
+	for (UItemShopSlotWidget* Slot : ShopSlots) {
+
+		FItemBaseStruct Item = Slot->GetItem();
+
+		int Count = 0;
+
+		if (Inventory.Contains(Item)) {
+
+			for (FItemBaseStruct ItemToSearch : Inventory)
+			{
+				if (Item == ItemToSearch)
+				{
+					Count++;
+				}
+			}
+
+			Slot->SetItemCount(Count);
+			Slot->SetSellState(true);
+		}
+		else {
+			Slot->SetItemCount(Count);
+			Slot->SetSellState(false);
+		}
+
+
+		if (PlayerController->GetMoney() >= Item.Value)
+		{
+			Slot->SetBuyState(true);
+		}
+		else {
+			Slot->SetBuyState(false);
+		}
+	}
+
+	ShopMessageDelegate.Broadcast("You currently have " + FString::FromInt(PlayerController->GetMoney()) + "$");
+}
+
+void AOverworldGameMode::BuyItem(FItemBaseStruct Item)
+{
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	PlayerController->ObtainItem(Item);
+	PlayerController->LoseMoney(Item.Value);
+
+	RefreshShop();
+}
+
+void AOverworldGameMode::SellItem(FItemBaseStruct Item)
+{
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	PlayerController->LoseItem(Item);
+	PlayerController->RecieveMoney(Item.Value);
+
+	RefreshShop();
 }
 
 TArray<class UDataTable*> AOverworldGameMode::GetItemDT() const

@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
 #include "Components/WrapBox.h"
+#include "Components/TextBlock.h"
 #include "ItemShopSlotWidget.h"
 #include "../ButtonClick.h"
 #include "ShopWidget.generated.h"
@@ -27,6 +28,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UWrapBox* WrapBox;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UTextBlock* TextBox;
+
 	virtual void NativeConstruct() override;
 
 public:
@@ -34,6 +38,8 @@ public:
 	void DisplayInShop(UItemShopSlotWidget* ItemWidget);
 
 	UFUNCTION()
+	void ShowText(FString Message);
+
 	void ClearShop();
 
 	FButtonClicked ExitClicked;

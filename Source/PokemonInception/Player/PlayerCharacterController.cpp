@@ -12,9 +12,6 @@
 void APlayerCharacterController::Interact()
 {
 	APokemonInceptionCharacter* PlayerOwner = Cast<APokemonInceptionCharacter>(GetPawn());
-	//if (PlayerOwner == nullptr) {
-	//	return;
-	//}
 	
 	FHitResult HitResult;
 
@@ -23,6 +20,7 @@ void APlayerCharacterController::Interact()
 
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Destructible));
+	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
 
 	FVector BoxHalfSize = FVector(50, 50, 100);
 	FRotator PlayerFaceDirection = PlayerOwner->GetActorRotation();
@@ -34,7 +32,7 @@ void APlayerCharacterController::Interact()
 	BoxDirection.Yaw += 90;
 
 	if (UKismetSystemLibrary::BoxTraceSingleForObjects(GetWorld(), BoxLocation, BoxLocation, BoxHalfSize, BoxDirection,
-		ObjectTypes, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true,
+		ObjectTypes, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true,
 		FLinearColor(1, 0, 0), FLinearColor(0, 1, 0), 1.f) == false) 
 	{
 		return;
@@ -51,36 +49,34 @@ void APlayerCharacterController::TogglePause()
 	PauseDelegate.Broadcast();
 }
 
-void APlayerCharacterController::ObtainItem(FName ID)
+void APlayerCharacterController::ObtainItem(FItemBaseStruct Item)
 {
-	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
-	if (GameMode == nullptr) {
-		return;
-	}
+	Inventory.Add(Item);
+}
 
-	AOverworldHUD* Hud = Cast<AOverworldHUD>(GetHUD());
-	if (GameMode == nullptr) {
-		return;
-	}
-
-	TArray<UDataTable*> ItemTables = GameMode->GetItemDT();
-	FItemBaseStruct* AddedItem = nullptr;
-
-	for (UDataTable* ItemTable : ItemTables) {
-		AddedItem = ItemTable->FindRow<FItemBaseStruct>(ID, "");
-
-		if (AddedItem) {
-			Hud->OnScreenMessage("You got a " + AddedItem->Name.ToString() + "!");
-			Inventory.Add(*AddedItem);
-
-			return;
-		}
-	}
+void APlayerCharacterController::LoseItem(FItemBaseStruct Item)
+{
+	Inventory.RemoveSingle(Item);
 }
 
 TArray<FItemBaseStruct> APlayerCharacterController::GetInventory() const
 {
 	return Inventory;
+}
+
+int APlayerCharacterController::GetMoney() const
+{
+	return money;
+}
+
+void APlayerCharacterController::RecieveMoney(int AddedMoney)
+{
+	money += AddedMoney;
+}
+
+void APlayerCharacterController::LoseMoney(int LostMoney)
+{
+	money -= LostMoney;
 }
 
 void APlayerCharacterController::SetupInputComponent()

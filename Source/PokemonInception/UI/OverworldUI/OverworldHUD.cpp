@@ -28,10 +28,13 @@ void AOverworldHUD::BeginPlay()
 	TrainerCardWidget = CreateWidget<UTrainerCardWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TrainerCardWidgetClass);
 	SaveWidget = CreateWidget<USaveWidget>(UGameplayStatics::GetGameInstance(GetWorld()), SaveWidgetClass);
 	SettingsWidget = CreateWidget<USettingsWidget>(UGameplayStatics::GetGameInstance(GetWorld()), SettingsWidgetClass);
+	ShopWidget = CreateWidget<UShopWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ShopWidgetClass);
 
 	GameMode->MessageUpdate.AddDynamic(TextBoxWidget, &UTextBoxWidget::ReturnMessage);
 	GameMode->OnScreenMessageDelegate.AddDynamic(OnScreenMessageWidget, &UTextBoxWidget::ReturnMessage);
+	GameMode->ShopMessageDelegate.AddDynamic(ShopWidget, &UShopWidget::ShowText);
 	GameMode->ItemSlotDelegate.AddDynamic(BagWidget, &UBagWidget::AddToWrapBox);
+	GameMode->ItemShopSlotDelegate.AddDynamic(ShopWidget, &UShopWidget::DisplayInShop);
 
 	MenuWidget->PokedexClicked.AddDynamic(this, &AOverworldHUD::ShowPokedex);
 	MenuWidget->PokemonClicked.AddDynamic(this, &AOverworldHUD::ShowPokemon);
@@ -46,6 +49,7 @@ void AOverworldHUD::BeginPlay()
 	TrainerCardWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ShowMenu);
 	SaveWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ShowMenu);
 	SettingsWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ShowMenu);
+	ShopWidget->ExitClicked.AddDynamic(this, &AOverworldHUD::ClearShop);
 
 }
 
@@ -132,6 +136,23 @@ void AOverworldHUD::ShowSettings()
 	}
 }
 
+void AOverworldHUD::ShowShop(TArray<FName> ItemsToSell)
+{
+	Clear();
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
+
+	if (PlayerOwner && ShopWidget) {
+		GameMode->InitShop(ItemsToSell);
+		ShopWidget->AddToViewport();
+		PlayerOwner->bShowMouseCursor = true;
+		PlayerOwner->SetInputMode(FInputModeUIOnly());
+		PlayerOwner->SetPause(true);
+	}
+}
+
 void AOverworldHUD::OnScreenMessage(FString Message)
 {
 	Clear();
@@ -188,7 +209,21 @@ void AOverworldHUD::ClearOnScreenMessage()
 	OnScreenMessageWidget->RemoveFromViewport();
 }
 
+void AOverworldHUD::ClearShop()
+{
+	Clear();
+	ShopWidget->ClearShop();
+	PlayerOwner->SetInputMode(FInputModeGameOnly());
+	PlayerOwner->bShowMouseCursor = false;
+	PlayerOwner->SetPause(false);
+}
+
 TSubclassOf<UItemSlotWidget> AOverworldHUD::GetItemSlotWidgetClass()
 {
 	return ItemSlotWidgetClass;
+}
+
+TSubclassOf<UItemShopSlotWidget> AOverworldHUD::GetItemShopSlotWidgetClass()
+{
+	return ItemShopSlotWidgetClass;
 }
