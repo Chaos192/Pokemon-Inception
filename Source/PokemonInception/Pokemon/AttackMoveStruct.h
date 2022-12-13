@@ -13,6 +13,13 @@ struct FAttackMoveStruct : public FMoveBaseStruct
 {
 	GENERATED_BODY()
 
+	FAttackMoveStruct() {
+		BaseDamage = 0;
+		Name = FText::FromString("None");
+		MoveType = ETypes::None;
+		PowerPoints = 0;
+	}
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int BaseDamage;
 };

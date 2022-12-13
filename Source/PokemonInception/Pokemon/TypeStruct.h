@@ -7,45 +7,61 @@
 #include "TypeStruct.generated.h"
 
 
+UENUM()
+enum class ETypes{
+	None,
+	Normal,
+	Grass,
+	Fire,
+	Water,
+	Earth,
+	Air,
+	Electric,
+	Bug,
+	Light,
+	Dark,
+	Dragon
+};
+
 USTRUCT(BlueprintType)
 struct FTypeStruct : public FTableRowBase
 {
 	GENERATED_BODY()
 
 	FTypeStruct() {
-		SuperEffectiveAgainst.Add(FName("None"));
-		NotVeryEffectiveAgainst.Add(FName("None"));
-		NoEffectAgainst.Add(FName("None"));
+		SuperEffectiveAgainst.Add(ETypes::None);
+		NotVeryEffectiveAgainst.Add(ETypes::None);
+		NoEffectAgainst.Add(ETypes::None);
 	}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName TypeName;
+	ETypes TypeName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FName> SuperEffectiveAgainst;
+	TArray<ETypes> SuperEffectiveAgainst;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FName> NotVeryEffectiveAgainst;
+	TArray<ETypes> NotVeryEffectiveAgainst;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FName> NoEffectAgainst;
+	TArray<ETypes> NoEffectAgainst;
 
-	bool operator > (const FTypeStruct& Type) const {
-		if (SuperEffectiveAgainst.Contains(Type.TypeName)) {
+	bool operator > (const ETypes Type) const {
+		if (SuperEffectiveAgainst.Contains(Type)) {
 			return true;
 		}
 		else return false;
 	}
 
-	bool operator < (const FTypeStruct& Type) const {
-		if (NotVeryEffectiveAgainst.Contains(Type.TypeName)) {
+	bool operator < (const ETypes Type) const {
+		if (NotVeryEffectiveAgainst.Contains(Type)) {
 			return true;
 		}
 		else return false;
 	}
 
-	bool operator != (const FTypeStruct& Type) const {
-		if (NoEffectAgainst.Contains(Type.TypeName)) {
+	bool operator != (const ETypes Type) const {
+		if (NoEffectAgainst.Contains(Type)) {
 			return true;
 		}
 		else return false;
