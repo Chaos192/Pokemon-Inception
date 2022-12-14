@@ -3,7 +3,6 @@
 
 #include "WildPokemon.h"
 #include "../Player/PokemonInceptionCharacter.h"
-#include "../Pokemon/PokemonBase.h"
 #include "Components/CapsuleComponent.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -20,23 +19,6 @@ AWildPokemon::AWildPokemon()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
-void AWildPokemon::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-void AWildPokemon::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-void AWildPokemon::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
 
 void AWildPokemon::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
