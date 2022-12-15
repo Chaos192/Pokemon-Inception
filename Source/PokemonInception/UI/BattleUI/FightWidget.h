@@ -5,39 +5,35 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
+#include "Components/WrapBox.h"
+#include "MoveButtonWidget.h"
 #include "../ButtonClick.h"
-#include "BattleStartWidget.generated.h"
+#include "FightWidget.generated.h"
 
 
 UCLASS()
-class POKEMONINCEPTION_API UBattleStartWidget : public UUserWidget
+class POKEMONINCEPTION_API UFightWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
 private:
 	UFUNCTION()
-	void OnFightClicked();
-
-	UFUNCTION()
-	void OnRunClicked();
+	void OnBackClicked();
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Fight;
+	class UButton* Back;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Pokemon;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Bag;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Run;
+	class UWrapBox* WrapBox;
 
 	virtual void NativeConstruct() override;
 
 public:
-	FButtonClicked FightClicked;
-	FButtonClicked RunClicked;
-	
+	UFUNCTION()
+	void AddToWrapBox(UMoveButtonWidget* MoveButton);
+
+	void ClearWrapBox();
+
+	FButtonClicked BackClicked;
 };

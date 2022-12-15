@@ -17,13 +17,22 @@ void ABattleHUD::BeginPlay()
 	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
 	BattleStartWidget = CreateWidget<UBattleStartWidget>(UGameplayStatics::GetGameInstance(GetWorld()), BattleStartWidgetClass);
+	FightWidget = CreateWidget<UFightWidget>(UGameplayStatics::GetGameInstance(GetWorld()), FightWidgetClass);
 	TextBoxWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TextBoxWidgetClass);
 
 	BattleStartWidget->RunClicked.AddDynamic(GameMode, &ABattleGameMode::Run);
+	BattleStartWidget->FightClicked.AddDynamic(this, &ABattleHUD::ShowFightWidget);
+	FightWidget->BackClicked.AddDynamic(this, &ABattleHUD::ShowBattleStartWidget);
+
 	GameMode->MessageUpdate.AddDynamic(TextBoxWidget, &UTextBoxWidget::ReturnMessage);
 	GameMode->WidgetUpdate.AddDynamic(this, &ABattleHUD::ShowWidget);
 
 	ShowText("A wild Pokemon appeared!", Cast<UUserWidget>(BattleStartWidget));
+}
+
+void ABattleHUD::Clear()
+{
+	UWidgetLayoutLibrary::RemoveAllWidgets(this);
 }
 
 void ABattleHUD::ShowWidget(class UUserWidget* Widget)
@@ -50,7 +59,24 @@ void ABattleHUD::ShowText(FString Message, class UUserWidget* NextWidget)
 	}
 }
 
-void ABattleHUD::Clear()
+void ABattleHUD::ShowFightWidget()
 {
-	UWidgetLayoutLibrary::RemoveAllWidgets(this);
+	Clear();
+
+	if (PlayerOwner && FightWidget) {
+		FightWidget->AddToViewport();
+		PlayerOwner->bShowMouseCursor = true;
+		PlayerOwner->SetInputMode(FInputModeUIOnly());
+	}
+}
+
+void ABattleHUD::ShowBattleStartWidget()
+{
+	Clear();
+
+	if (PlayerOwner && BattleStartWidget) {
+		BattleStartWidget->AddToViewport();
+		PlayerOwner->bShowMouseCursor = true;
+		PlayerOwner->SetInputMode(FInputModeUIOnly());
+	}
 }

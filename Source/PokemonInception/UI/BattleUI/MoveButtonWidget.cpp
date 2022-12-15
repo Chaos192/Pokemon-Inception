@@ -16,7 +16,6 @@ void UMoveButtonWidget::NativeConstruct()
 
 void UMoveButtonWidget::InitButton(FText Name, int CurrPP, int MaxPP, ETypes MoveType)
 {
-	//ItemCount->SetText(FText::FromString(FString::FromInt(Count)));
 	MoveName->SetText(Name);
 	MovePP->SetText(FText::FromString(FString::FromInt(CurrPP)));
 	MoveMaxPP->SetText(FText::FromString(FString::FromInt(MaxPP)));
