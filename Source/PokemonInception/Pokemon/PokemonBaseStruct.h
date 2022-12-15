@@ -16,7 +16,7 @@ struct FLearnableMoveStruct
 	int LevelWhenLearned;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName Move;
+	FDataTableRowHandle Move;
 };
 
 USTRUCT(BlueprintType)
@@ -37,7 +37,10 @@ struct FPokemonBaseStruct : public FTableRowBase
 	UTexture2D* Image;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<ETypes> Type;
+	ETypes Type1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ETypes Type2;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int HP;

@@ -23,5 +23,8 @@ struct FMoveBaseStruct : public FTableRowBase
 	int PowerPoints;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int CurrPowerPoints;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText Description;
 };
