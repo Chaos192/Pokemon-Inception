@@ -7,6 +7,17 @@
 #include "TypeStruct.h"
 #include "PokemonBaseStruct.generated.h"
 
+USTRUCT(BlueprintType)
+struct FLearnableMoveStruct
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int LevelWhenLearned;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName Move;
+};
 
 USTRUCT(BlueprintType)
 struct FPokemonBaseStruct : public FTableRowBase
@@ -45,4 +56,7 @@ struct FPokemonBaseStruct : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float CatchRate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FLearnableMoveStruct> MovePool;
 };
