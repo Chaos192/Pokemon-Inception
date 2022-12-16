@@ -108,6 +108,8 @@ void AOverworldGameMode::FillBagWidget()
 		ItemSlotWidget->SetItemName(UniqueItems[i].Name);
 		ItemSlotWidget->SetItemImage(UniqueItems[i].Image);
 		ItemSlotWidget->SetItemCount(ItemCount[i]);
+		ItemSlotWidget->SetItem(UniqueItems[i]);
+
 		//ItemSlotWidget->ItemClicked.AddDynamic(this, &AOverworldGameMode::ShowItemInfo);
 
 		ItemSlotDelegate.Broadcast(ItemSlotWidget);
