@@ -52,5 +52,5 @@ public:
 	UFUNCTION()
 	void SetItemCount(int Count);
 
-	//FShopSignature ItemClicked;
+	FShopSignature ItemClicked;
 };

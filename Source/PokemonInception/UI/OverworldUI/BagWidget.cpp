@@ -20,7 +20,6 @@ void UBagWidget::ClearWrapBox()
 	}
 }
 
-/*
 void UBagWidget::ShowInfo(UItemInfoWidget* ItemInfoWidget)
 {
 	ClearInfoBox();
@@ -33,7 +32,6 @@ void UBagWidget::ClearInfoBox()
 		InfoBox->ClearChildren();
 	}
 }
-*/
 
 void UBagWidget::NativeConstruct()
 {

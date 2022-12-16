@@ -5,7 +5,7 @@
 
 void UItemSlotWidget::OnItemClicked()
 {
-	//ItemClicked.Broadcast(Item);
+	ItemClicked.Broadcast(Item);
 }
 
 void UItemSlotWidget::SetItemName(FText Name)

@@ -110,13 +110,12 @@ void AOverworldGameMode::FillBagWidget()
 		ItemSlotWidget->SetItemCount(ItemCount[i]);
 		ItemSlotWidget->SetItem(UniqueItems[i]);
 
-		//ItemSlotWidget->ItemClicked.AddDynamic(this, &AOverworldGameMode::ShowItemInfo);
+		ItemSlotWidget->ItemClicked.AddDynamic(this, &AOverworldGameMode::ShowItemInfo);
 
 		ItemSlotDelegate.Broadcast(ItemSlotWidget);
 	}
 }
 
-/*
 void AOverworldGameMode::ShowItemInfo(FItemBaseStruct InventoryItem)
 {
 	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
@@ -126,7 +125,6 @@ void AOverworldGameMode::ShowItemInfo(FItemBaseStruct InventoryItem)
 
 	ItemInfoDelegate.Broadcast(ItemInfo);
 }
-*/
 
 void AOverworldGameMode::InitShop(TArray<FName> ItemsToSell)
 {

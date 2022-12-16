@@ -34,7 +34,7 @@ void AOverworldHUD::BeginPlay()
 	GameMode->OnScreenMessageDelegate.AddDynamic(OnScreenMessageWidget, &UTextBoxWidget::ReturnMessage);
 	GameMode->ShopMessageDelegate.AddDynamic(ShopWidget, &UShopWidget::ShowText);
 	GameMode->ItemSlotDelegate.AddDynamic(BagWidget, &UBagWidget::AddToWrapBox);
-	//GameMode->ItemInfoDelegate.AddDynamic(BagWidget, &UBagWidget::ShowInfo);
+	GameMode->ItemInfoDelegate.AddDynamic(BagWidget, &UBagWidget::ShowInfo);
 	GameMode->ItemShopSlotDelegate.AddDynamic(ShopWidget, &UShopWidget::DisplayInShop);
 
 	MenuWidget->PokedexClicked.AddDynamic(this, &AOverworldHUD::ShowPokedex);
@@ -97,7 +97,7 @@ void AOverworldHUD::ShowBag()
 
 	if (PlayerOwner && BagWidget) {
 		BagWidget->ClearWrapBox();
-		//BagWidget->ClearInfoBox();
+		BagWidget->ClearInfoBox();
 		GameMode->FillBagWidget();
 		BagWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;

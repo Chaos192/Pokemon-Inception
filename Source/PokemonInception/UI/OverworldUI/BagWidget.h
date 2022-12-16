@@ -40,12 +40,10 @@ public:
 
 	void ClearWrapBox();
 
-	/*
 	UFUNCTION()
 	void ShowInfo(UItemInfoWidget* ItemInfoWidget);
 
 	void ClearInfoBox();
-	*/
 
 	FButtonClicked BackClicked;
 };
