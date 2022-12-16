@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "ItemBaseStruct.h"
-#include "ReviveBaseStruct.generated.h"
+#include "EtherBaseStruct.generated.h"
 
 USTRUCT(BlueprintType)
-struct FReviveBaseStruct : public FItemBaseStruct 
+struct FEtherBaseStruct : public FItemBaseStruct
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float RevivePercent;
+	int RestoredPP;
 };

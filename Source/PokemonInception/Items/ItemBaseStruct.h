@@ -29,7 +29,10 @@ struct FItemBaseStruct : public FTableRowBase
 	UTexture2D* Image;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bUsable;
+	bool bUsableInBattle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bUsableOutsideBattle;
 
 	bool operator==(const FItemBaseStruct& Item) const {
 		if (ItemID == Item.ItemID) {

@@ -59,6 +59,9 @@ protected:
 	TSubclassOf<UItemSlotWidget> ItemSlotWidgetClass;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<UItemInfoWidget> ItemInfoWidgetClass;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UItemShopSlotWidget> ItemShopSlotWidgetClass;
 
 	UPROPERTY()
@@ -102,6 +105,8 @@ public:
 	void ClearShop();
 
 	TSubclassOf<UItemSlotWidget> GetItemSlotWidgetClass();
+
+	TSubclassOf<UItemInfoWidget> GetItemInfoWidgetClass();
 
 	TSubclassOf<UItemShopSlotWidget> GetItemShopSlotWidgetClass();
 
