@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "../SaveGame/WorldSaveData.h"
+#include "../UI/OverworldUI/ItemInfoWidget.h"
+#include "../UI/WidgetDelegates.h"
 #include "BattleGameMode.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageSignature, FString, String);
@@ -21,6 +24,8 @@ private:
 	UUserWidget* NextWidget;
 
 protected:
+	virtual void BeginPlay() override;
+
 	FTimerHandle MessageTimer;
 	FTimerHandle WidgetDelay;
 
@@ -35,9 +40,17 @@ public:
 	void DisplayNextWidget();
 
 	UFUNCTION()
+	void FillBagWidget();
+
+	UFUNCTION()
+	void ShowItemInfo(FItemBaseStruct InventoryItem);
+
+	UFUNCTION()
 	void Run();
 
 	FMessageSignature MessageUpdate;
 	FWidgetSignature WidgetUpdate;
 
+	FItemSlotSignature ItemSlotDelegate;
+	FItemInfoSignature ItemInfoDelegate;
 };

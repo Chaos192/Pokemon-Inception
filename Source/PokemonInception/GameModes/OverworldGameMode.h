@@ -8,6 +8,7 @@
 #include "../UI/OverworldUI/ShopWidget.h"
 #include "../UI/OverworldUI/ItemShopSlotWidget.h"
 #include "../UI/OverworldUI/ItemInfoWidget.h"
+#include "../UI/WidgetDelegates.h"
 #include "../SaveGame/WorldSaveData.h"
 #include "OverworldGameMode.generated.h"
 
@@ -15,10 +16,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEndTextSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTextSignature, FString, String);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGamePauseSignature, bool, bIsPaused);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FItemSlotSignature, UItemSlotWidget*, ItemSlot);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FShopSlotSignature, UItemShopSlotWidget*, ItemShopSlot);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FItemInfoSignature, UItemInfoWidget*, ItemInfo);
 
 UCLASS(minimalapi)
 class AOverworldGameMode : public AGameModeBase
@@ -28,6 +25,9 @@ class AOverworldGameMode : public AGameModeBase
 public:
 	UFUNCTION()
 	void SaveGame();
+
+	UFUNCTION()
+	void SaveAndExit();
 
 	UFUNCTION()
 	void OnScreenMessage(FString MessageToDisplay);

@@ -12,6 +12,8 @@
 
 void AOverworldGameMode::BeginPlay()
 {
+	Super::BeginPlay();
+
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (PlayerController == nullptr) {
 		return;
@@ -56,6 +58,17 @@ void AOverworldGameMode::SaveGame()
 	SaveData->PlayerLocation = PlayerOwner->GetActorLocation();
 
 	UGameplayStatics::SaveGameToSlot(SaveData, "SaveSlot", 0);
+}
+
+void AOverworldGameMode::SaveAndExit()
+{
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (PlayerController == nullptr) {
+		return;
+	}
+
+	SaveGame();
+	PlayerController->ConsoleCommand("quit");
 }
 
 void AOverworldGameMode::OnScreenMessage(FString MessageToDisplay)

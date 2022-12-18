@@ -6,7 +6,27 @@
 #include "GameFramework/PlayerController.h"
 #include "Blueprint/UserWidget.h"
 #include "../UI/BattleUI/BattleHUD.h"
+#include "../Player/PlayerCharacterController.h"
 
+
+void ABattleGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (PlayerController == nullptr) {
+		return;
+	}
+
+	UWorldSaveData* SaveData = Cast<UWorldSaveData>(UGameplayStatics::CreateSaveGameObject(UWorldSaveData::StaticClass()));
+
+	if (UGameplayStatics::DoesSaveGameExist("SaveSlot", 0)) {
+		SaveData = Cast<UWorldSaveData>(UGameplayStatics::LoadGameFromSlot("SaveSlot", 0));
+
+		PlayerController->LoadInventory(SaveData->InventoryData);
+		PlayerController->RecieveMoney(SaveData->MoneyData);
+	}
+}
 
 void ABattleGameMode::DisplayMessage(FString MessageToDisplay, UUserWidget* Widget)
 {
@@ -35,14 +55,75 @@ void ABattleGameMode::DisplayNextWidget()
 	WidgetUpdate.Broadcast(NextWidget);
 }
 
+void ABattleGameMode::FillBagWidget()
+{
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+	TArray<FItemBaseStruct> Inventory = PlayerController->GetInventory();
+
+	TArray<FItemBaseStruct> UniqueItems;
+	TArray<int> ItemCount;
+
+	for (FItemBaseStruct Item : Inventory) {
+		if (UniqueItems.Contains(Item) == false) {
+			UniqueItems.Add(Item);
+		}
+	}
+
+	for (FItemBaseStruct Item : UniqueItems) {
+		int Count = 0;
+
+		for (FItemBaseStruct ItemToSearch : Inventory) {
+			if (Item == ItemToSearch) {
+				Count++;
+			}
+		}
+
+		ItemCount.Add(Count);
+	}
+
+	for (int i = 0; i < UniqueItems.Num(); i++) {
+		ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+		UItemSlotWidget* ItemSlotWidget = CreateWidget<UItemSlotWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetItemSlotWidgetClass());
+
+		ItemSlotWidget->SetItemName(UniqueItems[i].Name);
+		ItemSlotWidget->SetItemImage(UniqueItems[i].Image);
+		ItemSlotWidget->SetItemCount(ItemCount[i]);
+		ItemSlotWidget->SetItem(UniqueItems[i]);
+
+		ItemSlotWidget->ItemClicked.AddDynamic(this, &ABattleGameMode::ShowItemInfo);
+
+		ItemSlotDelegate.Broadcast(ItemSlotWidget);
+	}
+}
+
+void ABattleGameMode::ShowItemInfo(FItemBaseStruct InventoryItem)
+{
+	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	UItemInfoWidget* ItemInfo = CreateWidget<UItemInfoWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetItemInfoWidgetClass());
+
+	ItemInfo->SetDescription(InventoryItem.Description);
+
+	ItemInfoDelegate.Broadcast(ItemInfo);
+}
+
 void ABattleGameMode::Run()
 {
-	APlayerController* cont = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	ABattleHUD* hud = Cast<ABattleHUD>(cont->GetHUD());
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (PlayerController == nullptr) {
+		return;
+	}
+
+	UWorldSaveData* SaveData = Cast<UWorldSaveData>(UGameplayStatics::CreateSaveGameObject(UWorldSaveData::StaticClass()));
+
+	SaveData->InventoryData = PlayerController->GetInventory();
+	SaveData->MoneyData = PlayerController->GetMoney();
+
+	ABattleHUD* Hud = Cast<ABattleHUD>(PlayerController->GetHUD());
 
 	UGameplayStatics::OpenLevel(GetWorld(), "TestingMap");
 
-	hud->PlayerOwner->SetInputMode(FInputModeGameOnly());
-	hud->PlayerOwner->bShowMouseCursor = false;
+	Hud->PlayerOwner->SetInputMode(FInputModeGameOnly());
+	Hud->PlayerOwner->bShowMouseCursor = false;
 }
 

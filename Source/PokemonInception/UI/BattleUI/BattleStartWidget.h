@@ -19,6 +19,9 @@ private:
 	void OnFightClicked();
 
 	UFUNCTION()
+	void OnBagClicked();
+
+	UFUNCTION()
 	void OnRunClicked();
 
 protected:
@@ -38,6 +41,7 @@ protected:
 
 public:
 	FButtonClicked FightClicked;
+	FButtonClicked BagClicked;
 	FButtonClicked RunClicked;
 	
 };
