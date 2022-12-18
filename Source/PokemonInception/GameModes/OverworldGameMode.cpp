@@ -12,19 +12,50 @@
 
 void AOverworldGameMode::BeginPlay()
 {
-	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-	if (Player == nullptr) {
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (PlayerController == nullptr) {
 		return;
 	}
 
-	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Player->Controller);
-	if (PlayerController == nullptr) {
+	APokemonInceptionCharacter* PlayerOwner = Cast<APokemonInceptionCharacter>(PlayerController->GetPawn());
+	if (PlayerOwner == nullptr) {
 		return;
+	}
+
+	UWorldSaveData* SaveData = Cast<UWorldSaveData>(UGameplayStatics::CreateSaveGameObject(UWorldSaveData::StaticClass()));
+
+	if (UGameplayStatics::DoesSaveGameExist("SaveSlot", 0)) {
+		SaveData = Cast<UWorldSaveData>(UGameplayStatics::LoadGameFromSlot("SaveSlot", 0));
+
+		PlayerController->LoadInventory(SaveData->InventoryData);
+		PlayerController->RecieveMoney(SaveData->MoneyData);
+		PlayerOwner->SetActorLocation(SaveData->PlayerLocation);
 	}
 	
 	PlayerController->PauseDelegate.AddDynamic(this, &AOverworldGameMode::TogglePause);
 
 	OnGamePaused.AddDynamic(Cast<AOverworldHUD>(PlayerController->GetHUD()), &AOverworldHUD::TogglePause);
+}
+
+void AOverworldGameMode::SaveGame()
+{
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (PlayerController == nullptr) {
+		return;
+	}
+
+	APokemonInceptionCharacter* PlayerOwner = Cast<APokemonInceptionCharacter>(PlayerController->GetPawn());
+	if (PlayerOwner == nullptr) {
+		return;
+	}
+
+	UWorldSaveData* SaveData = Cast<UWorldSaveData>(UGameplayStatics::CreateSaveGameObject(UWorldSaveData::StaticClass()));
+
+	SaveData->InventoryData = PlayerController->GetInventory();
+	SaveData->MoneyData = PlayerController->GetMoney();
+	SaveData->PlayerLocation = PlayerOwner->GetActorLocation();
+
+	UGameplayStatics::SaveGameToSlot(SaveData, "SaveSlot", 0);
 }
 
 void AOverworldGameMode::OnScreenMessage(FString MessageToDisplay)

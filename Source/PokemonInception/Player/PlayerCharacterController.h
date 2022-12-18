@@ -27,6 +27,9 @@ public:
 
 	TArray<FItemBaseStruct> GetInventory() const;
 
+	UFUNCTION()
+	void LoadInventory(TArray<FItemBaseStruct> InventoryData);
+
 	int GetMoney() const;
 
 	void RecieveMoney(int AddedMoney);

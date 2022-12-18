@@ -64,6 +64,11 @@ TArray<FItemBaseStruct> APlayerCharacterController::GetInventory() const
 	return Inventory;
 }
 
+void APlayerCharacterController::LoadInventory(TArray<FItemBaseStruct> InventoryData)
+{
+	Inventory = InventoryData;
+}
+
 int APlayerCharacterController::GetMoney() const
 {
 	return money;

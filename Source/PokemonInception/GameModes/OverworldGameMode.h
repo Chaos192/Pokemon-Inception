@@ -8,6 +8,7 @@
 #include "../UI/OverworldUI/ShopWidget.h"
 #include "../UI/OverworldUI/ItemShopSlotWidget.h"
 #include "../UI/OverworldUI/ItemInfoWidget.h"
+#include "../SaveGame/WorldSaveData.h"
 #include "OverworldGameMode.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEndTextSignature);
@@ -25,6 +26,9 @@ class AOverworldGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 public:
+	UFUNCTION()
+	void SaveGame();
+
 	UFUNCTION()
 	void OnScreenMessage(FString MessageToDisplay);
 
