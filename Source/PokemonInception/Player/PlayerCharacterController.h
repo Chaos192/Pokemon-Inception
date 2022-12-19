@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "../Pokemon/PokemonBase.h"
 #include "../Interactables/Interactable.h"
 #include "../Items/ItemBaseStruct.h"
 #include "PlayerCharacterController.generated.h"
@@ -16,8 +17,8 @@ class POKEMONINCEPTION_API APlayerCharacterController : public APlayerController
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	TArray<FItemBaseStruct> Inventory;
+	UFUNCTION()
+	void ObtainPokemon(APokemonBase* Pokemon);
 
 	UFUNCTION()
 	void ObtainItem(FItemBaseStruct Item);
@@ -39,6 +40,12 @@ public:
 	FPauseSignature PauseDelegate;
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TArray<FItemBaseStruct> Inventory;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TArray<APokemonBase*> PokemonTeam;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int money;
 

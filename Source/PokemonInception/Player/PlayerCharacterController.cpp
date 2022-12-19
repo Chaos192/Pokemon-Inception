@@ -49,6 +49,11 @@ void APlayerCharacterController::TogglePause()
 	PauseDelegate.Broadcast();
 }
 
+void APlayerCharacterController::ObtainPokemon(APokemonBase* Pokemon)
+{
+	PokemonTeam.Add(Pokemon);
+}
+
 void APlayerCharacterController::ObtainItem(FItemBaseStruct Item)
 {
 	Inventory.Add(Item);
