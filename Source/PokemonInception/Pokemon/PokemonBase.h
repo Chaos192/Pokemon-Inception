@@ -41,6 +41,9 @@ public:
 	UFUNCTION()
 	void RecoverStatus();
 
+	UFUNCTION()
+	FText GetPokemonName();
+
 
 protected:
 	UPROPERTY(EditDefaultsOnly)

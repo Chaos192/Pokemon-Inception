@@ -2,6 +2,9 @@
 
 
 #include "PokemonPickup.h"
+#include "../Player/PlayerCharacterController.h"
+#include "../GameModes/OverworldGameMode.h"
+#include "../UI/OverworldUI/OverworldHUD.h"
 
 APokemonPickup::APokemonPickup()
 {
@@ -13,5 +16,17 @@ APokemonPickup::APokemonPickup()
 
 void APokemonPickup::Interact(APlayerController* Controller)
 {
-	//h
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Controller);
+	if (PlayerController == nullptr) {
+		return;
+	}
+
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(PlayerController->GetHUD());
+	if (Hud == nullptr) {
+		return;
+	}
+
+	Hud->OnScreenMessage("You got a " + Pokemon->GetPokemonName().ToString() + "!");
+	PlayerController->ObtainPokemon(Pokemon);
+	Destroy();
 }

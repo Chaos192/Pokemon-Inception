@@ -89,3 +89,8 @@ void APokemonBase::RecoverStatus()
 	bIsFainted = false;
 	CurrHP = 1;
 }
+
+FText APokemonBase::GetPokemonName()
+{
+	return SpeciesData.Name;
+}

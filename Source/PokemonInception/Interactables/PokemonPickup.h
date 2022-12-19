@@ -22,8 +22,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* Mesh = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class APokemonBase* Pokemon;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	APokemonBase* Pokemon = nullptr;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
