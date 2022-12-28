@@ -56,6 +56,9 @@ public:
 	UFUNCTION()
 	void RefreshShop();
 
+	UFUNCTION()
+	void ShowPokemonInMenu();
+
 	TArray<class UDataTable*> GetItemDT() const;
 
 	FEndTextSignature RemoveText;
@@ -69,6 +72,8 @@ public:
 	FItemSlotSignature ItemSlotDelegate;
 	FShopSlotSignature ItemShopSlotDelegate;
 	FItemInfoSignature ItemInfoDelegate;
+
+	FPokemonSlotSignature PokemonSlotDelegate;
 
 protected:
 	virtual void BeginPlay() override;

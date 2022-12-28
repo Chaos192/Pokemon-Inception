@@ -13,6 +13,7 @@
 #include "ShopWidget.h"
 #include "ItemSlotWidget.h"
 #include "ItemShopSlotWidget.h"
+#include "../BattleUI/PokemonSlotWidget.h"
 #include "../TextBoxWidget.h"
 #include "OverworldHUD.generated.h"
 
@@ -60,6 +61,9 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UItemShopSlotWidget> ItemShopSlotWidgetClass;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPokemonSlotWidget> PokemonSlotWidgetClass;
+
 	UPROPERTY()
 	class UMenuWidget* MenuWidget;
 
@@ -102,6 +106,8 @@ public:
 	TSubclassOf<UItemInfoWidget> GetItemInfoWidgetClass();
 
 	TSubclassOf<UItemShopSlotWidget> GetItemShopSlotWidgetClass();
+
+	TSubclassOf<UPokemonSlotWidget> GetPokemonSlotWidgetClass();
 
 	UFUNCTION()
 	void ShowMenu();

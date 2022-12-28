@@ -72,9 +72,29 @@ TArray<FItemBaseStruct> APlayerCharacterController::GetInventory() const
 	return Inventory;
 }
 
+TArray<FPokemonStruct> APlayerCharacterController::GetPokemonParty() const
+{
+	return PokemonParty;
+}
+
+TArray<FPokemonStruct> APlayerCharacterController::GetPokemonStorage() const
+{
+	return PokemonStorage;
+}
+
 void APlayerCharacterController::LoadInventory(TArray<FItemBaseStruct> InventoryData)
 {
 	Inventory = InventoryData;
+}
+
+void APlayerCharacterController::LoadPokemonParty(TArray<FPokemonStruct> PartyData)
+{
+	PokemonParty = PartyData;
+}
+
+void APlayerCharacterController::LoadPokemonStorage(TArray<FPokemonStruct> StorageData)
+{
+	PokemonStorage = StorageData;
 }
 
 int APlayerCharacterController::GetMoney() const

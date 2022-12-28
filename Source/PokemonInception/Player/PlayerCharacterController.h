@@ -28,8 +28,18 @@ public:
 
 	TArray<FItemBaseStruct> GetInventory() const;
 
+	TArray<FPokemonStruct> GetPokemonParty() const;
+
+	TArray<FPokemonStruct> GetPokemonStorage() const;
+
 	UFUNCTION()
 	void LoadInventory(TArray<FItemBaseStruct> InventoryData);
+
+	UFUNCTION()
+	void LoadPokemonParty(TArray<FPokemonStruct> PartyData);
+
+	UFUNCTION()
+	void LoadPokemonStorage(TArray<FPokemonStruct> StorageData);
 
 	int GetMoney() const;
 

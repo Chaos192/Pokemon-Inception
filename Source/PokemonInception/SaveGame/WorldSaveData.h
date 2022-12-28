@@ -6,6 +6,7 @@
 #include "GameFramework/SaveGame.h"
 #include "../WildPokemon/WildPokemon.h"
 #include "../Items/ItemBaseStruct.h"
+#include "../Pokemon/PokemonStruct.h"
 #include "WorldSaveData.generated.h"
 
 
@@ -27,4 +28,10 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	int MoneyData;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FPokemonStruct> PartyData;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FPokemonStruct> StorageData;
 };

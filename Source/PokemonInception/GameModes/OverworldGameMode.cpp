@@ -31,6 +31,8 @@ void AOverworldGameMode::BeginPlay()
 
 		PlayerController->LoadInventory(SaveData->InventoryData);
 		PlayerController->RecieveMoney(SaveData->MoneyData);
+		PlayerController->LoadPokemonParty(SaveData->PartyData);
+		PlayerController->LoadPokemonStorage(SaveData->StorageData);
 		PlayerOwner->SetActorLocation(SaveData->PlayerLocation);
 	}
 	
@@ -56,6 +58,8 @@ void AOverworldGameMode::SaveGame()
 	SaveData->InventoryData = PlayerController->GetInventory();
 	SaveData->MoneyData = PlayerController->GetMoney();
 	SaveData->PlayerLocation = PlayerOwner->GetActorLocation();
+	SaveData->PartyData = PlayerController->GetPokemonParty();
+	SaveData->StorageData = PlayerController->GetPokemonStorage();
 
 	UGameplayStatics::SaveGameToSlot(SaveData, "SaveSlot", 0);
 }
@@ -270,6 +274,27 @@ void AOverworldGameMode::SellItem(FItemBaseStruct Item)
 	PlayerController->RecieveMoney(Item.Value);
 
 	RefreshShop();
+}
+
+void AOverworldGameMode::ShowPokemonInMenu()
+{
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	
+	TArray<FPokemonStruct> Party = PlayerController->GetPokemonParty();
+
+	for (FPokemonStruct Pokemon : Party) {
+		AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+		UPokemonSlotWidget* PokemonSlotWidget = CreateWidget<UPokemonSlotWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetPokemonSlotWidgetClass());
+
+		PokemonSlotWidget->SetPokemonName(Pokemon.SpeciesData.Name);
+		PokemonSlotWidget->SetPokemonLevel(Pokemon.Level);
+		PokemonSlotWidget->SetPokemonImage(Pokemon.SpeciesData.Image);
+		PokemonSlotWidget->SetPokemonHP(Pokemon.CurrHP, Pokemon.MaxHP);
+
+		//Button clicked
+
+		PokemonSlotDelegate.Broadcast(PokemonSlotWidget);
+	}
 }
 
 TArray<class UDataTable*> AOverworldGameMode::GetItemDT() const

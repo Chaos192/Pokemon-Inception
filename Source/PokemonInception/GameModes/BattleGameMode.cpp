@@ -25,6 +25,7 @@ void ABattleGameMode::BeginPlay()
 
 		PlayerController->LoadInventory(SaveData->InventoryData);
 		PlayerController->RecieveMoney(SaveData->MoneyData);
+		PlayerController->LoadPokemonParty(SaveData->PartyData);
 	}
 }
 
