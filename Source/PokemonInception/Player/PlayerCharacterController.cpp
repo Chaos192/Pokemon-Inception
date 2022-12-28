@@ -49,11 +49,6 @@ void APlayerCharacterController::TogglePause()
 	PauseDelegate.Broadcast();
 }
 
-void APlayerCharacterController::ObtainPokemon(APokemonBase* Pokemon)
-{
-	PokemonTeam.Add(Pokemon);
-}
-
 void APlayerCharacterController::ObtainItem(FItemBaseStruct Item)
 {
 	Inventory.Add(Item);
@@ -62,6 +57,14 @@ void APlayerCharacterController::ObtainItem(FItemBaseStruct Item)
 void APlayerCharacterController::LoseItem(FItemBaseStruct Item)
 {
 	Inventory.RemoveSingle(Item);
+}
+
+void APlayerCharacterController::ObtainPokemon(FPokemonStruct Pokemon)
+{
+	if (PokemonParty.Num() == 6) {
+		PokemonStorage.Add(Pokemon);
+	}
+	else PokemonParty.Add(Pokemon);
 }
 
 TArray<FItemBaseStruct> APlayerCharacterController::GetInventory() const

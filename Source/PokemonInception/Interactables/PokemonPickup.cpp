@@ -11,7 +11,6 @@ APokemonPickup::APokemonPickup()
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 
 	Action = "pick up";
-	//Pokemon->Init(PokemonLevel);
 }
 
 void APokemonPickup::Interact(APlayerController* Controller)
@@ -26,7 +25,11 @@ void APokemonPickup::Interact(APlayerController* Controller)
 		return;
 	}
 
-	Hud->OnScreenMessage("You got a " + Pokemon->GetPokemonName().ToString() + "!");
-	PlayerController->ObtainPokemon(Pokemon);
+	FPokemonBaseStruct* PokemonSpecies = PokemonDatatable->FindRow<FPokemonBaseStruct>(PokemonID, "");
+	FPokemonStruct AddedPokemon;
+	AddedPokemon.Init(PokemonLevel, *PokemonSpecies);
+
+	Hud->OnScreenMessage("You got a " + PokemonSpecies->Name.ToString() + "!");
+	PlayerController->ObtainPokemon(AddedPokemon);
 	Destroy();
 }

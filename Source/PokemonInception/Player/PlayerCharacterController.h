@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "../Pokemon/PokemonBase.h"
+#include "../Pokemon/PokemonStruct.h"
 #include "../Interactables/Interactable.h"
 #include "../Items/ItemBaseStruct.h"
 #include "PlayerCharacterController.generated.h"
@@ -18,13 +18,13 @@ class POKEMONINCEPTION_API APlayerCharacterController : public APlayerController
 	
 public:
 	UFUNCTION()
-	void ObtainPokemon(APokemonBase* Pokemon);
-
-	UFUNCTION()
 	void ObtainItem(FItemBaseStruct Item);
 
 	UFUNCTION()
 	void LoseItem(FItemBaseStruct Item);
+
+	UFUNCTION()
+	void ObtainPokemon(FPokemonStruct Pokemon);
 
 	TArray<FItemBaseStruct> GetInventory() const;
 
@@ -44,7 +44,10 @@ protected:
 	TArray<FItemBaseStruct> Inventory;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	TArray<APokemonBase*> PokemonTeam;
+	TArray<FPokemonStruct> PokemonParty;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TArray<FPokemonStruct> PokemonStorage;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int money;

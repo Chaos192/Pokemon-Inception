@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Interactable.h"
-#include "../Pokemon/PokemonBase.h"
+#include "../Pokemon/PokemonStruct.h"
+#include "../Pokemon/PokemonBaseStruct.h"
 #include "PokemonPickup.generated.h"
 
 
@@ -22,10 +23,13 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* Mesh = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	APokemonBase* Pokemon = nullptr;
+	UPROPERTY(EditDefaultsOnly)
+	class UDataTable* PokemonDatatable;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int PokemonLevel;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName PokemonID;
 };
