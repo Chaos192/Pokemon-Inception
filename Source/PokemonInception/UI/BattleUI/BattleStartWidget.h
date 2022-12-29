@@ -19,6 +19,9 @@ private:
 	void OnFightClicked();
 
 	UFUNCTION()
+	void OnPokemonClicked();
+
+	UFUNCTION()
 	void OnBagClicked();
 
 	UFUNCTION()
@@ -41,6 +44,7 @@ protected:
 
 public:
 	FButtonClicked FightClicked;
+	FButtonClicked PokemonClicked;
 	FButtonClicked BagClicked;
 	FButtonClicked RunClicked;
 	

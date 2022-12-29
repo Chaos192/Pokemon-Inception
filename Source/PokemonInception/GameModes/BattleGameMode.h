@@ -40,6 +40,9 @@ public:
 	void DisplayNextWidget();
 
 	UFUNCTION()
+	void ShowPokemonInMenu();
+
+	UFUNCTION()
 	void FillBagWidget();
 
 	UFUNCTION()
@@ -53,4 +56,6 @@ public:
 
 	FItemSlotSignature ItemSlotDelegate;
 	FItemInfoSignature ItemInfoDelegate;
+
+	FPokemonSlotSignature PokemonSlotDelegate;
 };

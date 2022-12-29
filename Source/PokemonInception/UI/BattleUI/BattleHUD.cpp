@@ -18,20 +18,24 @@ void ABattleHUD::BeginPlay()
 
 	BattleStartWidget = CreateWidget<UBattleStartWidget>(UGameplayStatics::GetGameInstance(GetWorld()), BattleStartWidgetClass);
 	FightWidget = CreateWidget<UFightWidget>(UGameplayStatics::GetGameInstance(GetWorld()), FightWidgetClass);
+	PokemonWidget = CreateWidget<UPokemonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonWidgetClass);
 	BagWidget = CreateWidget<UBagWidget>(UGameplayStatics::GetGameInstance(GetWorld()), BagWidgetClass);
 	TextBoxWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TextBoxWidgetClass);
 
 	BattleStartWidget->FightClicked.AddDynamic(this, &ABattleHUD::ShowFightWidget);
+	BattleStartWidget->PokemonClicked.AddDynamic(this, &ABattleHUD::ShowPokemon);
 	BattleStartWidget->BagClicked.AddDynamic(this, &ABattleHUD::ShowBag);
 	BattleStartWidget->RunClicked.AddDynamic(GameMode, &ABattleGameMode::Run);
 
 	FightWidget->BackClicked.AddDynamic(this, &ABattleHUD::ShowBattleStartWidget);
+	PokemonWidget->BackClicked.AddDynamic(this, &ABattleHUD::ShowBattleStartWidget);
 	BagWidget->BackClicked.AddDynamic(this, &ABattleHUD::ShowBattleStartWidget);
 
 	GameMode->MessageUpdate.AddDynamic(TextBoxWidget, &UTextBoxWidget::ReturnMessage);
 	GameMode->WidgetUpdate.AddDynamic(this, &ABattleHUD::ShowWidget);
 	GameMode->ItemSlotDelegate.AddDynamic(BagWidget, &UBagWidget::AddToWrapBox);
 	GameMode->ItemInfoDelegate.AddDynamic(BagWidget, &UBagWidget::ShowInfo);
+	GameMode->PokemonSlotDelegate.AddDynamic(PokemonWidget, &UPokemonWidget::AddToWrapBox);
 
 	ShowText("A wild Pokemon appeared!", Cast<UUserWidget>(BattleStartWidget));
 }
@@ -44,6 +48,11 @@ TSubclassOf<UItemSlotWidget> ABattleHUD::GetItemSlotWidgetClass()
 TSubclassOf<UItemInfoWidget> ABattleHUD::GetItemInfoWidgetClass()
 {
 	return ItemInfoWidgetClass;
+}
+
+TSubclassOf<UPokemonSlotWidget> ABattleHUD::GetPokemonSlotWidgetClass()
+{
+	return PokemonSlotWidgetClass;
 }
 
 void ABattleHUD::Clear()
@@ -99,6 +108,23 @@ void ABattleHUD::ShowBag()
 		BagWidget->ClearInfoBox();
 		GameMode->FillBagWidget();
 		BagWidget->AddToViewport();
+		PlayerOwner->bShowMouseCursor = true;
+		PlayerOwner->SetInputMode(FInputModeUIOnly());
+	}
+}
+
+void ABattleHUD::ShowPokemon()
+{
+	Clear();
+	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
+
+	if (PlayerOwner && PokemonWidget) {
+		PokemonWidget->ClearWrapBox();
+		GameMode->ShowPokemonInMenu();
+		PokemonWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
 	}

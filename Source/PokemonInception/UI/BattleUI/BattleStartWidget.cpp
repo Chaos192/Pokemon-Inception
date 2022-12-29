@@ -8,6 +8,11 @@ void UBattleStartWidget::OnFightClicked()
 	FightClicked.Broadcast();
 }
 
+void UBattleStartWidget::OnPokemonClicked()
+{
+	PokemonClicked.Broadcast();
+}
+
 void UBattleStartWidget::OnBagClicked()
 {
 	BagClicked.Broadcast();
@@ -22,7 +27,7 @@ void UBattleStartWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	Fight->OnClicked.AddDynamic(this, &UBattleStartWidget::OnFightClicked);
-	Pokemon->OnClicked.AddDynamic(this, &UBattleStartWidget::OnRunClicked);
+	Pokemon->OnClicked.AddDynamic(this, &UBattleStartWidget::OnPokemonClicked);
 	Bag->OnClicked.AddDynamic(this, &UBattleStartWidget::OnBagClicked);
 	Run->OnClicked.AddDynamic(this, &UBattleStartWidget::OnRunClicked);
 }

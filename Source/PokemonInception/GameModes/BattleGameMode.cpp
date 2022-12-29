@@ -56,6 +56,27 @@ void ABattleGameMode::DisplayNextWidget()
 	WidgetUpdate.Broadcast(NextWidget);
 }
 
+void ABattleGameMode::ShowPokemonInMenu()
+{
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+	TArray<FPokemonStruct> Party = PlayerController->GetPokemonParty();
+
+	for (FPokemonStruct Pokemon : Party) {
+		ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+		UPokemonSlotWidget* PokemonSlotWidget = CreateWidget<UPokemonSlotWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetPokemonSlotWidgetClass());
+
+		PokemonSlotWidget->SetPokemonName(Pokemon.SpeciesData.Name);
+		PokemonSlotWidget->SetPokemonLevel(Pokemon.Level);
+		PokemonSlotWidget->SetPokemonImage(Pokemon.SpeciesData.Image);
+		PokemonSlotWidget->SetPokemonHP(Pokemon.CurrHP, Pokemon.MaxHP);
+
+		//Button clicked
+
+		PokemonSlotDelegate.Broadcast(PokemonSlotWidget);
+	}
+}
+
 void ABattleGameMode::FillBagWidget()
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
