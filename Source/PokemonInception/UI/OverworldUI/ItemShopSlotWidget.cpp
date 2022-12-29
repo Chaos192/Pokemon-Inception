@@ -51,8 +51,6 @@ void UItemShopSlotWidget::SetSellState(bool enabled)
 void UItemShopSlotWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	//Buy->OnClicked.AddDynamic(this, &UItemShopSlotWidget::OnBuyClicked);
-	//Sell->OnClicked.AddDynamic(this, &UItemShopSlotWidget::OnSellClicked);
 }
 
 void UItemShopSlotWidget::SetItem(FItemBaseStruct ItemStruct)

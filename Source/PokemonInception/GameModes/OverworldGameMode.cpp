@@ -12,19 +12,67 @@
 
 void AOverworldGameMode::BeginPlay()
 {
-	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-	if (Player == nullptr) {
+	Super::BeginPlay();
+
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (PlayerController == nullptr) {
 		return;
 	}
 
-	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Player->Controller);
-	if (PlayerController == nullptr) {
+	APokemonInceptionCharacter* PlayerOwner = Cast<APokemonInceptionCharacter>(PlayerController->GetPawn());
+	if (PlayerOwner == nullptr) {
 		return;
+	}
+
+	UWorldSaveData* SaveData = Cast<UWorldSaveData>(UGameplayStatics::CreateSaveGameObject(UWorldSaveData::StaticClass()));
+
+	if (UGameplayStatics::DoesSaveGameExist("SaveSlot", 0)) {
+		SaveData = Cast<UWorldSaveData>(UGameplayStatics::LoadGameFromSlot("SaveSlot", 0));
+
+		PlayerController->LoadInventory(SaveData->InventoryData);
+		PlayerController->RecieveMoney(SaveData->MoneyData);
+		PlayerController->LoadPokemonParty(SaveData->PartyData);
+		PlayerController->LoadPokemonStorage(SaveData->StorageData);
+		PlayerOwner->SetActorLocation(SaveData->PlayerLocation);
 	}
 	
 	PlayerController->PauseDelegate.AddDynamic(this, &AOverworldGameMode::TogglePause);
 
 	OnGamePaused.AddDynamic(Cast<AOverworldHUD>(PlayerController->GetHUD()), &AOverworldHUD::TogglePause);
+}
+
+void AOverworldGameMode::SaveGame()
+{
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (PlayerController == nullptr) {
+		return;
+	}
+
+	APokemonInceptionCharacter* PlayerOwner = Cast<APokemonInceptionCharacter>(PlayerController->GetPawn());
+	if (PlayerOwner == nullptr) {
+		return;
+	}
+
+	UWorldSaveData* SaveData = Cast<UWorldSaveData>(UGameplayStatics::CreateSaveGameObject(UWorldSaveData::StaticClass()));
+
+	SaveData->InventoryData = PlayerController->GetInventory();
+	SaveData->MoneyData = PlayerController->GetMoney();
+	SaveData->PlayerLocation = PlayerOwner->GetActorLocation();
+	SaveData->PartyData = PlayerController->GetPokemonParty();
+	SaveData->StorageData = PlayerController->GetPokemonStorage();
+
+	UGameplayStatics::SaveGameToSlot(SaveData, "SaveSlot", 0);
+}
+
+void AOverworldGameMode::SaveAndExit()
+{
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (PlayerController == nullptr) {
+		return;
+	}
+
+	SaveGame();
+	PlayerController->ConsoleCommand("quit");
 }
 
 void AOverworldGameMode::OnScreenMessage(FString MessageToDisplay)
@@ -108,9 +156,22 @@ void AOverworldGameMode::FillBagWidget()
 		ItemSlotWidget->SetItemName(UniqueItems[i].Name);
 		ItemSlotWidget->SetItemImage(UniqueItems[i].Image);
 		ItemSlotWidget->SetItemCount(ItemCount[i]);
+		ItemSlotWidget->SetItem(UniqueItems[i]);
+
+		ItemSlotWidget->ItemClicked.AddDynamic(this, &AOverworldGameMode::ShowItemInfo);
 
 		ItemSlotDelegate.Broadcast(ItemSlotWidget);
 	}
+}
+
+void AOverworldGameMode::ShowItemInfo(FItemBaseStruct InventoryItem)
+{
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	UItemInfoWidget* ItemInfo = CreateWidget<UItemInfoWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetItemInfoWidgetClass());
+
+	ItemInfo->SetDescription(InventoryItem.Description);
+
+	ItemInfoDelegate.Broadcast(ItemInfo);
 }
 
 void AOverworldGameMode::InitShop(TArray<FName> ItemsToSell)
@@ -213,6 +274,27 @@ void AOverworldGameMode::SellItem(FItemBaseStruct Item)
 	PlayerController->RecieveMoney(Item.Value);
 
 	RefreshShop();
+}
+
+void AOverworldGameMode::ShowPokemonInMenu()
+{
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	
+	TArray<FPokemonStruct> Party = PlayerController->GetPokemonParty();
+
+	for (FPokemonStruct Pokemon : Party) {
+		AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+		UPokemonSlotWidget* PokemonSlotWidget = CreateWidget<UPokemonSlotWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetPokemonSlotWidgetClass());
+
+		PokemonSlotWidget->SetPokemonName(Pokemon.SpeciesData.Name);
+		PokemonSlotWidget->SetPokemonLevel(Pokemon.Level);
+		PokemonSlotWidget->SetPokemonImage(Pokemon.SpeciesData.Image);
+		PokemonSlotWidget->SetPokemonHP(Pokemon.CurrHP, Pokemon.MaxHP);
+
+		//Button clicked
+
+		PokemonSlotDelegate.Broadcast(PokemonSlotWidget);
+	}
 }
 
 TArray<class UDataTable*> AOverworldGameMode::GetItemDT() const

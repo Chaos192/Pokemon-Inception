@@ -16,6 +16,12 @@ class POKEMONINCEPTION_API UBattleStartWidget : public UUserWidget
 	
 private:
 	UFUNCTION()
+	void OnFightClicked();
+
+	UFUNCTION()
+	void OnBagClicked();
+
+	UFUNCTION()
 	void OnRunClicked();
 
 protected:
@@ -34,5 +40,8 @@ protected:
 	virtual void NativeConstruct() override;
 
 public:
+	FButtonClicked FightClicked;
+	FButtonClicked BagClicked;
 	FButtonClicked RunClicked;
+	
 };

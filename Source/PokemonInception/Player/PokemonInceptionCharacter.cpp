@@ -112,11 +112,6 @@ void APokemonInceptionCharacter::LookUpAtRate(float Rate)
 	AddControllerPitchInput(Rate * TurnRateGamepad * GetWorld()->GetDeltaSeconds());
 }
 
-void APokemonInceptionCharacter::ObtainPokemon(APokemonBase* AddedPokemon)
-{
-	PokemonTeam.Add(AddedPokemon);
-}
-
 void APokemonInceptionCharacter::MoveForward(float Value)
 {
 	if ((Controller != nullptr) && (Value != 0.0f))

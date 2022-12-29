@@ -3,91 +3,31 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "GameFramework/Actor.h"
+#include "PokemonBaseStruct.h"
+#include "MoveBaseStruct.h"
 #include "PokemonBase.generated.h"
 
 UCLASS()
-class POKEMONINCEPTION_API APokemonBase : public ACharacter
+class POKEMONINCEPTION_API APokemonBase : public AActor
 {
 	GENERATED_BODY()
-
-private:
-	UPROPERTY(VisibleAnywhere)
-	int MaxHP = 0;
-
-	UPROPERTY(VisibleAnywhere)
-	int CurrHP = 0;
-
-	UPROPERTY(VisibleAnywhere)
-	int Attack = 0;
-
-	UPROPERTY(VisibleAnywhere)
-	int Defence = 0;
-
-	UPROPERTY(VisibleAnywhere)
-	int Speed = 0;
-
-	UPROPERTY(VisibleAnywhere)
-	int Exp = 0;
-
-	UPROPERTY(VisibleAnywhere)
-	int CurrExp = 0;
-
-	UPROPERTY(VisibleAnywhere)
-	int RequiredExp = 0;
-
-	bool IsFainted = false;
-
-protected:
-	virtual void BeginPlay() override;
-
-	UPROPERTY(EditAnywhere)
-	FString Name;
-
-	UPROPERTY(EditAnywhere)
-	FString Nickname;
-
-	UPROPERTY(EditAnywhere)
-	float BaseHP = 1;
-
-	UPROPERTY(EditAnywhere)
-	float BaseAttack = 1;
-
-	UPROPERTY(EditAnywhere)
-	float BaseDefence = 1;
 	
-	UPROPERTY(EditAnywhere)
-	float BaseSpeed = 1;
-
-	UPROPERTY(EditAnywhere)
-	int Level = 1;
-
-	UPROPERTY(EditAnywhere)
-	int LevelToEvolve = 1;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<APokemonBase> EvolvedFormClass;
-
-	UPROPERTY()
-	class APokemonBase* EvolvedForm;
-
-public:
-	APokemonBase();
+public:	
+	UFUNCTION()
+	void Init(int StartingLevel);
 
 	UFUNCTION()
 	void CalculateStats();
-
-	UFUNCTION()
-	void SetLevel(int LevelToSet);
 
 	UFUNCTION()
 	void GainExp(int GainedExp);
 
 	UFUNCTION()
 	void LevelUp();
-	
+
 	UFUNCTION()
-	void Evolve();
+	void MovesInit();
 
 	UFUNCTION()
 	void RecieveDamage(int Damage);
@@ -101,7 +41,43 @@ public:
 	UFUNCTION()
 	void RecoverStatus();
 
+	UFUNCTION()
+	FText GetPokemonName();
 
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	FPokemonBaseStruct SpeciesData;
+
+	UPROPERTY(VisibleAnywhere)
+	int MaxHP;
+
+	UPROPERTY(VisibleAnywhere)
+	int CurrHP;
+
+	UPROPERTY(VisibleAnywhere)
+	int Attack;
+
+	UPROPERTY(VisibleAnywhere)
+	int Defence;
+
+	UPROPERTY(VisibleAnywhere)
+	int Speed;
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<FMoveBaseStruct> Moves;
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<FMoveBaseStruct> CurrentMoves;
+	
+private:
+	int Exp;
+
+	int CurrExp;
+
+	int RequiredExp;
+
+	int Level;
+
+	bool bIsFainted;
 };

@@ -12,5 +12,5 @@ struct FReviveBaseStruct : public FItemBaseStruct
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int RevivePercent;
+	float RevivePercent;
 };

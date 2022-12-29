@@ -7,13 +7,15 @@
 #include "Engine/DataTable.h"
 #include "../UI/OverworldUI/ShopWidget.h"
 #include "../UI/OverworldUI/ItemShopSlotWidget.h"
+#include "../UI/OverworldUI/ItemInfoWidget.h"
+#include "../UI/WidgetDelegates.h"
+#include "../SaveGame/WorldSaveData.h"
 #include "OverworldGameMode.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEndTextSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTextSignature, FString, String);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGamePauseSignature, bool, bIsPaused);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FItemSlotSignature, UItemSlotWidget*, ItemSlot);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FShopSlotSignature, UItemShopSlotWidget*, ItemShopSlot);
 
 UCLASS(minimalapi)
 class AOverworldGameMode : public AGameModeBase
@@ -21,6 +23,12 @@ class AOverworldGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 public:
+	UFUNCTION()
+	void SaveGame();
+
+	UFUNCTION()
+	void SaveAndExit();
+
 	UFUNCTION()
 	void OnScreenMessage(FString MessageToDisplay);
 
@@ -40,10 +48,16 @@ public:
 	void FillBagWidget();
 
 	UFUNCTION()
+	void ShowItemInfo(FItemBaseStruct InventoryItem);
+
+	UFUNCTION()
 	void InitShop(TArray<FName> ItemsToSell);
 
 	UFUNCTION()
 	void RefreshShop();
+
+	UFUNCTION()
+	void ShowPokemonInMenu();
 
 	TArray<class UDataTable*> GetItemDT() const;
 
@@ -57,6 +71,9 @@ public:
 
 	FItemSlotSignature ItemSlotDelegate;
 	FShopSlotSignature ItemShopSlotDelegate;
+	FItemInfoSignature ItemInfoDelegate;
+
+	FPokemonSlotSignature PokemonSlotDelegate;
 
 protected:
 	virtual void BeginPlay() override;

@@ -21,8 +21,8 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float SpawnTime = 10;
 
-	UPROPERTY(EditAnywhere)
-	TArray<TSubclassOf<class AWildPokemon>> PokemonToSpawn;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<TSubclassOf<AWildPokemon>> PokemonToSpawn;
 
 	FTimerHandle SpawnHandle;
 

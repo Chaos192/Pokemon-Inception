@@ -26,7 +26,6 @@ void AOverworldHUD::BeginPlay()
 	PokemonWidget = CreateWidget<UPokemonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonWidgetClass);
 	BagWidget = CreateWidget<UBagWidget>(UGameplayStatics::GetGameInstance(GetWorld()), BagWidgetClass);
 	TrainerCardWidget = CreateWidget<UTrainerCardWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TrainerCardWidgetClass);
-	SaveWidget = CreateWidget<USaveWidget>(UGameplayStatics::GetGameInstance(GetWorld()), SaveWidgetClass);
 	SettingsWidget = CreateWidget<USettingsWidget>(UGameplayStatics::GetGameInstance(GetWorld()), SettingsWidgetClass);
 	ShopWidget = CreateWidget<UShopWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ShopWidgetClass);
 
@@ -34,20 +33,21 @@ void AOverworldHUD::BeginPlay()
 	GameMode->OnScreenMessageDelegate.AddDynamic(OnScreenMessageWidget, &UTextBoxWidget::ReturnMessage);
 	GameMode->ShopMessageDelegate.AddDynamic(ShopWidget, &UShopWidget::ShowText);
 	GameMode->ItemSlotDelegate.AddDynamic(BagWidget, &UBagWidget::AddToWrapBox);
+	GameMode->ItemInfoDelegate.AddDynamic(BagWidget, &UBagWidget::ShowInfo);
 	GameMode->ItemShopSlotDelegate.AddDynamic(ShopWidget, &UShopWidget::DisplayInShop);
+	GameMode->PokemonSlotDelegate.AddDynamic(PokemonWidget, &UPokemonWidget::AddToWrapBox);
 
 	MenuWidget->PokedexClicked.AddDynamic(this, &AOverworldHUD::ShowPokedex);
 	MenuWidget->PokemonClicked.AddDynamic(this, &AOverworldHUD::ShowPokemon);
 	MenuWidget->BagClicked.AddDynamic(this, &AOverworldHUD::ShowBag);
 	MenuWidget->TrainerCardClicked.AddDynamic(this, &AOverworldHUD::ShowTrainerCard);
-	MenuWidget->SaveClicked.AddDynamic(this, &AOverworldHUD::ShowSave);
+	MenuWidget->SaveClicked.AddDynamic(GameMode, &AOverworldGameMode::SaveAndExit);
 	MenuWidget->SettingsClicked.AddDynamic(this, &AOverworldHUD::ShowSettings);
 
 	PokedexWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ShowMenu);
 	PokemonWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ShowMenu);
 	BagWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ShowMenu);
 	TrainerCardWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ShowMenu);
-	SaveWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ShowMenu);
 	SettingsWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ShowMenu);
 	ShopWidget->ExitClicked.AddDynamic(this, &AOverworldHUD::ClearShop);
 
@@ -78,8 +78,14 @@ void AOverworldHUD::ShowPokedex()
 void AOverworldHUD::ShowPokemon()
 {
 	Clear();
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
 
 	if (PlayerOwner && PokemonWidget) {
+		PokemonWidget->ClearWrapBox();
+		GameMode->ShowPokemonInMenu();
 		PokemonWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
@@ -96,6 +102,7 @@ void AOverworldHUD::ShowBag()
 
 	if (PlayerOwner && BagWidget) {
 		BagWidget->ClearWrapBox();
+		BagWidget->ClearInfoBox();
 		GameMode->FillBagWidget();
 		BagWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;
@@ -109,17 +116,6 @@ void AOverworldHUD::ShowTrainerCard()
 
 	if (PlayerOwner && TrainerCardWidget) {
 		TrainerCardWidget->AddToViewport();
-		PlayerOwner->bShowMouseCursor = true;
-		PlayerOwner->SetInputMode(FInputModeUIOnly());
-	}
-}
-
-void AOverworldHUD::ShowSave()
-{
-	Clear();
-
-	if (PlayerOwner && SaveWidget) {
-		SaveWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
 	}
@@ -223,7 +219,17 @@ TSubclassOf<UItemSlotWidget> AOverworldHUD::GetItemSlotWidgetClass()
 	return ItemSlotWidgetClass;
 }
 
+TSubclassOf<UItemInfoWidget> AOverworldHUD::GetItemInfoWidgetClass()
+{
+	return ItemInfoWidgetClass;
+}
+
 TSubclassOf<UItemShopSlotWidget> AOverworldHUD::GetItemShopSlotWidgetClass()
 {
 	return ItemShopSlotWidgetClass;
+}
+
+TSubclassOf<UPokemonSlotWidget> AOverworldHUD::GetPokemonSlotWidgetClass()
+{
+	return PokemonSlotWidgetClass;
 }

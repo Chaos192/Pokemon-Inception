@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "../Pokemon/PokemonBase.h"
 #include "../Items/ItemBaseStruct.h"
 #include "PokemonInceptionCharacter.generated.h"
 
@@ -28,8 +27,6 @@ private:
 public:
 	APokemonInceptionCharacter();
 
-	void ObtainPokemon(APokemonBase* AddedPokemon);
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Input)
 	float TurnRateGamepad;
 
@@ -38,9 +35,6 @@ public:
 
 
 protected:
-	UPROPERTY(VisibleAnywhere)
-	TArray<APokemonBase*> PokemonTeam;
-
 	void MoveForward(float Value);
 
 	void MoveRight(float Value);

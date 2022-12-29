@@ -5,7 +5,12 @@
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
 #include "BattleStartWidget.h"
+#include "FightWidget.h"
+#include "MoveButtonWidget.h"
 #include "../TextBoxWidget.h"
+#include "../OverworldUI/BagWidget.h"
+#include "../OverworldUI/ItemSlotWidget.h"
+#include "../OverworldUI/ItemInfoWidget.h"
 #include "BattleHUD.generated.h"
 
 
@@ -20,19 +25,52 @@ protected:
 	TSubclassOf<UBattleStartWidget> BattleStartWidgetClass;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<UFightWidget> FightWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UBagWidget> BagWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UItemSlotWidget> ItemSlotWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UItemInfoWidget> ItemInfoWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UMoveButtonWidget> MoveButtonWidgetClass;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UTextBoxWidget> TextBoxWidgetClass;
 
 	UPROPERTY()
 	class UBattleStartWidget* BattleStartWidget;
 
 	UPROPERTY()
+	class UFightWidget* FightWidget;
+
+	UPROPERTY()
+	class UBagWidget* BagWidget;
+
+	UPROPERTY()
 	class UTextBoxWidget* TextBoxWidget;
-	
-	void Clear();
 
 	virtual void BeginPlay() override;
 	
 public:
+	TSubclassOf<UItemSlotWidget> GetItemSlotWidgetClass();
+
+	TSubclassOf<UItemInfoWidget> GetItemInfoWidgetClass();
+
+	void Clear();
+
+	UFUNCTION()
+	void ShowFightWidget();
+
+	UFUNCTION()
+	void ShowBag();
+
+	UFUNCTION()
+	void ShowBattleStartWidget();
 
 	UFUNCTION()
 	void ShowWidget(class UUserWidget* Widget);

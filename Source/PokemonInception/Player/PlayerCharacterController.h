@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "../Pokemon/PokemonStruct.h"
 #include "../Interactables/Interactable.h"
 #include "../Items/ItemBaseStruct.h"
 #include "PlayerCharacterController.generated.h"
@@ -16,16 +17,29 @@ class POKEMONINCEPTION_API APlayerCharacterController : public APlayerController
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	TArray<FItemBaseStruct> Inventory;
-
 	UFUNCTION()
 	void ObtainItem(FItemBaseStruct Item);
 
 	UFUNCTION()
 	void LoseItem(FItemBaseStruct Item);
 
+	UFUNCTION()
+	void ObtainPokemon(FPokemonStruct Pokemon);
+
 	TArray<FItemBaseStruct> GetInventory() const;
+
+	TArray<FPokemonStruct> GetPokemonParty() const;
+
+	TArray<FPokemonStruct> GetPokemonStorage() const;
+
+	UFUNCTION()
+	void LoadInventory(TArray<FItemBaseStruct> InventoryData);
+
+	UFUNCTION()
+	void LoadPokemonParty(TArray<FPokemonStruct> PartyData);
+
+	UFUNCTION()
+	void LoadPokemonStorage(TArray<FPokemonStruct> StorageData);
 
 	int GetMoney() const;
 
@@ -36,6 +50,15 @@ public:
 	FPauseSignature PauseDelegate;
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TArray<FItemBaseStruct> Inventory;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TArray<FPokemonStruct> PokemonParty;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TArray<FPokemonStruct> PokemonStorage;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int money;
 

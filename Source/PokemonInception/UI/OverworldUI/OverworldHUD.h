@@ -9,11 +9,11 @@
 #include "PokemonWidget.h"
 #include "BagWidget.h"
 #include "TrainerCardWidget.h"
-#include "SaveWidget.h"
 #include "SettingsWidget.h"
 #include "ShopWidget.h"
 #include "ItemSlotWidget.h"
 #include "ItemShopSlotWidget.h"
+#include "../BattleUI/PokemonSlotWidget.h"
 #include "../TextBoxWidget.h"
 #include "OverworldHUD.generated.h"
 
@@ -47,9 +47,6 @@ protected:
 	TSubclassOf<UTrainerCardWidget> TrainerCardWidgetClass;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<USaveWidget> SaveWidgetClass;
-
-	UPROPERTY(EditAnywhere)
 	TSubclassOf<USettingsWidget> SettingsWidgetClass;
 
 	UPROPERTY(EditAnywhere)
@@ -59,7 +56,13 @@ protected:
 	TSubclassOf<UItemSlotWidget> ItemSlotWidgetClass;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<UItemInfoWidget> ItemInfoWidgetClass;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UItemShopSlotWidget> ItemShopSlotWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPokemonSlotWidget> PokemonSlotWidgetClass;
 
 	UPROPERTY()
 	class UMenuWidget* MenuWidget;
@@ -83,9 +86,6 @@ protected:
 	class UTrainerCardWidget* TrainerCardWidget;
 
 	UPROPERTY()
-	class USaveWidget* SaveWidget;
-
-	UPROPERTY()
 	class USettingsWidget* SettingsWidget;
 
 	UPROPERTY()
@@ -103,7 +103,11 @@ public:
 
 	TSubclassOf<UItemSlotWidget> GetItemSlotWidgetClass();
 
+	TSubclassOf<UItemInfoWidget> GetItemInfoWidgetClass();
+
 	TSubclassOf<UItemShopSlotWidget> GetItemShopSlotWidgetClass();
+
+	TSubclassOf<UPokemonSlotWidget> GetPokemonSlotWidgetClass();
 
 	UFUNCTION()
 	void ShowMenu();
@@ -119,9 +123,6 @@ public:
 
 	UFUNCTION()
 	void ShowTrainerCard();
-
-	UFUNCTION()
-	void ShowSave();
 
 	UFUNCTION()
 	void ShowSettings();

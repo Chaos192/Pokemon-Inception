@@ -20,6 +20,19 @@ void UBagWidget::ClearWrapBox()
 	}
 }
 
+void UBagWidget::ShowInfo(UItemInfoWidget* ItemInfoWidget)
+{
+	ClearInfoBox();
+	InfoBox->AddChildToWrapBox(ItemInfoWidget);
+}
+
+void UBagWidget::ClearInfoBox()
+{
+	if (InfoBox->HasAnyChildren()) {
+		InfoBox->ClearChildren();
+	}
+}
+
 void UBagWidget::NativeConstruct()
 {
 	Super::NativeConstruct();

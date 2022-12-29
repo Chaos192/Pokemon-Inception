@@ -6,6 +6,9 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
+#include "Components/Button.h"
+#include "../ButtonClick.h"
+#include "../../Items/ItemBaseStruct.h"
 #include "ItemSlotWidget.generated.h"
 
 
@@ -14,7 +17,16 @@ class POKEMONINCEPTION_API UItemSlotWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+private:
+	UFUNCTION()
+	void OnItemClicked();
+
 protected:
+	FItemBaseStruct Item;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UButton* ItemButton;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UTextBlock* ItemName;
 
@@ -24,7 +36,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UTextBlock* ItemCount;
 
+	virtual void NativeConstruct() override;
+
 public:
+	void SetItem(FItemBaseStruct ItemStruct);
+
+	FItemBaseStruct GetItem();
+
 	UFUNCTION()
 	void SetItemName(FText Name);
 
@@ -33,4 +51,6 @@ public:
 
 	UFUNCTION()
 	void SetItemCount(int Count);
+
+	FShopSignature ItemClicked;
 };
