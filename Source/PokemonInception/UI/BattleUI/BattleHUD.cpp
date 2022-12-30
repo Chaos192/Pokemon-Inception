@@ -8,6 +8,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "../../GameModes/BattleGameMode.h"
+#include "../../Player/PlayerCharacterController.h"
 #include "Engine/Engine.h"
 
 void ABattleHUD::BeginPlay()
@@ -19,6 +20,7 @@ void ABattleHUD::BeginPlay()
 	BattleStartWidget = CreateWidget<UBattleStartWidget>(UGameplayStatics::GetGameInstance(GetWorld()), BattleStartWidgetClass);
 	FightWidget = CreateWidget<UFightWidget>(UGameplayStatics::GetGameInstance(GetWorld()), FightWidgetClass);
 	PokemonWidget = CreateWidget<UPokemonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonWidgetClass);
+	PlayerPokemonStatusWidget = CreateWidget<UPokemonStatusWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonStatusWidgetClass);
 	BagWidget = CreateWidget<UBagWidget>(UGameplayStatics::GetGameInstance(GetWorld()), BagWidgetClass);
 	TextBoxWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TextBoxWidgetClass);
 
@@ -66,6 +68,12 @@ void ABattleHUD::ShowWidget(class UUserWidget* Widget)
 
 	if (PlayerOwner && Widget) {
 		Widget->AddToViewport();
+
+		UBattleStartWidget* BTWidget = Cast<UBattleStartWidget>(Widget);
+		if (BTWidget != nullptr) {
+			ShowPlayerPokemonStatus();
+		}
+
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
 	}
@@ -130,12 +138,33 @@ void ABattleHUD::ShowPokemon()
 	}
 }
 
+void ABattleHUD::ShowPlayerPokemonStatus()
+{
+	if (PlayerOwner && PlayerPokemonStatusWidget) {
+		RefreshPlayerPokemonStatus();
+		PlayerPokemonStatusWidget->AddToViewport();
+		PlayerOwner->bShowMouseCursor = true;
+		PlayerOwner->SetInputMode(FInputModeUIOnly());
+	}
+}
+
+void ABattleHUD::RefreshPlayerPokemonStatus()
+{
+	if (PlayerOwner && PlayerPokemonStatusWidget) {
+		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(PlayerOwner);
+		PlayerPokemonStatusWidget->SetPokemonHP(Controller->GetPokemonParty()[0].CurrHP, Controller->GetPokemonParty()[0].MaxHP);
+		PlayerPokemonStatusWidget->SetPokemonLevel(Controller->GetPokemonParty()[0].Level);
+		PlayerPokemonStatusWidget->SetPokemonName(Controller->GetPokemonParty()[0].SpeciesData.Name);
+	}
+}
+
 void ABattleHUD::ShowBattleStartWidget()
 {
 	Clear();
 
 	if (PlayerOwner && BattleStartWidget) {
 		BattleStartWidget->AddToViewport();
+		ShowPlayerPokemonStatus();
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
 	}
