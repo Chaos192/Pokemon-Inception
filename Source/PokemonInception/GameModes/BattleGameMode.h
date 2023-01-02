@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "../Pokemon/PokemonStruct.h"
 #include "../SaveGame/WorldSaveData.h"
 #include "../UI/OverworldUI/ItemInfoWidget.h"
 #include "../UI/WidgetDelegates.h"
@@ -18,6 +19,8 @@ class POKEMONINCEPTION_API ABattleGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 private:
+	TArray<FPokemonStruct> OpponentTeam;
+
 	FString Message = "";
 	FString TempMessage = "";
 	int Iterator = 0;

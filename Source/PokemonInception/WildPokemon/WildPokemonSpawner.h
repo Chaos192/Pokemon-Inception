@@ -15,11 +15,20 @@ class POKEMONINCEPTION_API AWildPokemonSpawner : public AActor
 public:	
 	AWildPokemonSpawner();
 
+	UFUNCTION()
+	void Generate();
+
 protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere)
 	float SpawnTime = 10;
+
+	UPROPERTY(EditAnywhere)
+	int MinLevel;
+
+	UPROPERTY(EditAnywhere)
+	int MaxLevel;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<TSubclassOf<AWildPokemon>> PokemonToSpawn;
@@ -28,8 +37,5 @@ protected:
 
 	FRotator Rotation;
 	FActorSpawnParameters SpawnInfo;
-
-public:	
-	UFUNCTION()
-	void Generate();
+	
 };

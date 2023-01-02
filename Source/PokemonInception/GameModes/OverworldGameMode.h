@@ -27,6 +27,9 @@ public:
 	void SaveGame();
 
 	UFUNCTION()
+	void SaveOpponent(FPokemonStruct Opponent);
+
+	UFUNCTION()
 	void SaveAndExit();
 
 	UFUNCTION()

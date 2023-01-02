@@ -19,6 +19,12 @@ AWildPokemon::AWildPokemon()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
+void AWildPokemon::InitPokemon(int Level)
+{
+	FPokemonBaseStruct* PokemonSpecies = PokemonDatatable->FindRow<FPokemonBaseStruct>(PokemonID, "");
+	Pokemon.Init(Level, *PokemonSpecies);
+}
+
 
 void AWildPokemon::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -30,6 +36,7 @@ void AWildPokemon::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(OtherActor);
 	if (IsValid(Player)) {
 		GameMode->SaveGame();
+		GameMode->SaveOpponent(Pokemon);
 		UGameplayStatics::OpenLevel(GetWorld(), FName("BattleMap"));
 	}
 }

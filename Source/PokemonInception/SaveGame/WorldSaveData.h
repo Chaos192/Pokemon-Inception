@@ -30,6 +30,9 @@ public:
 	int MoneyData;
 
 	UPROPERTY(EditDefaultsOnly)
+	TArray<FPokemonStruct> OpponentData;
+
+	UPROPERTY(EditDefaultsOnly)
 	TArray<FPokemonStruct> PartyData;
 
 	UPROPERTY(EditDefaultsOnly)

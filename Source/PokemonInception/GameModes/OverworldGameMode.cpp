@@ -34,6 +34,8 @@ void AOverworldGameMode::BeginPlay()
 		PlayerController->LoadPokemonParty(SaveData->PartyData);
 		PlayerController->LoadPokemonStorage(SaveData->StorageData);
 		PlayerOwner->SetActorLocation(SaveData->PlayerLocation);
+
+		SaveData->OpponentData.Empty();
 	}
 	
 	PlayerController->PauseDelegate.AddDynamic(this, &AOverworldGameMode::TogglePause);
@@ -60,6 +62,15 @@ void AOverworldGameMode::SaveGame()
 	SaveData->PlayerLocation = PlayerOwner->GetActorLocation();
 	SaveData->PartyData = PlayerController->GetPokemonParty();
 	SaveData->StorageData = PlayerController->GetPokemonStorage();
+
+	UGameplayStatics::SaveGameToSlot(SaveData, "SaveSlot", 0);
+}
+
+void AOverworldGameMode::SaveOpponent(FPokemonStruct Opponent)
+{
+	UWorldSaveData* SaveData = Cast<UWorldSaveData>(UGameplayStatics::CreateSaveGameObject(UWorldSaveData::StaticClass()));
+
+	SaveData->OpponentData.Add(Opponent);
 
 	UGameplayStatics::SaveGameToSlot(SaveData, "SaveSlot", 0);
 }
