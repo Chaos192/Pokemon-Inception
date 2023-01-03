@@ -30,6 +30,10 @@ void ABattleGameMode::BeginPlay()
 	}
 }
 
+void ABattleGameMode::BattleEnd()
+{
+}
+
 void ABattleGameMode::DisplayMessage(FString MessageToDisplay, UUserWidget* Widget)
 {
 	TempMessage = "";
@@ -128,6 +132,11 @@ void ABattleGameMode::ShowItemInfo(FItemBaseStruct InventoryItem)
 	ItemInfo->SetDescription(InventoryItem.Description);
 
 	ItemInfoDelegate.Broadcast(ItemInfo);
+}
+
+FPokemonStruct ABattleGameMode::GetCurrentOpponent()
+{
+	return OpponentTeam[0];
 }
 
 void ABattleGameMode::Run()

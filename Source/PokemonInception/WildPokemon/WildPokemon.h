@@ -17,12 +17,9 @@ public:
 	AWildPokemon();
 
 	UFUNCTION()
-	void InitPokemon(int Level);
+	void InitPokemon(UDataTable* PokemonDatatable, int Level);
 
 private:
-	UPROPERTY(EditDefaultsOnly)
-	class UDataTable* PokemonDatatable;
-
 	UPROPERTY(EditDefaultsOnly)
 	FName PokemonID;
 

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ // Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "BattleHUD.h"
@@ -21,6 +21,7 @@ void ABattleHUD::BeginPlay()
 	FightWidget = CreateWidget<UFightWidget>(UGameplayStatics::GetGameInstance(GetWorld()), FightWidgetClass);
 	PokemonWidget = CreateWidget<UPokemonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonWidgetClass);
 	PlayerPokemonStatusWidget = CreateWidget<UPokemonStatusWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonStatusWidgetClass);
+	OpponentPokemonStatusWidget = CreateWidget<UPokemonStatusWidget>(UGameplayStatics::GetGameInstance(GetWorld()), OpponentStatusWidgetClass);
 	BagWidget = CreateWidget<UBagWidget>(UGameplayStatics::GetGameInstance(GetWorld()), BagWidgetClass);
 	TextBoxWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TextBoxWidgetClass);
 
@@ -44,7 +45,7 @@ void ABattleHUD::BeginPlay()
 
 TSubclassOf<UItemSlotWidget> ABattleHUD::GetItemSlotWidgetClass()
 {
-	return ItemSlotWidgetClass;
+	return ItemSlotWidgetClass; 
 }
 
 TSubclassOf<UItemInfoWidget> ABattleHUD::GetItemInfoWidgetClass()
@@ -72,6 +73,7 @@ void ABattleHUD::ShowWidget(class UUserWidget* Widget)
 		UBattleStartWidget* BTWidget = Cast<UBattleStartWidget>(Widget);
 		if (BTWidget != nullptr) {
 			ShowPlayerPokemonStatus();
+			ShowOpponentPokemonStatus();
 		}
 
 		PlayerOwner->bShowMouseCursor = true;
@@ -97,6 +99,8 @@ void ABattleHUD::ShowFightWidget()
 	Clear();
 
 	if (PlayerOwner && FightWidget) {
+		ShowPlayerPokemonStatus();
+		ShowOpponentPokemonStatus();
 		FightWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
@@ -148,6 +152,16 @@ void ABattleHUD::ShowPlayerPokemonStatus()
 	}
 }
 
+void ABattleHUD::ShowOpponentPokemonStatus()
+{
+	if (PlayerOwner && OpponentPokemonStatusWidget) {
+		RefreshOpponentPokemonStatus();
+		OpponentPokemonStatusWidget->AddToViewport();
+		PlayerOwner->bShowMouseCursor = true;
+		PlayerOwner->SetInputMode(FInputModeUIOnly());
+	}
+}
+
 void ABattleHUD::RefreshPlayerPokemonStatus()
 {
 	if (PlayerOwner && PlayerPokemonStatusWidget) {
@@ -158,6 +172,19 @@ void ABattleHUD::RefreshPlayerPokemonStatus()
 	}
 }
 
+void ABattleHUD::RefreshOpponentPokemonStatus()
+{
+	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
+
+	FPokemonStruct Opponent = GameMode->GetCurrentOpponent();
+	OpponentPokemonStatusWidget->SetPokemonHP(Opponent.CurrHP, Opponent.MaxHP);
+	OpponentPokemonStatusWidget->SetPokemonLevel(Opponent.Level);
+	OpponentPokemonStatusWidget->SetPokemonName(Opponent.SpeciesData.Name);
+}
+
 void ABattleHUD::ShowBattleStartWidget()
 {
 	Clear();
@@ -165,6 +192,7 @@ void ABattleHUD::ShowBattleStartWidget()
 	if (PlayerOwner && BattleStartWidget) {
 		BattleStartWidget->AddToViewport();
 		ShowPlayerPokemonStatus();
+		ShowOpponentPokemonStatus();
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
 	}

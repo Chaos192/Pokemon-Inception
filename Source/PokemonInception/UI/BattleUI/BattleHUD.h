@@ -40,6 +40,9 @@ protected:
 	TSubclassOf<UPokemonStatusWidget> PokemonStatusWidgetClass;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPokemonStatusWidget> OpponentStatusWidgetClass;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UBagWidget> BagWidgetClass;
 
 	UPROPERTY(EditAnywhere)
@@ -62,6 +65,9 @@ protected:
 
 	UPROPERTY()
 	class UPokemonStatusWidget* PlayerPokemonStatusWidget;
+
+	UPROPERTY()
+	class UPokemonStatusWidget* OpponentPokemonStatusWidget;
 
 	UPROPERTY()
 	class UPokemonWidget* PokemonWidget;
@@ -96,7 +102,13 @@ public:
 	void ShowPlayerPokemonStatus();
 
 	UFUNCTION()
+	void ShowOpponentPokemonStatus();
+
+	UFUNCTION()
 	void RefreshPlayerPokemonStatus();
+
+	UFUNCTION()
+	void RefreshOpponentPokemonStatus();
 
 	UFUNCTION()
 	void ShowBattleStartWidget();

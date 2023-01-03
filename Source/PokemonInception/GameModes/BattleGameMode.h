@@ -29,6 +29,9 @@ private:
 protected:
 	virtual void BeginPlay() override;
 
+	UFUNCTION()
+	void BattleEnd();
+
 	FTimerHandle MessageTimer;
 	FTimerHandle WidgetDelay;
 
@@ -50,6 +53,9 @@ public:
 
 	UFUNCTION()
 	void ShowItemInfo(FItemBaseStruct InventoryItem);
+
+	UFUNCTION()
+	FPokemonStruct GetCurrentOpponent();
 
 	UFUNCTION()
 	void Run();

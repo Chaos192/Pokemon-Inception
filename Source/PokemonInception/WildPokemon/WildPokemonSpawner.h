@@ -18,6 +18,8 @@ public:
 	UFUNCTION()
 	void Generate();
 
+	UDataTable* GetPokemonTable();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -25,10 +27,13 @@ protected:
 	float SpawnTime = 10;
 
 	UPROPERTY(EditAnywhere)
-	int MinLevel;
+	int MinLevel = 1;
 
 	UPROPERTY(EditAnywhere)
-	int MaxLevel;
+	int MaxLevel = 1;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UDataTable* PokemonDatatable;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<TSubclassOf<AWildPokemon>> PokemonToSpawn;

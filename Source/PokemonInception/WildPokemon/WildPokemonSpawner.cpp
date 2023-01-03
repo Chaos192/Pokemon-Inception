@@ -20,10 +20,16 @@ void AWildPokemonSpawner::Generate()
 {
 	int index = (FMath::RandHelper(PokemonToSpawn.Num()));
 	int SpawnLevel = (FMath::RandRange(MinLevel, MaxLevel));
+
 	Rotation.Yaw = (FMath::RandRange(0, 360));
 
 	AWildPokemon* SpawnedPokemon = nullptr;
 	SpawnedPokemon = GetWorld()->SpawnActor<AWildPokemon>(PokemonToSpawn[index], GetActorLocation(), Rotation, SpawnInfo);
-	SpawnedPokemon->InitPokemon(SpawnLevel);
+	SpawnedPokemon->InitPokemon(PokemonDatatable, SpawnLevel);
+}
+
+UDataTable* AWildPokemonSpawner::GetPokemonTable()
+{
+	return PokemonDatatable;
 }
 

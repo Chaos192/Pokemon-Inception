@@ -70,7 +70,11 @@ void AOverworldGameMode::SaveOpponent(FPokemonStruct Opponent)
 {
 	UWorldSaveData* SaveData = Cast<UWorldSaveData>(UGameplayStatics::CreateSaveGameObject(UWorldSaveData::StaticClass()));
 
-	SaveData->OpponentData.Add(Opponent);
+	if (UGameplayStatics::DoesSaveGameExist("SaveSlot", 0)) {
+		SaveData = Cast<UWorldSaveData>(UGameplayStatics::LoadGameFromSlot("SaveSlot", 0));
+
+		SaveData->OpponentData.Add(Opponent);
+	}
 
 	UGameplayStatics::SaveGameToSlot(SaveData, "SaveSlot", 0);
 }

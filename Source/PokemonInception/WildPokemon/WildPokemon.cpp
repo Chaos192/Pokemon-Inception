@@ -19,7 +19,7 @@ AWildPokemon::AWildPokemon()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
-void AWildPokemon::InitPokemon(int Level)
+void AWildPokemon::InitPokemon(UDataTable* PokemonDatatable, int Level)
 {
 	FPokemonBaseStruct* PokemonSpecies = PokemonDatatable->FindRow<FPokemonBaseStruct>(PokemonID, "");
 	Pokemon.Init(Level, *PokemonSpecies);
