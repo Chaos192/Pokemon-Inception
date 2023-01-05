@@ -21,27 +21,27 @@ void UMoveButtonWidget::InitButton(FText Name, int CurrPP, int MaxPP, ETypes Mov
 	MoveMaxPP->SetText(FText::FromString(FString::FromInt(MaxPP)));
 
 	switch (MoveType) {
-		case ETypes::Normal: MoveButton->SetBackgroundColor(FLinearColor(207, 207, 207, 1));
+		case ETypes::Normal: MoveButton->SetBackgroundColor(FLinearColor(0.811, 0.811, 0.811, 1));
 			break;
-		case ETypes::Grass: MoveButton->SetBackgroundColor(FLinearColor(181, 230, 29, 1));
+		case ETypes::Grass: MoveButton->SetBackgroundColor(FLinearColor(0.209, 1, 0.083, 1));
 			break;
-		case ETypes::Fire: MoveButton->SetBackgroundColor(FLinearColor(177, 42, 0, 1));
+		case ETypes::Fire: MoveButton->SetBackgroundColor(FLinearColor(1, 0.123, 0, 1));
 			break;
-		case ETypes::Water: MoveButton->SetBackgroundColor(FLinearColor(0, 116, 184, 1));
+		case ETypes::Water: MoveButton->SetBackgroundColor(FLinearColor(0, 0.454, 0.721, 1));
 			break;
-		case ETypes::Earth: MoveButton->SetBackgroundColor(FLinearColor(127, 100, 22, 1));
+		case ETypes::Earth: MoveButton->SetBackgroundColor(FLinearColor(0.598, 0.492, 0.186, 1));
 			break;
-		case ETypes::Air: MoveButton->SetBackgroundColor(FLinearColor(39, 200, 183, 1));
+		case ETypes::Air: MoveButton->SetBackgroundColor(FLinearColor(0.352, 0.984, 0.917, 1));
 			break;
-		case ETypes::Electric: MoveButton->SetBackgroundColor(FLinearColor(255, 231, 15, 1));
+		case ETypes::Electric: MoveButton->SetBackgroundColor(FLinearColor(1, 1, 0, 1));
 			break;
-		case ETypes::Bug: MoveButton->SetBackgroundColor(FLinearColor(215, 220, 51, 1));
+		case ETypes::Bug: MoveButton->SetBackgroundColor(FLinearColor(0.543, 0.862, 0.100, 1));
 			break;
-		case ETypes::Light: MoveButton->SetBackgroundColor(FLinearColor(219, 176, 187, 1));
+		case ETypes::Light: MoveButton->SetBackgroundColor(FLinearColor(0.968, 0.490, 0.873, 1));
 			break;
-		case ETypes::Dark: MoveButton->SetBackgroundColor(FLinearColor(90, 88, 85, 1));
+		case ETypes::Dark: MoveButton->SetBackgroundColor(FLinearColor(0.062, 0.042, 0.084, 1));
 			break;
-		case ETypes::Dragon: MoveButton->SetBackgroundColor(FLinearColor(159, 100, 157, 1));
+		case ETypes::Dragon: MoveButton->SetBackgroundColor(FLinearColor(0.523, 0.092, 0.515, 1));
 			break;
 	}
 }

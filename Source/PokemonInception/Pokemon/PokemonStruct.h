@@ -102,7 +102,7 @@ struct FPokemonStruct
 		}
 
 		else {
-			for (int i = Moves.Num() - 3; i < Moves.Num(); i++) {
+			for (int i = Moves.Num() - 4; i < Moves.Num(); i++) {
 				CurrentMoves.Add(Moves[i]);
 			}
 		}
