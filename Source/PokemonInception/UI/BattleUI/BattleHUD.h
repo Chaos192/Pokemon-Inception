@@ -87,6 +87,8 @@ public:
 
 	TSubclassOf<UPokemonSlotWidget> GetPokemonSlotWidgetClass();
 
+	TSubclassOf<UMoveButtonWidget> GetMoveButtonWidgetClass();
+
 	void Clear();
 
 	UFUNCTION()

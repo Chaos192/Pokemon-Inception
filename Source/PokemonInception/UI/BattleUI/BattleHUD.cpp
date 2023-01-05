@@ -39,6 +39,7 @@ void ABattleHUD::BeginPlay()
 	GameMode->ItemSlotDelegate.AddDynamic(BagWidget, &UBagWidget::AddToWrapBox);
 	GameMode->ItemInfoDelegate.AddDynamic(BagWidget, &UBagWidget::ShowInfo);
 	GameMode->PokemonSlotDelegate.AddDynamic(PokemonWidget, &UPokemonWidget::AddToWrapBox);
+	GameMode->MoveDelegate.AddDynamic(FightWidget, &UFightWidget::AddToWrapBox);
 
 	ShowText("A wild Pokemon appeared!", Cast<UUserWidget>(BattleStartWidget));
 }
@@ -56,6 +57,11 @@ TSubclassOf<UItemInfoWidget> ABattleHUD::GetItemInfoWidgetClass()
 TSubclassOf<UPokemonSlotWidget> ABattleHUD::GetPokemonSlotWidgetClass()
 {
 	return PokemonSlotWidgetClass;
+}
+
+TSubclassOf<UMoveButtonWidget> ABattleHUD::GetMoveButtonWidgetClass()
+{
+	return MoveButtonWidgetClass;
 }
 
 void ABattleHUD::Clear()
@@ -85,6 +91,9 @@ void ABattleHUD::ShowText(FString Message, class UUserWidget* NextWidget)
 {
 	Clear();
 	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
 
 	if (PlayerOwner && TextBoxWidget) {
 		TextBoxWidget->AddToViewport();
@@ -97,10 +106,16 @@ void ABattleHUD::ShowText(FString Message, class UUserWidget* NextWidget)
 void ABattleHUD::ShowFightWidget()
 {
 	Clear();
+	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
 
 	if (PlayerOwner && FightWidget) {
 		ShowPlayerPokemonStatus();
 		ShowOpponentPokemonStatus();
+		FightWidget->ClearWrapBox();
+		GameMode->ShowPokemonMoves();
 		FightWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());

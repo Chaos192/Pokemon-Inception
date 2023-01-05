@@ -20,6 +20,11 @@ void APokemonPickup::Interact(APlayerController* Controller)
 		return;
 	}
 
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
+	if (GameMode == nullptr) {
+		return;
+	}
+
 	AOverworldHUD* Hud = Cast<AOverworldHUD>(PlayerController->GetHUD());
 	if (Hud == nullptr) {
 		return;
@@ -28,6 +33,7 @@ void APokemonPickup::Interact(APlayerController* Controller)
 	FPokemonBaseStruct* PokemonSpecies = PokemonDatatable->FindRow<FPokemonBaseStruct>(PokemonID, "");
 	FPokemonStruct AddedPokemon;
 	AddedPokemon.Init(PokemonLevel, *PokemonSpecies);
+	AddedPokemon.InitMoves(GameMode->GetMoveDT());
 
 	Hud->OnScreenMessage("You got a " + PokemonSpecies->Name.ToString() + "!");
 	PlayerController->ObtainPokemon(AddedPokemon);

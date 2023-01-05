@@ -2,6 +2,7 @@
 
 
 #include "WildPokemonSpawner.h"
+#include "../GameModes/OverworldGameMode.h"
 
 
 AWildPokemonSpawner::AWildPokemonSpawner()
@@ -18,6 +19,11 @@ void AWildPokemonSpawner::BeginPlay()
 
 void AWildPokemonSpawner::Generate()
 {
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
+	if (GameMode == nullptr) {
+		return;
+	}
+
 	int index = (FMath::RandHelper(PokemonToSpawn.Num()));
 	int SpawnLevel = (FMath::RandRange(MinLevel, MaxLevel));
 
@@ -25,7 +31,7 @@ void AWildPokemonSpawner::Generate()
 
 	AWildPokemon* SpawnedPokemon = nullptr;
 	SpawnedPokemon = GetWorld()->SpawnActor<AWildPokemon>(PokemonToSpawn[index], GetActorLocation(), Rotation, SpawnInfo);
-	SpawnedPokemon->InitPokemon(PokemonDatatable, SpawnLevel);
+	SpawnedPokemon->InitPokemon(PokemonDatatable, SpawnLevel, GameMode->GetMoveDT());
 }
 
 UDataTable* AWildPokemonSpawner::GetPokemonTable()

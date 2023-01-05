@@ -17,7 +17,7 @@ public:
 	AWildPokemon();
 
 	UFUNCTION()
-	void InitPokemon(UDataTable* PokemonDatatable, int Level);
+	void InitPokemon(UDataTable* PokemonDatatable, int Level, TArray<UDataTable*> MoveTables);
 
 private:
 	UPROPERTY(EditDefaultsOnly)

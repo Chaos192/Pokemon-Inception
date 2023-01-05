@@ -317,6 +317,11 @@ TArray<class UDataTable*> AOverworldGameMode::GetItemDT() const
 	return ItemDT;
 }
 
+TArray<class UDataTable*> AOverworldGameMode::GetMoveDT() const
+{
+	return MoveDT;
+}
+
 void AOverworldGameMode::TogglePause()
 {
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);

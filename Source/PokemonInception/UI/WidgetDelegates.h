@@ -9,3 +9,4 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FItemSlotSignature, UItemSlotWidget*
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FShopSlotSignature, UItemShopSlotWidget*, ItemShopSlot);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FItemInfoSignature, UItemInfoWidget*, ItemInfo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPokemonSlotSignature, UPokemonSlotWidget*, PokemonSlot);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMoveSignature, UMoveButtonWidget*, MoveButton);

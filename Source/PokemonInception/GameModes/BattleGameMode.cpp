@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Blueprint/UserWidget.h"
 #include "../UI/BattleUI/BattleHUD.h"
+#include "../UI/BattleUI/MoveButtonWidget.h"
 #include "../Player/PlayerCharacterController.h"
 
 
@@ -121,6 +122,21 @@ void ABattleGameMode::FillBagWidget()
 		ItemSlotWidget->ItemClicked.AddDynamic(this, &ABattleGameMode::ShowItemInfo);
 
 		ItemSlotDelegate.Broadcast(ItemSlotWidget);
+	}
+}
+
+void ABattleGameMode::ShowPokemonMoves()
+{
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+	FPokemonStruct Attacker = (PlayerController->GetPokemonParty())[0];
+
+	for (FMoveBaseStruct Move : Attacker.CurrentMoves) {
+		ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+		UMoveButtonWidget* MoveButton = CreateWidget<UMoveButtonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetMoveButtonWidgetClass());
+
+		MoveButton->InitButton(Move.Name, Move.CurrPowerPoints, Move.PowerPoints, Move.MoveType);
+		MoveDelegate.Broadcast(MoveButton);
 	}
 }
 

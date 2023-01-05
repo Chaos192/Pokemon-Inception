@@ -52,6 +52,9 @@ public:
 	void FillBagWidget();
 
 	UFUNCTION()
+	void ShowPokemonMoves();
+
+	UFUNCTION()
 	void ShowItemInfo(FItemBaseStruct InventoryItem);
 
 	UFUNCTION()
@@ -67,4 +70,6 @@ public:
 	FItemInfoSignature ItemInfoDelegate;
 
 	FPokemonSlotSignature PokemonSlotDelegate;
+
+	FMoveSignature MoveDelegate;
 };

@@ -64,6 +64,8 @@ public:
 
 	TArray<class UDataTable*> GetItemDT() const;
 
+	TArray<class UDataTable*> GetMoveDT() const;
+
 	FEndTextSignature RemoveText;
 
 	FGamePauseSignature OnGamePaused;
@@ -89,6 +91,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<class UDataTable*> ItemDT;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<class UDataTable*> MoveDT;
 	
 	FTimerHandle MessageTimer;
 	FTimerHandle ScreenMessageTimer;

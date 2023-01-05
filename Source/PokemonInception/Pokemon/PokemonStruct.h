@@ -32,11 +32,11 @@ struct FPokemonStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int Speed = 0;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	//TArray<FMoveBaseStruct> CurrentMoves;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FMoveBaseStruct> CurrentMoves;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	//TArray<FMoveBaseStruct> Moves;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FMoveBaseStruct> Moves;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int Exp = 0;
@@ -76,6 +76,40 @@ struct FPokemonStruct
 		}
 
 		RequiredExp = (Level + 1) * (Level + 1) * (Level + 1) - Exp;
+	}
+
+	void InitMoves(TArray<UDataTable*> MoveTables) {
+		for (auto& Move : SpeciesData.MovePool) {
+			if (Move.Key <= Level) {
+				FMoveBaseStruct* AddedMove = nullptr;
+
+				for (UDataTable* DataTable : MoveTables) {
+					AddedMove = DataTable->FindRow<FMoveBaseStruct>(Move.Value, "");
+					
+					if (AddedMove) {
+						Moves.Add(*AddedMove);
+					}
+				}
+			}
+		}
+
+		InitCurrentMoves();
+	}
+
+	void InitCurrentMoves() {
+		if (Moves.Num() <= 4) {
+			CurrentMoves = Moves;
+		}
+
+		else {
+			for (int i = Moves.Num() - 3; i < Moves.Num(); i++) {
+				CurrentMoves.Add(Moves[i]);
+			}
+		}
+	}
+
+	bool CheckForNewMoves() {
+		return false;
 	}
 
 	void GainExp(int GainedExp) {

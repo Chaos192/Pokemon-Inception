@@ -49,5 +49,5 @@ struct FPokemonBaseStruct : public FTableRowBase
 	float CatchRate;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TMap<int, FDataTableRowHandle> MovePool;
+	TMap<int, FName> MovePool;
 };
