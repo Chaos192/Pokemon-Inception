@@ -8,6 +8,8 @@
 #include "../UI/BattleUI/BattleHUD.h"
 #include "../UI/BattleUI/MoveButtonWidget.h"
 #include "../Player/PlayerCharacterController.h"
+#include "../Player/PokemonInceptionCharacter.h"
+#include "../Pokemon/StaticOverworldPokemon.h"
 
 
 void ABattleGameMode::BeginPlay()
@@ -29,6 +31,63 @@ void ABattleGameMode::BeginPlay()
 		PlayerController->LoadPokemonParty(SaveData->PartyData);
 		OpponentTeam = SaveData->OpponentData;
 	}
+
+	TArray<AActor*> FoundActors;
+
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), Camera, FoundActors);
+
+	PlayerController->SetViewTargetWithBlend(FoundActors[0], 0, EViewTargetBlendFunction::VTBlend_Linear);
+
+	PlacePlayerPokemon(PlayerController->GetPokemonParty()[0]);
+	PlaceOpponentPokemon(OpponentTeam[0]);
+}
+
+void ABattleGameMode::PlacePlayerPokemon(FPokemonStruct Pokemon)
+{
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (PlayerController == nullptr) {
+		return;
+	}
+
+	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(PlayerController->GetPawn());
+	if (Player == nullptr) {
+		return;
+	}
+
+	FRotator Rotation;
+	FActorSpawnParameters SpawnInfo;
+	FVector Position = FVector(-350, -270, 115);
+
+	PlayerPokemonActor = GetWorld()->SpawnActor<AStaticOverworldPokemon>(Pokemon.SpeciesData.PokemonActor, Position, Rotation, SpawnInfo);
+}
+
+void ABattleGameMode::PlaceOpponentPokemon(FPokemonStruct Pokemon)
+{
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (PlayerController == nullptr) {
+		return;
+	}
+
+	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(PlayerController->GetPawn());
+	if (Player == nullptr) {
+		return;
+	}
+	
+	FRotator Rotation;
+	Rotation.Yaw += 180;
+	FActorSpawnParameters SpawnInfo;
+	FVector Position = FVector(-350, 440, 115);
+
+	OpponentPokemonActor = GetWorld()->SpawnActor<AStaticOverworldPokemon>(Pokemon.SpeciesData.PokemonActor, Position, Rotation, SpawnInfo);
+}
+
+void ABattleGameMode::BattleStart()
+{
+	/*ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+
+	if (OpponentTeam.Num() == 1) {
+		Hud->ShowText("A wild " + OpponentTeam[0].SpeciesData.Name.ToString() + "Pokemon appeared!");
+	}*/
 }
 
 void ABattleGameMode::BattleEnd()

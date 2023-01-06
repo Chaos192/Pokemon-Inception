@@ -14,6 +14,13 @@ AWildPokemon::AWildPokemon()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	/*Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	SetRootComponent(Root);
+
+	OverworldPokemon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Pokemon Actor"));
+	OverworldPokemon->SetChildActorClass(OverworldPokemonClass);
+	OverworldPokemon->SetupAttachment(Root);*/
+
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AWildPokemon::OnBeginOverlap);
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "../Player/Camera/BattleCamera.h"
 #include "../Pokemon/PokemonStruct.h"
 #include "../SaveGame/WorldSaveData.h"
 #include "../UI/OverworldUI/ItemInfoWidget.h"
@@ -26,16 +27,29 @@ private:
 	int Iterator = 0;
 	UUserWidget* NextWidget;
 
+	AStaticOverworldPokemon* PlayerPokemonActor = nullptr;
+	AStaticOverworldPokemon* OpponentPokemonActor = nullptr;
+
+	void PlacePlayerPokemon(FPokemonStruct Pokemon);
+
+	void PlaceOpponentPokemon(FPokemonStruct Pokemon);
+
 protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
 	void BattleEnd();
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ABattleCamera> Camera;
+
 	FTimerHandle MessageTimer;
 	FTimerHandle WidgetDelay;
 
 public:
+	UFUNCTION()
+	void BattleStart();
+
 	UFUNCTION()
 	void DisplayMessage(FString MessageToDisplay, UUserWidget* Widget);
 

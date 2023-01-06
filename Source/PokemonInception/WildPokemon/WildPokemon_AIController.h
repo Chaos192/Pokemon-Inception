@@ -14,9 +14,12 @@ class POKEMONINCEPTION_API AWildPokemon_AIController : public AAIController
 
 public:
 	AWildPokemon_AIController(FObjectInitializer const& ObjectInitializer = FObjectInitializer::Get());
+
 	void BeginPlay() override;
-	void OnPossess(APawn* const pawn)override;
-	class UBlackboardComponent* getBlackboard()const;
+
+	void OnPossess(APawn* const pawn) override;
+
+	class UBlackboardComponent* getBlackboard() const;
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))

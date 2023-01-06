@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "../Pokemon/PokemonBaseStruct.h"
 #include "../Pokemon/PokemonStruct.h"
+#include "../Pokemon/StaticOverworldPokemon.h"
 #include "WildPokemon.generated.h"
 
 UCLASS()
@@ -22,6 +23,15 @@ public:
 private:
 	UPROPERTY(EditDefaultsOnly)
 	FName PokemonID;
+
+	/*UPROPERTY(EditAnywhere)
+	class USceneComponent* Root = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	class UChildActorComponent* OverworldPokemon = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class AStaticOverworldPokemon> OverworldPokemonClass;*/
 
 	UPROPERTY()
 	FPokemonStruct Pokemon;
