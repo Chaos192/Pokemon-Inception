@@ -90,6 +90,36 @@ void AOverworldGameMode::SaveAndExit()
 	PlayerController->ConsoleCommand("quit");
 }
 
+FString AOverworldGameMode::ETypeToString(ETypes Type)
+{
+	switch (Type) {
+	case ETypes::Normal:
+		return "Normal";
+	case ETypes::Grass:
+		return "Grass";
+	case ETypes::Fire:
+		return "Fire";
+	case ETypes::Water:
+		return "Water";
+	case ETypes::Earth:
+		return "Earth";
+	case ETypes::Air:
+		return "Air";
+	case ETypes::Electric:
+		return "Electric";
+	case ETypes::Bug:
+		return "Bug";
+	case ETypes::Light:
+		return "Light";
+	case ETypes::Dark:
+		return "Dark";
+	case ETypes::Dragon:
+		return "Dragon";
+	default:
+		return " ";
+	}
+}
+
 void AOverworldGameMode::OnScreenMessage(FString MessageToDisplay)
 {
 	OnScreenMessageDelegate.Broadcast(MessageToDisplay);
@@ -305,11 +335,41 @@ void AOverworldGameMode::ShowPokemonInMenu()
 		PokemonSlotWidget->SetPokemonLevel(Pokemon.Level);
 		PokemonSlotWidget->SetPokemonImage(Pokemon.SpeciesData.Image);
 		PokemonSlotWidget->SetPokemonHP(Pokemon.CurrHP, Pokemon.MaxHP);
+		PokemonSlotWidget->SetPokemon(Pokemon);
 
-		//Button clicked
+		PokemonSlotWidget->PokemonClick.AddDynamic(this, &AOverworldGameMode::ShowPokemonSummary);
 
 		PokemonSlotDelegate.Broadcast(PokemonSlotWidget);
 	}
+}
+
+void AOverworldGameMode::ShowPokemonSummary(FPokemonStruct Pokemon)
+{
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	UPokemonSummaryWidget* PokemonSummary = CreateWidget<UPokemonSummaryWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetPokemonSummaryWidgetClass());
+
+	FString PokemonType;
+	if (Pokemon.SpeciesData.Type2 == ETypes::None) {
+		PokemonType = ETypeToString(Pokemon.SpeciesData.Type1);
+	}
+	else {
+		PokemonType = ETypeToString(Pokemon.SpeciesData.Type1) + " " + ETypeToString(Pokemon.SpeciesData.Type2);
+	}
+
+	FString PokemonHP = FString::FromInt(Pokemon.CurrHP) + "/" + FString::FromInt(Pokemon.MaxHP);
+
+	PokemonSummary->SetImage(Pokemon.SpeciesData.Image);
+	PokemonSummary->SetGeneralInfo(Pokemon.SpeciesData.Name, Pokemon.SpeciesData.PokemonID, PokemonType, Pokemon.Level, (Pokemon.RequiredExp - Pokemon.CurrExp));
+	PokemonSummary->SetStats(PokemonHP, Pokemon.Attack, Pokemon.Defence, Pokemon.Speed);
+
+	for (FMoveBaseStruct Move : Pokemon.CurrentMoves) {
+		UMoveButtonWidget* MoveButton = CreateWidget<UMoveButtonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetMoveButtonWidgetClass());
+
+		MoveButton->InitButton(Move.Name, Move.CurrPowerPoints, Move.PowerPoints, Move.MoveType);
+		PokemonSummary->AddMove(MoveButton);
+	}
+
+	PokemonSummaryDelegate.Broadcast(PokemonSummary);
 }
 
 TArray<class UDataTable*> AOverworldGameMode::GetItemDT() const

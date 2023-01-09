@@ -21,6 +21,8 @@ private:
 	UFUNCTION()
 	void OnPokemonClicked();
 
+	FPokemonStruct Pokemon;
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* PokemonButton;
@@ -58,5 +60,8 @@ public:
 	UFUNCTION()
 	void SetPokemonHP(int CurrHP, int MaxHP);
 
-	FButtonClicked PokemonClick;
+	UFUNCTION()
+	void SetPokemon(FPokemonStruct InPokemon);
+
+	FPokemonSignature PokemonClick;
 };

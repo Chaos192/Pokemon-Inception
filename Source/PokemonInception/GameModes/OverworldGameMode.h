@@ -62,6 +62,9 @@ public:
 	UFUNCTION()
 	void ShowPokemonInMenu();
 
+	UFUNCTION()
+	void ShowPokemonSummary(FPokemonStruct Pokemon);
+
 	TArray<class UDataTable*> GetItemDT() const;
 
 	TArray<class UDataTable*> GetMoveDT() const;
@@ -79,9 +82,13 @@ public:
 	FItemInfoSignature ItemInfoDelegate;
 
 	FPokemonSlotSignature PokemonSlotDelegate;
+	FPokemonSummarySignature PokemonSummaryDelegate;
 
 protected:
 	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	FString ETypeToString(ETypes Type);
 
 	UFUNCTION()
 	void BuyItem(FItemBaseStruct Item);

@@ -35,13 +35,11 @@ void ABattleHUD::BeginPlay()
 	BagWidget->BackClicked.AddDynamic(this, &ABattleHUD::ShowBattleStartWidget);
 
 	GameMode->MessageUpdate.AddDynamic(TextBoxWidget, &UTextBoxWidget::ReturnMessage);
-	GameMode->WidgetUpdate.AddDynamic(this, &ABattleHUD::ShowWidget);
 	GameMode->ItemSlotDelegate.AddDynamic(BagWidget, &UBagWidget::AddToWrapBox);
 	GameMode->ItemInfoDelegate.AddDynamic(BagWidget, &UBagWidget::ShowInfo);
 	GameMode->PokemonSlotDelegate.AddDynamic(PokemonWidget, &UPokemonWidget::AddToWrapBox);
+	GameMode->PokemonSummaryDelegate.AddDynamic(PokemonWidget, &UPokemonWidget::AddToInfoWrapBox);
 	GameMode->MoveDelegate.AddDynamic(FightWidget, &UFightWidget::AddToWrapBox);
-
-	ShowText("A wild Pokemon appeared!", Cast<UUserWidget>(BattleStartWidget));
 }
 
 TSubclassOf<UItemSlotWidget> ABattleHUD::GetItemSlotWidgetClass()
@@ -59,6 +57,11 @@ TSubclassOf<UPokemonSlotWidget> ABattleHUD::GetPokemonSlotWidgetClass()
 	return PokemonSlotWidgetClass;
 }
 
+TSubclassOf<UPokemonSummaryWidget> ABattleHUD::GetPokemonSummaryWidgetClass()
+{
+	return PokemonSummaryWidgetClass;
+}
+
 TSubclassOf<UMoveButtonWidget> ABattleHUD::GetMoveButtonWidgetClass()
 {
 	return MoveButtonWidgetClass;
@@ -69,37 +72,15 @@ void ABattleHUD::Clear()
 	UWidgetLayoutLibrary::RemoveAllWidgets(this);
 }
 
-void ABattleHUD::ShowWidget(class UUserWidget* Widget)
+void ABattleHUD::ShowText(FString Message)
 {
 	Clear();
-
-	if (PlayerOwner && Widget) {
-		Widget->AddToViewport();
-
-		UBattleStartWidget* BTWidget = Cast<UBattleStartWidget>(Widget);
-		if (BTWidget != nullptr) {
-			ShowPlayerPokemonStatus();
-			ShowOpponentPokemonStatus();
-		}
-
-		PlayerOwner->bShowMouseCursor = true;
-		PlayerOwner->SetInputMode(FInputModeUIOnly());
-	}
-}
-
-void ABattleHUD::ShowText(FString Message, class UUserWidget* NextWidget)
-{
-	Clear();
-	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GameMode == nullptr) {
-		return;
-	}
 
 	if (PlayerOwner && TextBoxWidget) {
+		TextBoxWidget->ReturnMessage(Message);
 		TextBoxWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = false;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
-		GameMode->DisplayMessage(Message, NextWidget);
 	}
 }
 
@@ -150,6 +131,7 @@ void ABattleHUD::ShowPokemon()
 
 	if (PlayerOwner && PokemonWidget) {
 		PokemonWidget->ClearWrapBox();
+		PokemonWidget->ClearSummaryBox();
 		GameMode->ShowPokemonInMenu();
 		PokemonWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;

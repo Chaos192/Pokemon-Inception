@@ -8,7 +8,7 @@
 
 
 UENUM()
-enum class ETypes{
+enum class ETypes {
 	None,
 	Normal,
 	Grass,

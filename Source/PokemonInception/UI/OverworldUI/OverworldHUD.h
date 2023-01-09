@@ -64,6 +64,12 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UPokemonSlotWidget> PokemonSlotWidgetClass;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPokemonSummaryWidget> PokemonSummaryWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UMoveButtonWidget> MoveButtonWidgetClass;
+
 	UPROPERTY()
 	class UMenuWidget* MenuWidget;
 
@@ -108,6 +114,10 @@ public:
 	TSubclassOf<UItemShopSlotWidget> GetItemShopSlotWidgetClass();
 
 	TSubclassOf<UPokemonSlotWidget> GetPokemonSlotWidgetClass();
+
+	TSubclassOf<UPokemonSummaryWidget> GetPokemonSummaryWidgetClass();
+
+	TSubclassOf<UMoveButtonWidget> GetMoveButtonWidgetClass();
 
 	UFUNCTION()
 	void ShowMenu();

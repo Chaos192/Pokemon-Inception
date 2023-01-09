@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "../Player/Camera/BattleCamera.h"
 #include "../Pokemon/PokemonStruct.h"
+#include "../Pokemon/TypeStruct.h"
 #include "../SaveGame/WorldSaveData.h"
 #include "../UI/OverworldUI/ItemInfoWidget.h"
 #include "../UI/WidgetDelegates.h"
@@ -22,11 +23,6 @@ class POKEMONINCEPTION_API ABattleGameMode : public AGameModeBase
 private:
 	TArray<FPokemonStruct> OpponentTeam;
 
-	FString Message = "";
-	FString TempMessage = "";
-	int Iterator = 0;
-	UUserWidget* NextWidget;
-
 	AStaticOverworldPokemon* PlayerPokemonActor = nullptr;
 	AStaticOverworldPokemon* OpponentPokemonActor = nullptr;
 
@@ -38,29 +34,27 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
+	void BattleStart();
+
+	UFUNCTION()
 	void BattleEnd();
+
+	UFUNCTION()
+	FString ETypeToString(ETypes Type);
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ABattleCamera> Camera;
 
 	FTimerHandle MessageTimer;
+	FTimerHandle MessageTimer2;
 	FTimerHandle WidgetDelay;
 
 public:
 	UFUNCTION()
-	void BattleStart();
-
-	UFUNCTION()
-	void DisplayMessage(FString MessageToDisplay, UUserWidget* Widget);
-
-	UFUNCTION()
-	void IterateMessage();
-
-	UFUNCTION()
-	void DisplayNextWidget();
-
-	UFUNCTION()
 	void ShowPokemonInMenu();
+
+	UFUNCTION()
+	void ShowPokemonSummary(FPokemonStruct Pokemon);
 
 	UFUNCTION()
 	void FillBagWidget();
@@ -84,6 +78,7 @@ public:
 	FItemInfoSignature ItemInfoDelegate;
 
 	FPokemonSlotSignature PokemonSlotDelegate;
+	FPokemonSummarySignature PokemonSummaryDelegate;
 
 	FMoveSignature MoveDelegate;
 };

@@ -9,6 +9,7 @@
 #include "MoveButtonWidget.h"
 #include "PokemonSlotWidget.h"
 #include "PokemonStatusWidget.h"
+#include "PokemonSummaryWidget.h"
 #include "../TextBoxWidget.h"
 #include "../OverworldUI/PokemonWidget.h"
 #include "../OverworldUI/BagWidget.h"
@@ -23,7 +24,6 @@ class POKEMONINCEPTION_API ABattleHUD : public AHUD
 	GENERATED_BODY()
 
 protected:
-	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UBattleStartWidget> BattleStartWidgetClass;
 
@@ -35,6 +35,9 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UPokemonSlotWidget> PokemonSlotWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPokemonSummaryWidget> PokemonSummaryWidgetClass;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UPokemonStatusWidget> PokemonStatusWidgetClass;
@@ -87,6 +90,8 @@ public:
 
 	TSubclassOf<UPokemonSlotWidget> GetPokemonSlotWidgetClass();
 
+	TSubclassOf<UPokemonSummaryWidget> GetPokemonSummaryWidgetClass();
+
 	TSubclassOf<UMoveButtonWidget> GetMoveButtonWidgetClass();
 
 	void Clear();
@@ -116,9 +121,6 @@ public:
 	void ShowBattleStartWidget();
 
 	UFUNCTION()
-	void ShowWidget(class UUserWidget* Widget);
-
-	UFUNCTION()
-	void ShowText(FString Message, class UUserWidget* NextWidget);
+	void ShowText(FString Message);
 
 };

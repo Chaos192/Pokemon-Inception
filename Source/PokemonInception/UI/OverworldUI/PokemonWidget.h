@@ -7,6 +7,7 @@
 #include "Components/Button.h"
 #include "Components/WrapBox.h"
 #include "../BattleUI/PokemonSlotWidget.h"
+#include "../BattleUI/PokemonSummaryWidget.h"
 #include "../ButtonClick.h"
 #include "PokemonWidget.generated.h"
 
@@ -27,13 +28,21 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UWrapBox* WrapBox;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UWrapBox* InfoWrapBox;
+
 	virtual void NativeConstruct() override;
 
 public:
 	UFUNCTION()
 	void AddToWrapBox(UPokemonSlotWidget* PokemonWidget);
 
+	UFUNCTION()
+	void AddToInfoWrapBox(UPokemonSummaryWidget* PokemonSummaryWidget);
+
 	void ClearWrapBox();
+
+	void ClearSummaryBox();
 
 	FButtonClicked BackClicked;
 };

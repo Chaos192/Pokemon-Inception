@@ -36,6 +36,7 @@ void AOverworldHUD::BeginPlay()
 	GameMode->ItemInfoDelegate.AddDynamic(BagWidget, &UBagWidget::ShowInfo);
 	GameMode->ItemShopSlotDelegate.AddDynamic(ShopWidget, &UShopWidget::DisplayInShop);
 	GameMode->PokemonSlotDelegate.AddDynamic(PokemonWidget, &UPokemonWidget::AddToWrapBox);
+	GameMode->PokemonSummaryDelegate.AddDynamic(PokemonWidget, &UPokemonWidget::AddToInfoWrapBox);
 
 	MenuWidget->PokedexClicked.AddDynamic(this, &AOverworldHUD::ShowPokedex);
 	MenuWidget->PokemonClicked.AddDynamic(this, &AOverworldHUD::ShowPokemon);
@@ -232,4 +233,14 @@ TSubclassOf<UItemShopSlotWidget> AOverworldHUD::GetItemShopSlotWidgetClass()
 TSubclassOf<UPokemonSlotWidget> AOverworldHUD::GetPokemonSlotWidgetClass()
 {
 	return PokemonSlotWidgetClass;
+}
+
+TSubclassOf<UPokemonSummaryWidget> AOverworldHUD::GetPokemonSummaryWidgetClass()
+{
+	return PokemonSummaryWidgetClass;
+}
+
+TSubclassOf<UMoveButtonWidget> AOverworldHUD::GetMoveButtonWidgetClass()
+{
+	return MoveButtonWidgetClass;
 }
