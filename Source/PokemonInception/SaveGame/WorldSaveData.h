@@ -16,10 +16,6 @@ class POKEMONINCEPTION_API UWorldSaveData : public USaveGame
 	GENERATED_BODY()
 
 public:
-	/*
-	UPROPERTY(EditDefaultsOnly)
-	TArray<AWildPokemon> SpawnedPokemon;
-	*/
 	UPROPERTY(EditDefaultsOnly)
 	FVector PlayerLocation;
 
@@ -37,4 +33,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FPokemonStruct> StorageData;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<AActor*> ActorsToDestroy;
 };

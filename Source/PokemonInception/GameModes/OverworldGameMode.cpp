@@ -34,8 +34,13 @@ void AOverworldGameMode::BeginPlay()
 		PlayerController->LoadPokemonParty(SaveData->PartyData);
 		PlayerController->LoadPokemonStorage(SaveData->StorageData);
 		PlayerOwner->SetActorLocation(SaveData->PlayerLocation);
+		ActorsToDestroy = SaveData->ActorsToDestroy;
 
 		SaveData->OpponentData.Empty();
+
+		for (AActor* Actor : ActorsToDestroy) {
+			Actor->Destroy();
+		}
 	}
 	
 	PlayerController->PauseDelegate.AddDynamic(this, &AOverworldGameMode::TogglePause);
@@ -62,8 +67,14 @@ void AOverworldGameMode::SaveGame()
 	SaveData->PlayerLocation = PlayerOwner->GetActorLocation();
 	SaveData->PartyData = PlayerController->GetPokemonParty();
 	SaveData->StorageData = PlayerController->GetPokemonStorage();
+	SaveData->ActorsToDestroy = ActorsToDestroy;
 
 	UGameplayStatics::SaveGameToSlot(SaveData, "SaveSlot", 0);
+}
+
+void AOverworldGameMode::MarkActorAsDestroyed(AActor* Actor)
+{
+	ActorsToDestroy.Add(Actor);
 }
 
 void AOverworldGameMode::SaveOpponent(FPokemonStruct Opponent)
@@ -372,6 +383,14 @@ void AOverworldGameMode::ShowPokemonSummary(FPokemonStruct Pokemon)
 	PokemonSummaryDelegate.Broadcast(PokemonSummary);
 }
 
+void AOverworldGameMode::TogglePause()
+{
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	bIsPaused = !bIsPaused;
+	PlayerController->SetPause(bIsPaused);
+	OnGamePaused.Broadcast(bIsPaused);
+}
+
 TArray<class UDataTable*> AOverworldGameMode::GetItemDT() const
 {
 	return ItemDT;
@@ -380,12 +399,4 @@ TArray<class UDataTable*> AOverworldGameMode::GetItemDT() const
 TArray<class UDataTable*> AOverworldGameMode::GetMoveDT() const
 {
 	return MoveDT;
-}
-
-void AOverworldGameMode::TogglePause()
-{
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	bIsPaused = !bIsPaused;
-	PlayerController->SetPause(bIsPaused);
-	OnGamePaused.Broadcast(bIsPaused);
 }

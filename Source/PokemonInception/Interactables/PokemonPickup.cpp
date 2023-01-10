@@ -37,5 +37,6 @@ void APokemonPickup::Interact(APlayerController* Controller)
 
 	Hud->OnScreenMessage("You got a " + PokemonSpecies->Name.ToString() + "!");
 	PlayerController->ObtainPokemon(AddedPokemon);
+	GameMode->MarkActorAsDestroyed(this);
 	Destroy();
 }

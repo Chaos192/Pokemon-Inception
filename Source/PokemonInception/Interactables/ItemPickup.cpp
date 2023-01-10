@@ -41,6 +41,7 @@ void AItemPickup::Interact(APlayerController* Controller)
 		if (AddedItem) {
 			Hud->OnScreenMessage("You got a " + AddedItem->Name.ToString() + "!");
 			PlayerController->ObtainItem(*AddedItem);
+			GameMode->MarkActorAsDestroyed(this);
 			Destroy();
 
 			return;

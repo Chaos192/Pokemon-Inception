@@ -27,6 +27,9 @@ public:
 	void SaveGame();
 
 	UFUNCTION()
+	void MarkActorAsDestroyed(AActor* Actor);
+
+	UFUNCTION()
 	void SaveOpponent(FPokemonStruct Opponent);
 
 	UFUNCTION()
@@ -110,6 +113,8 @@ private:
 	void TogglePause();
 
 	bool bIsPaused = false;
+
+	TArray<AActor*> ActorsToDestroy;
 
 	FString Message = "";
 	FString TempMessage = "";

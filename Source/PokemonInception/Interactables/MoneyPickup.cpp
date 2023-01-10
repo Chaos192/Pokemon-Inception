@@ -4,6 +4,7 @@
 #include "MoneyPickup.h"
 #include "Components/StaticMeshComponent.h"
 #include "../Player/PlayerCharacterController.h"
+#include "../GameModes/OverworldGameMode.h"
 #include "../UI/OverworldUI/OverworldHUD.h"
 
 AMoneyPickup::AMoneyPickup()
@@ -16,6 +17,11 @@ AMoneyPickup::AMoneyPickup()
 
 void AMoneyPickup::Interact(APlayerController* Controller)
 {
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
+	if (GameMode == nullptr) {
+		return;
+	}
+
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Controller);
 	if (PlayerController == nullptr) {
 		return;
@@ -28,6 +34,6 @@ void AMoneyPickup::Interact(APlayerController* Controller)
 	
 	Hud->OnScreenMessage("You got " + FString::FromInt(money) + "$!");
 	PlayerController->RecieveMoney(money);
+	GameMode->MarkActorAsDestroyed(this);
 	Destroy();
-	
 }
