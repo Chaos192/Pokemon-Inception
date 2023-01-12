@@ -23,6 +23,9 @@ public:
 	TArray<FItemBaseStruct> InventoryData;
 
 	UPROPERTY(EditDefaultsOnly)
+	TArray<FPokemonBaseStruct> PokedexData;
+
+	UPROPERTY(EditDefaultsOnly)
 	int MoneyData;
 
 	UPROPERTY(EditDefaultsOnly)

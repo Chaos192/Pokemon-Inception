@@ -38,6 +38,10 @@ void AOverworldGameMode::BeginPlay()
 
 		SaveData->OpponentData.Empty();
 
+		for (FPokemonBaseStruct SpeciesData : SaveData->PokedexData) {
+			PlayerController->RegisterToPokedex(SpeciesData);
+		}
+
 		for (AActor* Actor : ActorsToDestroy) {
 			Actor->Destroy();
 		}
@@ -63,6 +67,7 @@ void AOverworldGameMode::SaveGame()
 	UWorldSaveData* SaveData = Cast<UWorldSaveData>(UGameplayStatics::CreateSaveGameObject(UWorldSaveData::StaticClass()));
 
 	SaveData->InventoryData = PlayerController->GetInventory();
+	SaveData->PokedexData = PlayerController->GetPokedexData();
 	SaveData->MoneyData = PlayerController->GetMoney();
 	SaveData->PlayerLocation = PlayerOwner->GetActorLocation();
 	SaveData->PartyData = PlayerController->GetPokemonParty();
@@ -364,11 +369,11 @@ void AOverworldGameMode::FillPokedex()
 		UPokedexSlotWidget* PokedexSlotWidget = CreateWidget<UPokedexSlotWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetPokedexSlotWidgetClass());
 
 		if (PlayerController->bIsRegisteredInPokedex(PokemonSpecies->PokemonID)) {
-			PokedexSlotWidget->InitEmptySlot(PokemonSpecies->PokemonID);
+			PokedexSlotWidget->InitFilledSlot(*PokemonSpecies);
 
 		}
 		else {
-			PokedexSlotWidget->InitFilledSlot(*PokemonSpecies);
+			PokedexSlotWidget->InitEmptySlot(PokemonSpecies->PokemonID);
 
 		}
 
