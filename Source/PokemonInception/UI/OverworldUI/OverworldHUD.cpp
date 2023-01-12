@@ -37,6 +37,7 @@ void AOverworldHUD::BeginPlay()
 	GameMode->ItemShopSlotDelegate.AddDynamic(ShopWidget, &UShopWidget::DisplayInShop);
 	GameMode->PokemonSlotDelegate.AddDynamic(PokemonWidget, &UPokemonWidget::AddToWrapBox);
 	GameMode->PokemonSummaryDelegate.AddDynamic(PokemonWidget, &UPokemonWidget::AddToInfoWrapBox);
+	GameMode->PokedexSlotDelegate.AddDynamic(PokedexWidget, &UPokedexWidget::AddPokedexSlotToBox);
 
 	MenuWidget->PokedexClicked.AddDynamic(this, &AOverworldHUD::ShowPokedex);
 	MenuWidget->PokemonClicked.AddDynamic(this, &AOverworldHUD::ShowPokemon);
@@ -68,8 +69,14 @@ void AOverworldHUD::ShowMenu()
 void AOverworldHUD::ShowPokedex()
 {
 	Clear();
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
 
 	if (PlayerOwner && PokedexWidget) {
+		PokedexWidget->ClearSlotBox();
+		GameMode->FillPokedex();
 		PokedexWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
@@ -169,16 +176,12 @@ void AOverworldHUD::OnScreenMessage(FString Message)
 void AOverworldHUD::ShowText(FString Message)
 {
 	Clear();
-	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GameMode == nullptr) {
-		return;
-	}
 
 	if (PlayerOwner && TextBoxWidget) {
+		TextBoxWidget->ReturnMessage(Message);
 		TextBoxWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = false;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
-		GameMode->DisplayMessage(Message);
 	}
 }
 
@@ -228,6 +231,11 @@ TSubclassOf<UItemInfoWidget> AOverworldHUD::GetItemInfoWidgetClass()
 TSubclassOf<UItemShopSlotWidget> AOverworldHUD::GetItemShopSlotWidgetClass()
 {
 	return ItemShopSlotWidgetClass;
+}
+
+TSubclassOf<UPokedexSlotWidget> AOverworldHUD::GetPokedexSlotWidgetClass()
+{
+	return PokedexSlotWidgetClass;
 }
 
 TSubclassOf<UPokemonSlotWidget> AOverworldHUD::GetPokemonSlotWidgetClass()

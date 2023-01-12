@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "../Pokemon/PokemonBaseStruct.h"
 #include "../Pokemon/PokemonStruct.h"
 #include "../Interactables/Interactable.h"
 #include "../Items/ItemBaseStruct.h"
@@ -26,12 +27,6 @@ public:
 	UFUNCTION()
 	void ObtainPokemon(FPokemonStruct Pokemon);
 
-	TArray<FItemBaseStruct> GetInventory() const;
-
-	TArray<FPokemonStruct> GetPokemonParty() const;
-
-	TArray<FPokemonStruct> GetPokemonStorage() const;
-
 	UFUNCTION()
 	void LoadInventory(TArray<FItemBaseStruct> InventoryData);
 
@@ -41,17 +36,37 @@ public:
 	UFUNCTION()
 	void LoadPokemonStorage(TArray<FPokemonStruct> StorageData);
 
+	UFUNCTION()
+	void RegisterToPokedex(FPokemonBaseStruct Species);
+
+	UFUNCTION()
+	void LoadPokedexData(TArray<FPokemonBaseStruct> PokedexData);
+
+	UFUNCTION()
+	bool bIsRegisteredInPokedex(FName ID);
+
 	int GetMoney() const;
 
 	void RecieveMoney(int AddedMoney);
 
 	void LoseMoney(int LostMoney);
 
+	TArray<FItemBaseStruct> GetInventory() const;
+
+	TArray<FPokemonStruct> GetPokemonParty() const;
+
+	TArray<FPokemonStruct> GetPokemonStorage() const;
+
+	TArray<FPokemonBaseStruct> GetPokedexData() const;
+
 	FPauseSignature PauseDelegate;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<FItemBaseStruct> Inventory;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TArray<FPokemonBaseStruct> Pokedex;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<FPokemonStruct> PokemonParty;

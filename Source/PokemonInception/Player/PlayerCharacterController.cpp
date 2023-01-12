@@ -61,10 +61,19 @@ void APlayerCharacterController::LoseItem(FItemBaseStruct Item)
 
 void APlayerCharacterController::ObtainPokemon(FPokemonStruct Pokemon)
 {
+	if (bIsRegisteredInPokedex(Pokemon.SpeciesData.PokemonID) == false) {
+		RegisterToPokedex(Pokemon.SpeciesData);
+	}
+
 	if (PokemonParty.Num() == 6) {
 		PokemonStorage.Add(Pokemon);
 	}
 	else PokemonParty.Add(Pokemon);
+}
+
+void APlayerCharacterController::RegisterToPokedex(FPokemonBaseStruct Species)
+{
+	Pokedex.Add(Species);
 }
 
 TArray<FItemBaseStruct> APlayerCharacterController::GetInventory() const
@@ -82,6 +91,11 @@ TArray<FPokemonStruct> APlayerCharacterController::GetPokemonStorage() const
 	return PokemonStorage;
 }
 
+TArray<FPokemonBaseStruct> APlayerCharacterController::GetPokedexData() const
+{
+	return Pokedex;
+}
+
 void APlayerCharacterController::LoadInventory(TArray<FItemBaseStruct> InventoryData)
 {
 	Inventory = InventoryData;
@@ -95,6 +109,21 @@ void APlayerCharacterController::LoadPokemonParty(TArray<FPokemonStruct> PartyDa
 void APlayerCharacterController::LoadPokemonStorage(TArray<FPokemonStruct> StorageData)
 {
 	PokemonStorage = StorageData;
+}
+
+void APlayerCharacterController::LoadPokedexData(TArray<FPokemonBaseStruct> PokedexData)
+{
+	Pokedex = PokedexData;
+}
+
+bool APlayerCharacterController::bIsRegisteredInPokedex(FName ID)
+{
+	for (FPokemonBaseStruct PokemonData : Pokedex) {
+		if (PokemonData.PokemonID == ID) {
+			return true;
+		}
+	}
+	return false;
 }
 
 int APlayerCharacterController::GetMoney() const

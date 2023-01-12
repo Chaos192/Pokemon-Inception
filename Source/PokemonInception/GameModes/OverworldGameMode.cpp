@@ -133,41 +133,10 @@ FString AOverworldGameMode::ETypeToString(ETypes Type)
 
 void AOverworldGameMode::OnScreenMessage(FString MessageToDisplay)
 {
-	OnScreenMessageDelegate.Broadcast(MessageToDisplay);
-	GetWorldTimerManager().SetTimer(ScreenMessageTimer, this, &AOverworldGameMode::EndOnScreenMessage, 1, false);
-}
-
-void AOverworldGameMode::DisplayMessage(FString MessageToDisplay)
-{
-	UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->CustomTimeDilation = 0;
-	TempMessage = "";
-	Message = MessageToDisplay;
-	Iterator = 0;
-
-	GetWorldTimerManager().SetTimer(MessageTimer, this, &AOverworldGameMode::IterateMessage, 0.05, true);
-}
-
-void AOverworldGameMode::IterateMessage()
-{
-	TempMessage = Message.Mid(0, Iterator);
-	Iterator++;
-	MessageUpdate.Broadcast(TempMessage);
-
-	if (TempMessage == Message) {
-		GetWorldTimerManager().ClearTimer(MessageTimer);
-		GetWorldTimerManager().SetTimer(MessageTimer, this, &AOverworldGameMode::EndMessage, 1, false);
-	}
-}
-
-void AOverworldGameMode::EndMessage()
-{
 	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
-	Hud->PlayerOwner->SetInputMode(FInputModeGameOnly());
-	Hud->Clear();
 
-	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-	
-	Player->CustomTimeDilation = 1;
+	OnScreenMessageDelegate.Broadcast(MessageToDisplay);
+	GetWorldTimerManager().SetTimer(ScreenMessageTimer, Hud, &AOverworldHUD::ClearOnScreenMessage, 1, false);
 }
 
 void AOverworldGameMode::EndOnScreenMessage()
@@ -381,6 +350,30 @@ void AOverworldGameMode::ShowPokemonSummary(FPokemonStruct Pokemon)
 	}
 
 	PokemonSummaryDelegate.Broadcast(PokemonSummary);
+}
+
+void AOverworldGameMode::FillPokedex()
+{
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+
+	TArray<FPokemonBaseStruct*> AllPokemonData;
+	PokemonDT->GetAllRows<FPokemonBaseStruct>(TEXT("PokemonDT"), AllPokemonData);
+
+	for (FPokemonBaseStruct* PokemonSpecies : AllPokemonData) {
+		UPokedexSlotWidget* PokedexSlotWidget = CreateWidget<UPokedexSlotWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetPokedexSlotWidgetClass());
+
+		if (PlayerController->bIsRegisteredInPokedex(PokemonSpecies->PokemonID)) {
+			PokedexSlotWidget->InitEmptySlot(PokemonSpecies->PokemonID);
+
+		}
+		else {
+			PokedexSlotWidget->InitFilledSlot(*PokemonSpecies);
+
+		}
+
+		PokedexSlotDelegate.Broadcast(PokedexSlotWidget);
+	}
 }
 
 void AOverworldGameMode::TogglePause()

@@ -39,15 +39,6 @@ public:
 	void OnScreenMessage(FString MessageToDisplay);
 
 	UFUNCTION()
-	void DisplayMessage(FString MessageToDisplay);
-
-	UFUNCTION()
-	void IterateMessage();
-
-	UFUNCTION()
-	void EndMessage();
-
-	UFUNCTION()
 	void EndOnScreenMessage();
 
 	UFUNCTION()
@@ -68,6 +59,9 @@ public:
 	UFUNCTION()
 	void ShowPokemonSummary(FPokemonStruct Pokemon);
 
+	UFUNCTION()
+	void FillPokedex();
+
 	TArray<class UDataTable*> GetItemDT() const;
 
 	TArray<class UDataTable*> GetMoveDT() const;
@@ -83,6 +77,8 @@ public:
 	FItemSlotSignature ItemSlotDelegate;
 	FShopSlotSignature ItemShopSlotDelegate;
 	FItemInfoSignature ItemInfoDelegate;
+
+	FPokedexSlotSignature PokedexSlotDelegate;
 
 	FPokemonSlotSignature PokemonSlotDelegate;
 	FPokemonSummarySignature PokemonSummaryDelegate;
@@ -100,6 +96,9 @@ protected:
 	void SellItem(FItemBaseStruct Item);
 
 	UPROPERTY(EditDefaultsOnly)
+	class UDataTable* PokemonDT;
+
+	UPROPERTY(EditDefaultsOnly)
 	TArray<class UDataTable*> ItemDT;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -115,10 +114,6 @@ private:
 	bool bIsPaused = false;
 
 	TArray<AActor*> ActorsToDestroy;
-
-	FString Message = "";
-	FString TempMessage = "";
-	int Iterator = 0;
 
 	TArray<UItemShopSlotWidget*> ShopSlots;
 };
