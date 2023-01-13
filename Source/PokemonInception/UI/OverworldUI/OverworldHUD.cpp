@@ -38,6 +38,7 @@ void AOverworldHUD::BeginPlay()
 	GameMode->PokemonSlotDelegate.AddDynamic(PokemonWidget, &UPokemonWidget::AddToWrapBox);
 	GameMode->PokemonSummaryDelegate.AddDynamic(PokemonWidget, &UPokemonWidget::AddToInfoWrapBox);
 	GameMode->PokedexSlotDelegate.AddDynamic(PokedexWidget, &UPokedexWidget::AddPokedexSlotToBox);
+	GameMode->PokedexInfoDelegate.AddDynamic(PokedexWidget, &UPokedexWidget::AddPokedexInfoToBox);
 
 	MenuWidget->PokedexClicked.AddDynamic(this, &AOverworldHUD::ShowPokedex);
 	MenuWidget->PokemonClicked.AddDynamic(this, &AOverworldHUD::ShowPokemon);
@@ -76,6 +77,7 @@ void AOverworldHUD::ShowPokedex()
 
 	if (PlayerOwner && PokedexWidget) {
 		PokedexWidget->ClearSlotBox();
+		PokedexWidget->ClearInfoBox();
 		GameMode->FillPokedex();
 		PokedexWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;
@@ -93,6 +95,7 @@ void AOverworldHUD::ShowPokemon()
 
 	if (PlayerOwner && PokemonWidget) {
 		PokemonWidget->ClearWrapBox();
+		PokemonWidget->ClearSummaryBox();
 		GameMode->ShowPokemonInMenu();
 		PokemonWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;
@@ -236,6 +239,11 @@ TSubclassOf<UItemShopSlotWidget> AOverworldHUD::GetItemShopSlotWidgetClass()
 TSubclassOf<UPokedexSlotWidget> AOverworldHUD::GetPokedexSlotWidgetClass()
 {
 	return PokedexSlotWidgetClass;
+}
+
+TSubclassOf<UPokedexInfoWidget> AOverworldHUD::GetPokedexInfoWidgetClass()
+{
+	return PokedexInfoWidgetClass;
 }
 
 TSubclassOf<UPokemonSlotWidget> AOverworldHUD::GetPokemonSlotWidgetClass()

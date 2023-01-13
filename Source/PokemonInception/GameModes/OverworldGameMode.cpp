@@ -370,7 +370,7 @@ void AOverworldGameMode::FillPokedex()
 
 		if (PlayerController->bIsRegisteredInPokedex(PokemonSpecies->PokemonID)) {
 			PokedexSlotWidget->InitFilledSlot(*PokemonSpecies);
-
+			PokedexSlotWidget->SlotClicked.AddDynamic(this, &AOverworldGameMode::ShowPokedexInfo);
 		}
 		else {
 			PokedexSlotWidget->InitEmptySlot(PokemonSpecies->PokemonID);
@@ -379,6 +379,23 @@ void AOverworldGameMode::FillPokedex()
 
 		PokedexSlotDelegate.Broadcast(PokedexSlotWidget);
 	}
+}
+
+void AOverworldGameMode::ShowPokedexInfo(FPokemonBaseStruct PokemonData)
+{
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	UPokedexInfoWidget* PokedexInfo = CreateWidget<UPokedexInfoWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetPokedexInfoWidgetClass());
+
+	FString PokemonType;
+	if (PokemonData.Type2 == ETypes::None) {
+		PokemonType = ETypeToString(PokemonData.Type1);
+	}
+	else {
+		PokemonType = ETypeToString(PokemonData.Type1) + " " + ETypeToString(PokemonData.Type2);
+	}
+
+	PokedexInfo->SetPokedexInfo(PokemonData, PokemonType);
+	PokedexInfoDelegate.Broadcast(PokedexInfo);
 }
 
 void AOverworldGameMode::TogglePause()

@@ -7,6 +7,7 @@
 #include "Components/Button.h"
 #include "Components/WrapBox.h"
 #include "PokedexSlotWidget.h"
+#include "PokedexInfoWidget.h"
 #include "../ButtonClick.h"
 #include "PokedexWidget.generated.h"
 
@@ -27,13 +28,21 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UWrapBox* PokedexSlotBox;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UWrapBox* InfoBox;
+
 	virtual void NativeConstruct() override;
 
 public:
 	UFUNCTION()
 	void AddPokedexSlotToBox(UPokedexSlotWidget* PokedexSlot);
 
+	UFUNCTION()
+	void AddPokedexInfoToBox(UPokedexInfoWidget* PokedexInfo);
+
 	void ClearSlotBox();
+
+	void ClearInfoBox();
 
 	FButtonClicked BackClicked;
 };

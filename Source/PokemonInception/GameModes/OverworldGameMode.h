@@ -62,6 +62,9 @@ public:
 	UFUNCTION()
 	void FillPokedex();
 
+	UFUNCTION()
+	void ShowPokedexInfo(FPokemonBaseStruct PokemonData);
+
 	TArray<class UDataTable*> GetItemDT() const;
 
 	TArray<class UDataTable*> GetMoveDT() const;
@@ -79,6 +82,7 @@ public:
 	FItemInfoSignature ItemInfoDelegate;
 
 	FPokedexSlotSignature PokedexSlotDelegate;
+	FPokedexInfoSignature PokedexInfoDelegate;
 
 	FPokemonSlotSignature PokemonSlotDelegate;
 	FPokemonSummarySignature PokemonSummaryDelegate;

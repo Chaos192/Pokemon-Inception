@@ -7,6 +7,7 @@
 #include "MenuWidget.h"
 #include "PokedexWidget.h"
 #include "PokedexSlotWidget.h"
+#include "PokedexInfoWidget.h"
 #include "PokemonWidget.h"
 #include "BagWidget.h"
 #include "TrainerCardWidget.h"
@@ -66,6 +67,9 @@ protected:
 	TSubclassOf<UPokedexSlotWidget> PokedexSlotWidgetClass;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPokedexInfoWidget> PokedexInfoWidgetClass;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UPokemonSlotWidget> PokemonSlotWidgetClass;
 
 	UPROPERTY(EditAnywhere)
@@ -118,6 +122,8 @@ public:
 	TSubclassOf<UItemShopSlotWidget> GetItemShopSlotWidgetClass();
 
 	TSubclassOf<UPokedexSlotWidget> GetPokedexSlotWidgetClass();
+
+	TSubclassOf<UPokedexInfoWidget> GetPokedexInfoWidgetClass();
 
 	TSubclassOf<UPokemonSlotWidget> GetPokemonSlotWidgetClass();
 

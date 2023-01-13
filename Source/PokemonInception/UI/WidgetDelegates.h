@@ -10,6 +10,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FShopSlotSignature, UItemShopSlotWid
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FItemInfoSignature, UItemInfoWidget*, ItemInfo);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPokedexSlotSignature, UPokedexSlotWidget*, PokedexSlot);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPokedexInfoSignature, UPokedexInfoWidget*, PokedexInfo);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPokemonSlotSignature, UPokemonSlotWidget*, PokemonSlot);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPokemonSummarySignature, UPokemonSummaryWidget*, PokemonSummary);
