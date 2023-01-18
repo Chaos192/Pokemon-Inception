@@ -42,9 +42,9 @@ void AOverworldGameMode::BeginPlay()
 			PlayerController->RegisterToPokedex(SpeciesData);
 		}
 
-		for (AActor* Actor : ActorsToDestroy) {
+		/*for (AActor* Actor : ActorsToDestroy) {
 			Actor->Destroy();
-		}
+		}*/
 	}
 	
 	PlayerController->PauseDelegate.AddDynamic(this, &AOverworldGameMode::TogglePause);

@@ -154,10 +154,6 @@ struct FPokemonStruct
 		}
 	}
 
-	bool IsPokemonFainted() {
-		return bIsFainted;
-	}
-
 	void RecoverStatus() {
 		bIsFainted = false;
 		CurrHP = 1;

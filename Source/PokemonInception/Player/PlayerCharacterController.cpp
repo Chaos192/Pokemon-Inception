@@ -49,6 +49,27 @@ void APlayerCharacterController::TogglePause()
 	PauseDelegate.Broadcast();
 }
 
+FPokemonStruct APlayerCharacterController::GetLeadPokemon()
+{
+	for (FPokemonStruct Pokemon : PokemonParty) {
+		if (Pokemon.bIsFainted == false) {
+			return Pokemon;
+		}
+	}
+
+	return FPokemonStruct();
+}
+
+bool APlayerCharacterController::bIsPartyDefeated()
+{
+	for (FPokemonStruct Pokemon : PokemonParty) {
+		if (Pokemon.bIsFainted == false) {
+			return false;
+		}
+	}
+	return true;
+}
+
 void APlayerCharacterController::ObtainItem(FItemBaseStruct Item)
 {
 	Inventory.Add(Item);

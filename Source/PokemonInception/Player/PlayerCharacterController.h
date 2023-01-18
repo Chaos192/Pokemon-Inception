@@ -19,6 +19,12 @@ class POKEMONINCEPTION_API APlayerCharacterController : public APlayerController
 	
 public:
 	UFUNCTION()
+	FPokemonStruct GetLeadPokemon();
+
+	UFUNCTION()
+	bool bIsPartyDefeated();
+
+	UFUNCTION()
 	void ObtainItem(FItemBaseStruct Item);
 
 	UFUNCTION()

@@ -38,6 +38,9 @@ void ABattleGameMode::BeginPlay()
 
 	PlayerController->SetViewTargetWithBlend(FoundActors[0], 0, EViewTargetBlendFunction::VTBlend_Linear);
 
+	PlayerPokemon = PlayerController->GetLeadPokemon();
+	OpponentPokemon = GetCurrentOpponent();
+
 	PlacePlayerPokemon(PlayerController->GetPokemonParty()[0]);
 	PlaceOpponentPokemon(OpponentTeam[0]);
 
@@ -61,6 +64,21 @@ void ABattleGameMode::PlaceOpponentPokemon(FPokemonStruct Pokemon)
 	FVector Position = FVector(-350, 440, 115);
 
 	OpponentPokemonActor = GetWorld()->SpawnActor<AStaticOverworldPokemon>(Pokemon.SpeciesData.PokemonActor, Position, Rotation, SpawnInfo);
+}
+
+bool ABattleGameMode::bIsOpponentDefeated()
+{
+	for (FPokemonStruct Pokemon : OpponentTeam) {
+		if (Pokemon.bIsFainted == false) {
+			return false;
+		}
+	}
+	return true;
+}
+
+void ABattleGameMode::UseMove(FPokemonStruct Attacker, FPokemonStruct Opponent, FMoveBaseStruct Move)
+{
+	//if(Move.IsChild())
 }
 
 void ABattleGameMode::BattleStart()
@@ -94,6 +112,16 @@ void ABattleGameMode::BattleStart()
 
 void ABattleGameMode::BattleEnd()
 {
+}
+
+void ABattleGameMode::BattleTurn(EAction PlayerAction)
+{
+	if (PlayerAction == EAction::UseMove) {
+
+
+
+		return;
+	}
 }
 
 FString ABattleGameMode::ETypeToString(ETypes Type)
@@ -246,7 +274,12 @@ void ABattleGameMode::ShowPokemonMoves()
 
 FPokemonStruct ABattleGameMode::GetCurrentOpponent()
 {
-	return OpponentTeam[0];
+	for (FPokemonStruct Pokemon : OpponentTeam) {
+		if (Pokemon.bIsFainted == false) {
+			return Pokemon;
+		}
+	}
+	return FPokemonStruct();
 }
 
 void ABattleGameMode::Run()

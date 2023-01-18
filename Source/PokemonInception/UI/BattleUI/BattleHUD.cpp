@@ -163,9 +163,9 @@ void ABattleHUD::RefreshPlayerPokemonStatus()
 {
 	if (PlayerOwner && PlayerPokemonStatusWidget) {
 		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(PlayerOwner);
-		PlayerPokemonStatusWidget->SetPokemonHP(Controller->GetPokemonParty()[0].CurrHP, Controller->GetPokemonParty()[0].MaxHP);
-		PlayerPokemonStatusWidget->SetPokemonLevel(Controller->GetPokemonParty()[0].Level);
-		PlayerPokemonStatusWidget->SetPokemonName(Controller->GetPokemonParty()[0].SpeciesData.Name);
+		PlayerPokemonStatusWidget->SetPokemonHP(Controller->GetLeadPokemon().CurrHP, Controller->GetPokemonParty()[0].MaxHP);
+		PlayerPokemonStatusWidget->SetPokemonLevel(Controller->GetLeadPokemon().Level);
+		PlayerPokemonStatusWidget->SetPokemonName(Controller->GetLeadPokemon().SpeciesData.Name);
 	}
 }
 

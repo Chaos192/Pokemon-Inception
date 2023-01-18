@@ -15,6 +15,14 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageSignature, FString, String);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWidgetSignature, UUserWidget*, Widget);
 
+UENUM()
+enum class EAction {
+	UseMove,
+	UsePokeball,
+	UseHealingItem,
+	SwitchOut
+};
+
 UCLASS()
 class POKEMONINCEPTION_API ABattleGameMode : public AGameModeBase
 {
@@ -26,9 +34,16 @@ private:
 	AStaticOverworldPokemon* PlayerPokemonActor = nullptr;
 	AStaticOverworldPokemon* OpponentPokemonActor = nullptr;
 
+	FPokemonStruct PlayerPokemon;
+	FPokemonStruct OpponentPokemon;
+
 	void PlacePlayerPokemon(FPokemonStruct Pokemon);
 
 	void PlaceOpponentPokemon(FPokemonStruct Pokemon);
+
+	bool bIsOpponentDefeated();
+
+	void UseMove(FPokemonStruct Attacker, FPokemonStruct Opponent, FMoveBaseStruct Move);
 
 protected:
 	virtual void BeginPlay() override;
@@ -38,6 +53,9 @@ protected:
 
 	UFUNCTION()
 	void BattleEnd();
+
+	UFUNCTION()
+	void BattleTurn(EAction PlayerAction);
 
 	UFUNCTION()
 	FString ETypeToString(ETypes Type);
