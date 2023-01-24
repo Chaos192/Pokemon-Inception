@@ -14,6 +14,9 @@ struct FMoveBaseStruct : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName MoveID;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText Name;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -27,4 +30,7 @@ struct FMoveBaseStruct : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText Description;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString MoveStructType;
 };

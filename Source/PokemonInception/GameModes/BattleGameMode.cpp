@@ -10,6 +10,9 @@
 #include "../Player/PlayerCharacterController.h"
 #include "../Player/PokemonInceptionCharacter.h"
 #include "../Pokemon/StaticOverworldPokemon.h"
+#include "../Pokemon/AttackMoveStruct.h"
+#include "../Pokemon/StatusMoveStruct.h"
+#include "../Pokemon/TypeStruct.h"
 
 
 void ABattleGameMode::BeginPlay()
@@ -78,7 +81,162 @@ bool ABattleGameMode::bIsOpponentDefeated()
 
 void ABattleGameMode::UseMove(FPokemonStruct Attacker, FPokemonStruct Opponent, FMoveBaseStruct Move)
 {
-	//if(Move.IsChild())
+	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+
+	FTimerDelegate MoveMessageDelegate;
+	FString MoveMessage;
+
+	if (Move.CurrPowerPoints == 0) {
+		return;
+	}
+
+	if (Move.MoveStructType == "Attack") {
+		FAttackMoveStruct* AttackMove = AttackMovesDT->FindRow<FAttackMoveStruct>(Move.MoveID, "");
+
+		//Base damage
+		int Damage = (((100 + Attacker.Attack + 15 * Attacker.Level) * AttackMove->BaseDamage) / (Opponent.Defence + 50)) / 5;
+
+		float EffectMultiplier = 0;
+
+		//Adding effect multiplier
+		if (Attacker.Effects.Contains(EEffect::AttackUp)) {
+			EffectMultiplier = 1.5;
+		}
+		else if (Attacker.Effects.Contains(EEffect::AttackDown)) {
+			EffectMultiplier = 0.5;
+		}
+		else EffectMultiplier = 1;
+
+		if (Opponent.Effects.Contains(EEffect::DefenceUp)) {
+			EffectMultiplier /= 1.5;
+		}
+		else if (Opponent.Effects.Contains(EEffect::DefenceDown)) {
+			EffectMultiplier /= 0.5;
+		}
+
+		Damage *= EffectMultiplier;
+
+		//Is it a critical hit
+		int CriticalHitChance = FMath::RandRange(1, 100);
+		if (CriticalHitChance <= 5) {
+			Damage *= 1.5;
+		}
+
+		//Multiplying by a random value
+		float RandomMultiplier = FMath::RandRange(0.85, 1.00);
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Random multiplier: " + FString::SanitizeFloat(RandomMultiplier));
+		Damage *= RandomMultiplier;
+
+		//Same type attack bonus - STAB
+		if ((Attacker.SpeciesData.Type1 == AttackMove->MoveType) || (Attacker.SpeciesData.Type2 == AttackMove->MoveType)) {
+			Damage *= 1.25;
+		}
+
+		//Move effectiveness 
+		FTypeStruct* MovetTypeStruct = TypesDT->FindRow<FTypeStruct>(FName(ETypeToString(AttackMove->MoveType)), "");
+		
+		if (MovetTypeStruct->SuperEffectiveAgainst.Contains(Opponent.SpeciesData.Type1)) {
+			Damage *= 2;
+		}
+		else if (MovetTypeStruct->NotVeryEffectiveAgainst.Contains(Opponent.SpeciesData.Type1)) {
+			Damage *= 0.5;
+		}
+		else if (MovetTypeStruct->NoEffectAgainst.Contains(Opponent.SpeciesData.Type1)) {
+			Damage *= 0;
+		}
+
+		if (Opponent.SpeciesData.Type2 != ETypes::None) {
+			if(MovetTypeStruct->SuperEffectiveAgainst.Contains(Opponent.SpeciesData.Type2)) {
+				Damage *= 2;
+			}
+			else if (MovetTypeStruct->NotVeryEffectiveAgainst.Contains(Opponent.SpeciesData.Type2)) {
+				Damage *= 0.5;
+			}
+			else if (MovetTypeStruct->NoEffectAgainst.Contains(Opponent.SpeciesData.Type2)) {
+				Damage *= 0;
+			}
+		}
+
+		MoveMessage = Attacker.SpeciesData.Name.ToString() + " used " + AttackMove->Name.ToString() + " and dealt " + FString::FromInt(Damage) + " damage!";
+		MoveMessageDelegate.BindUFunction(Hud, FName("ShowText"), MoveMessage);
+
+		Opponent.RecieveDamage(Damage);
+
+		GetWorldTimerManager().SetTimer(MessageTimer, MoveMessageDelegate, 0.001, false);
+		GetWorldTimerManager().SetTimer(WidgetDelay, Hud, &ABattleHUD::ShowBattleStartWidget, 2, false);
+	}
+
+
+	
+	if (Move.MoveStructType == "Status") {
+		FStatusMoveStruct* StatusMove = StatusMovesDT->FindRow<FStatusMoveStruct>(Move.MoveID, "");
+
+		for (EEffect Effect : StatusMove->MoveEffects) {
+			if (Effect == EEffect::RestoreHP) {
+				switch (StatusMove->Target) {
+				case ETarget::Self:
+					Attacker.RestoreHP(Attacker.MaxHP / 2);
+
+					MoveMessage = Attacker.SpeciesData.Name.ToString() + " used " + StatusMove->Name.ToString() + "!";
+					MoveMessageDelegate.BindUFunction(Hud, FName("ShowText"), MoveMessage);
+
+					GetWorldTimerManager().SetTimer(MessageTimer, MoveMessageDelegate, 0.001, false);
+					GetWorldTimerManager().SetTimer(WidgetDelay, Hud, &ABattleHUD::ShowBattleStartWidget, 2, false);
+					break;
+
+				case ETarget::Opponent:
+					Opponent.RestoreHP(Opponent.MaxHP / 2);
+
+					MoveMessage = Attacker.SpeciesData.Name.ToString() + " used " + StatusMove->Name.ToString() + "!";
+					MoveMessageDelegate.BindUFunction(Hud, FName("ShowText"), MoveMessage);
+
+					GetWorldTimerManager().SetTimer(MessageTimer, MoveMessageDelegate, 0.001, false);
+					GetWorldTimerManager().SetTimer(WidgetDelay, Hud, &ABattleHUD::ShowBattleStartWidget, 2, false);
+					break;
+				}
+			}
+
+			else {
+				switch (StatusMove->Target) {
+				case ETarget::Self:
+					if (Attacker.AddEffect(Effect) == true) {
+						MoveMessage = Attacker.SpeciesData.Name.ToString() + " used " + StatusMove->Name.ToString() + "!";
+						MoveMessageDelegate.BindUFunction(Hud, FName("ShowText"), MoveMessage);
+
+						GetWorldTimerManager().SetTimer(MessageTimer, MoveMessageDelegate, 0.001, false);
+						GetWorldTimerManager().SetTimer(WidgetDelay, Hud, &ABattleHUD::ShowBattleStartWidget, 2, false);
+					}
+					else {
+						MoveMessage = Attacker.SpeciesData.Name.ToString() + " used " + StatusMove->Name.ToString() + ", but it failed";
+						MoveMessageDelegate.BindUFunction(Hud, FName("ShowText"), MoveMessage);
+
+						GetWorldTimerManager().SetTimer(MessageTimer, MoveMessageDelegate, 0.001, false);
+						GetWorldTimerManager().SetTimer(WidgetDelay, Hud, &ABattleHUD::ShowBattleStartWidget, 2, false);
+					}
+					break;
+
+				case ETarget::Opponent:
+					if (Opponent.AddEffect(Effect) == true) {
+						MoveMessage = Attacker.SpeciesData.Name.ToString() + " used " + StatusMove->Name.ToString() + "!";
+						MoveMessageDelegate.BindUFunction(Hud, FName("ShowText"), MoveMessage);
+
+						GetWorldTimerManager().SetTimer(MessageTimer, MoveMessageDelegate, 0.001, false);
+						GetWorldTimerManager().SetTimer(WidgetDelay, Hud, &ABattleHUD::ShowBattleStartWidget, 2, false);
+					}
+					else {
+						MoveMessage = Attacker.SpeciesData.Name.ToString() + " used " + StatusMove->Name.ToString() + ", but it failed";
+						MoveMessageDelegate.BindUFunction(Hud, FName("ShowText"), MoveMessage);
+
+						GetWorldTimerManager().SetTimer(MessageTimer, MoveMessageDelegate, 0.001, false);
+						GetWorldTimerManager().SetTimer(WidgetDelay, Hud, &ABattleHUD::ShowBattleStartWidget, 2, false);
+					}
+					break;
+				}
+			}
+		}
+	}
+
+	Move.CurrPowerPoints--;
 }
 
 void ABattleGameMode::BattleStart()
@@ -117,10 +275,7 @@ void ABattleGameMode::BattleEnd()
 void ABattleGameMode::BattleTurn(EAction PlayerAction)
 {
 	if (PlayerAction == EAction::UseMove) {
-
-
-
-		return;
+		UseMove(PlayerPokemon, OpponentPokemon, SelectedMove);
 	}
 }
 
@@ -152,6 +307,12 @@ FString ABattleGameMode::ETypeToString(ETypes Type)
 		default: 
 			return " ";
 	}
+}
+
+void ABattleGameMode::SelectMove(FMoveBaseStruct Move)
+{
+	SelectedMove = Move;
+	BattleTurn(EAction::UseMove);
 }
 
 void ABattleGameMode::ShowPokemonInMenu()
@@ -268,6 +429,9 @@ void ABattleGameMode::ShowPokemonMoves()
 		UMoveButtonWidget* MoveButton = CreateWidget<UMoveButtonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetMoveButtonWidgetClass());
 
 		MoveButton->InitButton(Move.Name, Move.CurrPowerPoints, Move.PowerPoints, Move.MoveType);
+		MoveButton->SetMove(Move);
+		MoveButton->ButtonClicked.AddDynamic(this, &ABattleGameMode::SelectMove);
+
 		MoveDelegate.Broadcast(MoveButton);
 	}
 }
@@ -282,7 +446,7 @@ FPokemonStruct ABattleGameMode::GetCurrentOpponent()
 	return FPokemonStruct();
 }
 
-void ABattleGameMode::Run()
+void ABattleGameMode::ExitBattleMap()
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (PlayerController == nullptr) {
@@ -300,5 +464,13 @@ void ABattleGameMode::Run()
 
 	Hud->PlayerOwner->SetInputMode(FInputModeGameOnly());
 	Hud->PlayerOwner->bShowMouseCursor = false;
+}
+
+void ABattleGameMode::Run()
+{
+	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+
+	Hud->ShowText("Got away safely...");
+	GetWorldTimerManager().SetTimer(WidgetDelay, this, &ABattleGameMode::ExitBattleMap, 2, false);
 }
 

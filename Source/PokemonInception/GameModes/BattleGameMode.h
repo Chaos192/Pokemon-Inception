@@ -7,6 +7,7 @@
 #include "../Player/Camera/BattleCamera.h"
 #include "../Pokemon/PokemonStruct.h"
 #include "../Pokemon/TypeStruct.h"
+#include "../Pokemon/MoveBaseStruct.h"
 #include "../SaveGame/WorldSaveData.h"
 #include "../UI/OverworldUI/ItemInfoWidget.h"
 #include "../UI/WidgetDelegates.h"
@@ -43,6 +44,7 @@ private:
 
 	bool bIsOpponentDefeated();
 
+	FMoveBaseStruct SelectedMove;
 	void UseMove(FPokemonStruct Attacker, FPokemonStruct Opponent, FMoveBaseStruct Move);
 
 protected:
@@ -60,8 +62,23 @@ protected:
 	UFUNCTION()
 	FString ETypeToString(ETypes Type);
 
+	UFUNCTION()
+	void SelectMove(FMoveBaseStruct Move);
+
+	UFUNCTION()
+	void ExitBattleMap();
+
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ABattleCamera> Camera;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UDataTable* AttackMovesDT;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UDataTable* StatusMovesDT;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UDataTable* TypesDT;
 
 	FTimerHandle MessageTimer;
 	FTimerHandle MessageTimer2;

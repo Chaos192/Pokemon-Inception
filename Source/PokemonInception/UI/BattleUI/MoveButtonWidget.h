@@ -8,6 +8,7 @@
 #include "Components/Button.h"
 #include "../ButtonClick.h"
 #include "../../Pokemon/TypeStruct.h"
+#include "../../Pokemon/MoveBaseStruct.h"
 #include "MoveButtonWidget.generated.h"
 
 
@@ -19,6 +20,8 @@ class POKEMONINCEPTION_API UMoveButtonWidget : public UUserWidget
 private:
 	UFUNCTION()
 	void OnButtonClicked();
+
+	FMoveBaseStruct Move;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
@@ -39,5 +42,8 @@ public:
 	UFUNCTION()
 	void InitButton(FText Name, int CurrPP, int MaxPP, ETypes MoveType);
 
-	FButtonClicked ButtonClicked;
+	UFUNCTION()
+	void SetMove(FMoveBaseStruct InMove);
+
+	FMoveStructSignature ButtonClicked;
 };

@@ -7,6 +7,7 @@
 #include "TypeStruct.h"
 #include "MoveBaseStruct.h"
 #include "PokemonBaseStruct.h"
+#include "StatusMoveStruct.h"
 #include "PokemonStruct.generated.h"
 
 USTRUCT(BlueprintType)
@@ -52,6 +53,9 @@ struct FPokemonStruct
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsFainted = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<EEffect> Effects;
 
 	void Init(int StartingLevel, FPokemonBaseStruct Species) {
 		SpeciesData = Species;
@@ -157,5 +161,48 @@ struct FPokemonStruct
 	void RecoverStatus() {
 		bIsFainted = false;
 		CurrHP = 1;
+	}
+
+	bool AddEffect(EEffect Effect) {
+		if (Effects.Contains(Effect) == true) {
+			return false;
+		}
+
+		if (Effects.Contains(EEffect::AttackDown) && Effect == EEffect::AttackUp) {
+			Effects.Remove(EEffect::AttackDown);
+			return true;
+		}
+
+		if (Effects.Contains(EEffect::AttackUp) && Effect == EEffect::AttackDown) {
+			Effects.Remove(EEffect::AttackUp);
+			return true;
+		}
+
+		if (Effects.Contains(EEffect::DefenceDown) && Effect == EEffect::DefenceUp) {
+			Effects.Remove(EEffect::DefenceDown);
+			return true;
+		}
+
+		if (Effects.Contains(EEffect::DefenceUp) && Effect == EEffect::DefenceDown) {
+			Effects.Remove(EEffect::DefenceUp);
+			return true;
+		}
+
+		if (Effects.Contains(EEffect::SpeedDown) && Effect == EEffect::SpeedUp) {
+			Effects.Remove(EEffect::SpeedDown);
+			return true;
+		}
+
+		if (Effects.Contains(EEffect::SpeedUp) && Effect == EEffect::SpeedDown) {
+			Effects.Remove(EEffect::SpeedDown);
+			return true;
+		}
+
+		Effects.Add(Effect);
+		return true;
+	}
+
+	void ClearEffects() {
+		Effects.Empty();
 	}
 };

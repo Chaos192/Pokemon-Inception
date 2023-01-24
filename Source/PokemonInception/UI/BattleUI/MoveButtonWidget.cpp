@@ -5,7 +5,7 @@
 
 void UMoveButtonWidget::OnButtonClicked()
 {
-	ButtonClicked.Broadcast();
+	ButtonClicked.Broadcast(Move);
 }
 
 void UMoveButtonWidget::NativeConstruct()
@@ -44,4 +44,9 @@ void UMoveButtonWidget::InitButton(FText Name, int CurrPP, int MaxPP, ETypes Mov
 		case ETypes::Dragon: MoveButton->SetBackgroundColor(FLinearColor(0.523, 0.092, 0.515, 1));
 			break;
 	}
+}
+
+void UMoveButtonWidget::SetMove(FMoveBaseStruct InMove)
+{
+	Move = InMove;
 }

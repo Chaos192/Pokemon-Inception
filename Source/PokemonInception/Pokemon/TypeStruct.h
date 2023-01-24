@@ -45,25 +45,4 @@ struct FTypeStruct : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<ETypes> NoEffectAgainst;
-
-	bool operator > (const ETypes Type) const {
-		if (SuperEffectiveAgainst.Contains(Type)) {
-			return true;
-		}
-		else return false;
-	}
-
-	bool operator < (const ETypes Type) const {
-		if (NotVeryEffectiveAgainst.Contains(Type)) {
-			return true;
-		}
-		else return false;
-	}
-
-	bool operator != (const ETypes Type) const {
-		if (NoEffectAgainst.Contains(Type)) {
-			return true;
-		}
-		else return false;
-	}
 };

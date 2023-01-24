@@ -30,16 +30,12 @@ struct FStatusMoveStruct : public FMoveBaseStruct
 	GENERATED_BODY()
 
 	FStatusMoveStruct() {
-		Value = 0;
 		Target = ETarget::Self;
 		MoveEffects.Add(EEffect::RestoreHP);
 		Name = FText::FromString("None");
 		MoveType = ETypes::None;
 		PowerPoints = 0;
 	}
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Value;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ETarget Target;
