@@ -34,7 +34,10 @@ void AOverworldGameMode::BeginPlay()
 		PlayerController->LoadPokemonParty(SaveData->PartyData);
 		PlayerController->LoadPokemonStorage(SaveData->StorageData);
 		PlayerOwner->SetActorLocation(SaveData->PlayerLocation);
-		ActorsToDestroy = SaveData->ActorsToDestroy;
+		
+		if (SaveData->ActorsToDestroy.Num() > 0) {
+			ActorsToDestroy = SaveData->ActorsToDestroy;
+		}
 
 		SaveData->OpponentData.Empty();
 
@@ -42,9 +45,11 @@ void AOverworldGameMode::BeginPlay()
 			PlayerController->RegisterToPokedex(SpeciesData);
 		}
 
-		/*for (AActor* Actor : ActorsToDestroy) {
-			Actor->Destroy();
-		}*/
+		if (ActorsToDestroy.Num() > 0) {
+			for (AActor* Actor : ActorsToDestroy) {
+				Actor->Destroy();
+			}
+		}
 	}
 	
 	PlayerController->PauseDelegate.AddDynamic(this, &AOverworldGameMode::TogglePause);
@@ -72,7 +77,10 @@ void AOverworldGameMode::SaveGame()
 	SaveData->PlayerLocation = PlayerOwner->GetActorLocation();
 	SaveData->PartyData = PlayerController->GetPokemonParty();
 	SaveData->StorageData = PlayerController->GetPokemonStorage();
-	SaveData->ActorsToDestroy = ActorsToDestroy;
+	
+	if (ActorsToDestroy.Num() > 0) {
+		SaveData->ActorsToDestroy = ActorsToDestroy;
+	}
 
 	UGameplayStatics::SaveGameToSlot(SaveData, "SaveSlot", 0);
 }
