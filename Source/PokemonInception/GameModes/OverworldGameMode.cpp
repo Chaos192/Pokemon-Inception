@@ -34,6 +34,7 @@ void AOverworldGameMode::BeginPlay()
 		PlayerController->LoadPokemonParty(SaveData->PartyData);
 		PlayerController->LoadPokemonStorage(SaveData->StorageData);
 		PlayerOwner->SetActorLocation(SaveData->PlayerLocation);
+		PlayerOwner->SetActorRotation(SaveData->PlayerRotation, ETeleportType::None);
 		
 		if (SaveData->ActorsToDestroy.Num() > 0) {
 			ActorsToDestroy = SaveData->ActorsToDestroy;
@@ -47,7 +48,7 @@ void AOverworldGameMode::BeginPlay()
 
 		if (ActorsToDestroy.Num() > 0) {
 			for (AActor* Actor : ActorsToDestroy) {
-				Actor->Destroy();
+				//Actor->Destroy();
 			}
 		}
 	}
@@ -75,6 +76,7 @@ void AOverworldGameMode::SaveGame()
 	SaveData->PokedexData = PlayerController->GetPokedexData();
 	SaveData->MoneyData = PlayerController->GetMoney();
 	SaveData->PlayerLocation = PlayerOwner->GetActorLocation();
+	SaveData->PlayerRotation = PlayerOwner->GetActorRotation();
 	SaveData->PartyData = PlayerController->GetPokemonParty();
 	SaveData->StorageData = PlayerController->GetPokemonStorage();
 	

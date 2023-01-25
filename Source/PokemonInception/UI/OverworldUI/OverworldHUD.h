@@ -11,7 +11,6 @@
 #include "PokemonWidget.h"
 #include "BagWidget.h"
 #include "TrainerCardWidget.h"
-#include "SettingsWidget.h"
 #include "ShopWidget.h"
 #include "ItemSlotWidget.h"
 #include "ItemShopSlotWidget.h"
@@ -47,9 +46,6 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UTrainerCardWidget> TrainerCardWidgetClass;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<USettingsWidget> SettingsWidgetClass;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UShopWidget> ShopWidgetClass;
@@ -100,9 +96,6 @@ protected:
 	class UTrainerCardWidget* TrainerCardWidget;
 
 	UPROPERTY()
-	class USettingsWidget* SettingsWidget;
-
-	UPROPERTY()
 	class UShopWidget* ShopWidget;
 
 	virtual void BeginPlay()override;
@@ -145,9 +138,6 @@ public:
 
 	UFUNCTION()
 	void ShowTrainerCard();
-
-	UFUNCTION()
-	void ShowSettings();
 
 	UFUNCTION()
 	void ShowShop(TArray<FName> ItemsToSell);

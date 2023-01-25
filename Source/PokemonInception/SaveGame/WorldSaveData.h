@@ -20,6 +20,9 @@ public:
 	FVector PlayerLocation;
 
 	UPROPERTY(EditDefaultsOnly)
+	FRotator PlayerRotation;
+
+	UPROPERTY(EditDefaultsOnly)
 	TArray<FItemBaseStruct> InventoryData;
 
 	UPROPERTY(EditDefaultsOnly)

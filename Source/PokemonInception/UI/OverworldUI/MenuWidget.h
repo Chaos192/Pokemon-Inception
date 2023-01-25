@@ -30,9 +30,6 @@ private:
 	UFUNCTION()
 	void OnSaveClicked();
 
-	UFUNCTION()
-	void OnSettingsClicked();
-
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* Pokedex;
@@ -49,9 +46,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* Save;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Settings;
-
 	virtual void NativeConstruct() override;
 
 public:
@@ -60,5 +54,4 @@ public:
 	FButtonClicked BagClicked;
 	FButtonClicked TrainerCardClicked;
 	FButtonClicked SaveClicked;
-	FButtonClicked SettingsClicked;
 };

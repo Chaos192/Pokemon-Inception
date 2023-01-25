@@ -28,11 +28,6 @@ void UMenuWidget::OnSaveClicked()
 	SaveClicked.Broadcast();
 }
 
-void UMenuWidget::OnSettingsClicked()
-{
-	SettingsClicked.Broadcast();
-}
-
 void UMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -41,5 +36,4 @@ void UMenuWidget::NativeConstruct()
 	Bag->OnClicked.AddDynamic(this, &UMenuWidget::OnBagClicked);
 	TrainerCard->OnClicked.AddDynamic(this, &UMenuWidget::OnTrainerCardClicked);
 	Save->OnClicked.AddDynamic(this, &UMenuWidget::OnSaveClicked);
-	Settings->OnClicked.AddDynamic(this, &UMenuWidget::OnSettingsClicked);
 }
