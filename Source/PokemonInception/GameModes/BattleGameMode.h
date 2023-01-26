@@ -31,21 +31,20 @@ class POKEMONINCEPTION_API ABattleGameMode : public AGameModeBase
 
 private:
 	TArray<FPokemonStruct> OpponentTeam;
+	int GetCurrentOpponent();
+	bool bIsOpponentDefeated();
+
+	int PlayerPokemonId;
+	int OpponentPokemonId;
 
 	AStaticOverworldPokemon* PlayerPokemonActor = nullptr;
 	AStaticOverworldPokemon* OpponentPokemonActor = nullptr;
 
-	FPokemonStruct PlayerPokemon;
-	FPokemonStruct OpponentPokemon;
-
-	void PlacePlayerPokemon(FPokemonStruct Pokemon);
-
-	void PlaceOpponentPokemon(FPokemonStruct Pokemon);
-
-	bool bIsOpponentDefeated();
+	void PlacePlayerPokemon(int PokemonId);
+	void PlaceOpponentPokemon(int PokemonId);
 
 	FMoveBaseStruct SelectedMove;
-	void UseMove(FPokemonStruct Attacker, FPokemonStruct Opponent, FMoveBaseStruct Move);
+	void UseMove(int AttackerId, int OpponentId, FMoveBaseStruct Move);
 
 protected:
 	virtual void BeginPlay() override;
@@ -101,7 +100,7 @@ public:
 	void ShowItemInfo(FItemBaseStruct InventoryItem);
 
 	UFUNCTION()
-	FPokemonStruct GetCurrentOpponent();
+	FPokemonStruct GetCurrentOpponentStruct();
 
 	UFUNCTION()
 	void Run();

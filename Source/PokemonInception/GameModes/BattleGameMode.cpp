@@ -7,7 +7,7 @@
 #include "Blueprint/UserWidget.h"
 #include "../UI/BattleUI/BattleHUD.h"
 #include "../UI/BattleUI/MoveButtonWidget.h"
-#include "../Player/PlayerCharacterController.h"
+#include "../Player/BattleController.h"
 #include "../Player/PokemonInceptionCharacter.h"
 #include "../Pokemon/StaticOverworldPokemon.h"
 #include "../Pokemon/AttackMoveStruct.h"
@@ -19,7 +19,7 @@ void ABattleGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (PlayerController == nullptr) {
 		return;
 	}
@@ -29,44 +29,47 @@ void ABattleGameMode::BeginPlay()
 	if (UGameplayStatics::DoesSaveGameExist("SaveSlot", 0)) {
 		SaveData = Cast<UWorldSaveData>(UGameplayStatics::LoadGameFromSlot("SaveSlot", 0));
 
-		PlayerController->LoadInventory(SaveData->InventoryData);
-		PlayerController->RecieveMoney(SaveData->MoneyData);
-		PlayerController->LoadPokemonParty(SaveData->PartyData);
+		PlayerController->Inventory = SaveData->InventoryData;
+		PlayerController->Money = SaveData->MoneyData;
+		PlayerController->PokemonParty = SaveData->PartyData;
 		OpponentTeam = SaveData->OpponentData;
 	}
 
 	TArray<AActor*> FoundActors;
-
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), Camera, FoundActors);
-
 	PlayerController->SetViewTargetWithBlend(FoundActors[0], 0, EViewTargetBlendFunction::VTBlend_Linear);
 
-	PlayerPokemon = PlayerController->GetLeadPokemon();
-	OpponentPokemon = GetCurrentOpponent();
+	PlayerPokemonId = PlayerController->GetLeadPokemon();
+	OpponentPokemonId = GetCurrentOpponent();
 
-	PlacePlayerPokemon(PlayerController->GetPokemonParty()[0]);
-	PlaceOpponentPokemon(OpponentTeam[0]);
+	PlacePlayerPokemon(PlayerPokemonId);
+	PlaceOpponentPokemon(OpponentPokemonId);
 
 	BattleStart();
 }
 
-void ABattleGameMode::PlacePlayerPokemon(FPokemonStruct Pokemon)
+void ABattleGameMode::PlacePlayerPokemon(int PokemonId)
 {
+	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (PlayerController == nullptr) {
+		return;
+	}
+
 	FRotator Rotation;
 	FActorSpawnParameters SpawnInfo;
 	FVector Position = FVector(-350, -270, 115);
 
-	PlayerPokemonActor = GetWorld()->SpawnActor<AStaticOverworldPokemon>(Pokemon.SpeciesData.PokemonActor, Position, Rotation, SpawnInfo);
+	PlayerPokemonActor = GetWorld()->SpawnActor<AStaticOverworldPokemon>(PlayerController->PokemonParty[PokemonId].SpeciesData.PokemonActor, Position, Rotation, SpawnInfo);
 }
 
-void ABattleGameMode::PlaceOpponentPokemon(FPokemonStruct Pokemon)
+void ABattleGameMode::PlaceOpponentPokemon(int PokemonId)
 {
 	FRotator Rotation;
-	Rotation.Yaw += 180;
+	Rotation.Yaw = 180;
 	FActorSpawnParameters SpawnInfo;
 	FVector Position = FVector(-350, 440, 115);
 
-	OpponentPokemonActor = GetWorld()->SpawnActor<AStaticOverworldPokemon>(Pokemon.SpeciesData.PokemonActor, Position, Rotation, SpawnInfo);
+	OpponentPokemonActor = GetWorld()->SpawnActor<AStaticOverworldPokemon>(OpponentTeam[PokemonId].SpeciesData.PokemonActor, Position, Rotation, SpawnInfo);
 }
 
 bool ABattleGameMode::bIsOpponentDefeated()
@@ -79,9 +82,25 @@ bool ABattleGameMode::bIsOpponentDefeated()
 	return true;
 }
 
-void ABattleGameMode::UseMove(FPokemonStruct Attacker, FPokemonStruct Opponent, FMoveBaseStruct Move)
+int ABattleGameMode::GetCurrentOpponent()
+{
+	for (int i = 0; i < OpponentTeam.Num(); i++) {
+		if (OpponentTeam[i].bIsFainted == false) {
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+void ABattleGameMode::UseMove(int AttackerId, int OpponentId, FMoveBaseStruct Move)
 {
 	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+
+	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (PlayerController == nullptr) {
+		return;
+	}
 
 	FTimerDelegate MoveMessageDelegate;
 	FString MoveMessage;
@@ -94,23 +113,24 @@ void ABattleGameMode::UseMove(FPokemonStruct Attacker, FPokemonStruct Opponent, 
 		FAttackMoveStruct* AttackMove = AttackMovesDT->FindRow<FAttackMoveStruct>(Move.MoveID, "");
 
 		//Base damage
-		int Damage = (((100 + Attacker.Attack + 15 * Attacker.Level) * AttackMove->BaseDamage) / (Opponent.Defence + 50)) / 5;
+		int Damage = (((100 + PlayerController->PokemonParty[AttackerId].Attack + 15 * PlayerController->PokemonParty[AttackerId].Level) *
+			AttackMove->BaseDamage) / (OpponentTeam[OpponentId].Defence + 50)) / 5;
 
 		float EffectMultiplier = 0;
 
 		//Adding effect multiplier
-		if (Attacker.Effects.Contains(EEffect::AttackUp)) {
+		if (PlayerController->PokemonParty[AttackerId].Effects.Contains(EEffect::AttackUp)) {
 			EffectMultiplier = 1.5;
 		}
-		else if (Attacker.Effects.Contains(EEffect::AttackDown)) {
+		else if (PlayerController->PokemonParty[AttackerId].Effects.Contains(EEffect::AttackDown)) {
 			EffectMultiplier = 0.5;
 		}
 		else EffectMultiplier = 1;
 
-		if (Opponent.Effects.Contains(EEffect::DefenceUp)) {
+		if (OpponentTeam[OpponentId].Effects.Contains(EEffect::DefenceUp)) {
 			EffectMultiplier /= 1.5;
 		}
-		else if (Opponent.Effects.Contains(EEffect::DefenceDown)) {
+		else if (OpponentTeam[OpponentId].Effects.Contains(EEffect::DefenceDown)) {
 			EffectMultiplier /= 0.5;
 		}
 
@@ -124,46 +144,46 @@ void ABattleGameMode::UseMove(FPokemonStruct Attacker, FPokemonStruct Opponent, 
 
 		//Multiplying by a random value
 		float RandomMultiplier = FMath::RandRange(0.85, 1.00);
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Random multiplier: " + FString::SanitizeFloat(RandomMultiplier));
 		Damage *= RandomMultiplier;
 
 		//Same type attack bonus - STAB
-		if ((Attacker.SpeciesData.Type1 == AttackMove->MoveType) || (Attacker.SpeciesData.Type2 == AttackMove->MoveType)) {
+		if ((PlayerController->PokemonParty[AttackerId].SpeciesData.Type1 == AttackMove->MoveType) ||
+			(PlayerController->PokemonParty[AttackerId].SpeciesData.Type2 == AttackMove->MoveType)) {
 			Damage *= 1.25;
 		}
 
 		//Move effectiveness 
 		FTypeStruct* MovetTypeStruct = TypesDT->FindRow<FTypeStruct>(FName(ETypeToString(AttackMove->MoveType)), "");
 		
-		if (MovetTypeStruct->SuperEffectiveAgainst.Contains(Opponent.SpeciesData.Type1)) {
+		if (MovetTypeStruct->SuperEffectiveAgainst.Contains(OpponentTeam[OpponentId].SpeciesData.Type1)) {
 			Damage *= 2;
 		}
-		else if (MovetTypeStruct->NotVeryEffectiveAgainst.Contains(Opponent.SpeciesData.Type1)) {
+		else if (MovetTypeStruct->NotVeryEffectiveAgainst.Contains(OpponentTeam[OpponentId].SpeciesData.Type1)) {
 			Damage *= 0.5;
 		}
-		else if (MovetTypeStruct->NoEffectAgainst.Contains(Opponent.SpeciesData.Type1)) {
+		else if (MovetTypeStruct->NoEffectAgainst.Contains(OpponentTeam[OpponentId].SpeciesData.Type1)) {
 			Damage *= 0;
 		}
 
-		if (Opponent.SpeciesData.Type2 != ETypes::None) {
-			if(MovetTypeStruct->SuperEffectiveAgainst.Contains(Opponent.SpeciesData.Type2)) {
+		if (OpponentTeam[OpponentPokemonId].SpeciesData.Type2 != ETypes::None) {
+			if(MovetTypeStruct->SuperEffectiveAgainst.Contains(OpponentTeam[OpponentId].SpeciesData.Type2)) {
 				Damage *= 2;
 			}
-			else if (MovetTypeStruct->NotVeryEffectiveAgainst.Contains(Opponent.SpeciesData.Type2)) {
+			else if (MovetTypeStruct->NotVeryEffectiveAgainst.Contains(OpponentTeam[OpponentId].SpeciesData.Type2)) {
 				Damage *= 0.5;
 			}
-			else if (MovetTypeStruct->NoEffectAgainst.Contains(Opponent.SpeciesData.Type2)) {
+			else if (MovetTypeStruct->NoEffectAgainst.Contains(OpponentTeam[OpponentId].SpeciesData.Type2)) {
 				Damage *= 0;
 			}
 		}
 
-		MoveMessage = Attacker.SpeciesData.Name.ToString() + " used " + AttackMove->Name.ToString() + " and dealt " + FString::FromInt(Damage) + " damage!";
+		OpponentTeam[OpponentId].RecieveDamage(Damage);
+		/*UE_LOG(LogTemp, Error, TEXT("Damage dealt: %s"), *FString::FromInt(Damage));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Damage dealt: " + FString::FromInt(Damage)));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Opponent HP: " + FString::FromInt(GetCurrentOpponent().CurrHP) + "/" + FString::FromInt(GetCurrentOpponent().MaxHP)));*/
+
+		MoveMessage = PlayerController->PokemonParty[AttackerId].SpeciesData.Name.ToString() + " used " + AttackMove->Name.ToString() + " and dealt " + FString::FromInt(Damage) + " damage!";
 		MoveMessageDelegate.BindUFunction(Hud, FName("ShowText"), MoveMessage);
-
-		Opponent.RecieveDamage(Damage);
-
-		GetWorldTimerManager().SetTimer(MessageTimer, MoveMessageDelegate, 0.001, false);
-		GetWorldTimerManager().SetTimer(WidgetDelay, Hud, &ABattleHUD::ShowBattleStartWidget, 2, false);
 	}
 
 
@@ -171,70 +191,57 @@ void ABattleGameMode::UseMove(FPokemonStruct Attacker, FPokemonStruct Opponent, 
 	if (Move.MoveStructType == "Status") {
 		FStatusMoveStruct* StatusMove = StatusMovesDT->FindRow<FStatusMoveStruct>(Move.MoveID, "");
 
+		MoveMessage = PlayerController->PokemonParty[AttackerId].SpeciesData.Name.ToString() + " used " + StatusMove->Name.ToString() + "!";
+
 		for (EEffect Effect : StatusMove->MoveEffects) {
 			if (Effect == EEffect::RestoreHP) {
 				switch (StatusMove->Target) {
-				case ETarget::Self:
-					Attacker.RestoreHP(Attacker.MaxHP / 2);
+					case ETarget::Self:
+						PlayerController->PokemonParty[AttackerId].RestoreHP(PlayerController->PokemonParty[AttackerId].MaxHP / 2);
+						MoveMessageDelegate.BindUFunction(Hud, FName("ShowText"), MoveMessage);
 
-					MoveMessage = Attacker.SpeciesData.Name.ToString() + " used " + StatusMove->Name.ToString() + "!";
-					MoveMessageDelegate.BindUFunction(Hud, FName("ShowText"), MoveMessage);
+						break;
 
-					GetWorldTimerManager().SetTimer(MessageTimer, MoveMessageDelegate, 0.001, false);
-					GetWorldTimerManager().SetTimer(WidgetDelay, Hud, &ABattleHUD::ShowBattleStartWidget, 2, false);
-					break;
+					case ETarget::Opponent:
+						OpponentTeam[OpponentId].RestoreHP(OpponentTeam[OpponentId].MaxHP / 2);
+						MoveMessageDelegate.BindUFunction(Hud, FName("ShowText"), MoveMessage);
 
-				case ETarget::Opponent:
-					Opponent.RestoreHP(Opponent.MaxHP / 2);
-
-					MoveMessage = Attacker.SpeciesData.Name.ToString() + " used " + StatusMove->Name.ToString() + "!";
-					MoveMessageDelegate.BindUFunction(Hud, FName("ShowText"), MoveMessage);
-
-					GetWorldTimerManager().SetTimer(MessageTimer, MoveMessageDelegate, 0.001, false);
-					GetWorldTimerManager().SetTimer(WidgetDelay, Hud, &ABattleHUD::ShowBattleStartWidget, 2, false);
-					break;
-				}
+						break;
+					}
 			}
 
 			else {
 				switch (StatusMove->Target) {
-				case ETarget::Self:
-					if (Attacker.AddEffect(Effect) == true) {
-						MoveMessage = Attacker.SpeciesData.Name.ToString() + " used " + StatusMove->Name.ToString() + "!";
-						MoveMessageDelegate.BindUFunction(Hud, FName("ShowText"), MoveMessage);
+					case ETarget::Self:
+						if (PlayerController->PokemonParty[AttackerId].AddEffect(Effect) == true) {
+							MoveMessageDelegate.BindUFunction(Hud, FName("ShowText"), MoveMessage);
 
-						GetWorldTimerManager().SetTimer(MessageTimer, MoveMessageDelegate, 0.001, false);
-						GetWorldTimerManager().SetTimer(WidgetDelay, Hud, &ABattleHUD::ShowBattleStartWidget, 2, false);
-					}
-					else {
-						MoveMessage = Attacker.SpeciesData.Name.ToString() + " used " + StatusMove->Name.ToString() + ", but it failed";
-						MoveMessageDelegate.BindUFunction(Hud, FName("ShowText"), MoveMessage);
+						}
+						else {
+							MoveMessage = PlayerController->PokemonParty[AttackerId].SpeciesData.Name.ToString() + " used " + StatusMove->Name.ToString() + ", but it failed!";
+							MoveMessageDelegate.BindUFunction(Hud, FName("ShowText"), MoveMessage);
 
-						GetWorldTimerManager().SetTimer(MessageTimer, MoveMessageDelegate, 0.001, false);
-						GetWorldTimerManager().SetTimer(WidgetDelay, Hud, &ABattleHUD::ShowBattleStartWidget, 2, false);
-					}
-					break;
+						}
+						break;
 
-				case ETarget::Opponent:
-					if (Opponent.AddEffect(Effect) == true) {
-						MoveMessage = Attacker.SpeciesData.Name.ToString() + " used " + StatusMove->Name.ToString() + "!";
-						MoveMessageDelegate.BindUFunction(Hud, FName("ShowText"), MoveMessage);
+					case ETarget::Opponent:
+						if (OpponentTeam[OpponentId].AddEffect(Effect) == true) {
+							MoveMessageDelegate.BindUFunction(Hud, FName("ShowText"), MoveMessage);
 
-						GetWorldTimerManager().SetTimer(MessageTimer, MoveMessageDelegate, 0.001, false);
-						GetWorldTimerManager().SetTimer(WidgetDelay, Hud, &ABattleHUD::ShowBattleStartWidget, 2, false);
-					}
-					else {
-						MoveMessage = Attacker.SpeciesData.Name.ToString() + " used " + StatusMove->Name.ToString() + ", but it failed";
-						MoveMessageDelegate.BindUFunction(Hud, FName("ShowText"), MoveMessage);
+						}
+						else {
+							MoveMessage = PlayerController->PokemonParty[AttackerId].SpeciesData.Name.ToString() + " used " + StatusMove->Name.ToString() + ", but it failed!";
+							MoveMessageDelegate.BindUFunction(Hud, FName("ShowText"), MoveMessage);
 
-						GetWorldTimerManager().SetTimer(MessageTimer, MoveMessageDelegate, 0.001, false);
-						GetWorldTimerManager().SetTimer(WidgetDelay, Hud, &ABattleHUD::ShowBattleStartWidget, 2, false);
-					}
-					break;
+						}
+						break;
 				}
 			}
 		}
 	}
+
+	GetWorldTimerManager().SetTimer(MessageTimer, MoveMessageDelegate, 0.001, false);
+	GetWorldTimerManager().SetTimer(WidgetDelay, Hud, &ABattleHUD::ShowBattleStartWidget, 2, false);
 
 	Move.CurrPowerPoints--;
 }
@@ -243,7 +250,7 @@ void ABattleGameMode::BattleStart()
 {
 	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 
-	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (PlayerController == nullptr) {
 		return;
 	}
@@ -254,14 +261,14 @@ void ABattleGameMode::BattleStart()
 	FString OpponentMessage;
 
 	if (OpponentTeam.Num() == 1) {
-		OpponentMessage = "A wild " + OpponentTeam[0].SpeciesData.Name.ToString() + " appeared!";
+		OpponentMessage = "A wild " + OpponentTeam[OpponentPokemonId].SpeciesData.Name.ToString() + " appeared!";
 	}
 	else {
-		OpponentMessage = "Trainer sent out " + OpponentTeam[0].SpeciesData.Name.ToString() + "!";
+		OpponentMessage = "Trainer sent out " + OpponentTeam[OpponentPokemonId].SpeciesData.Name.ToString() + "!";
 	}
 
 	OpponentMessageDelegate.BindUFunction(Hud, FName("ShowText"), OpponentMessage);
-	PlayerMessageDelegate.BindUFunction(Hud, FName("ShowText"), ("You sent out " + PlayerController->GetPokemonParty()[0].SpeciesData.Name.ToString() + "!"));
+	PlayerMessageDelegate.BindUFunction(Hud, FName("ShowText"), ("You sent out " + PlayerController->PokemonParty[PlayerPokemonId].SpeciesData.Name.ToString() + "!"));
 
 	GetWorldTimerManager().SetTimer(MessageTimer, OpponentMessageDelegate, 0.001, false);
 	GetWorldTimerManager().SetTimer(MessageTimer2, PlayerMessageDelegate, 1.5, false);
@@ -275,7 +282,7 @@ void ABattleGameMode::BattleEnd()
 void ABattleGameMode::BattleTurn(EAction PlayerAction)
 {
 	if (PlayerAction == EAction::UseMove) {
-		UseMove(PlayerPokemon, OpponentPokemon, SelectedMove);
+		UseMove(PlayerPokemonId, OpponentPokemonId, SelectedMove);
 	}
 }
 
@@ -317,11 +324,9 @@ void ABattleGameMode::SelectMove(FMoveBaseStruct Move)
 
 void ABattleGameMode::ShowPokemonInMenu()
 {
-	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
-	TArray<FPokemonStruct> Party = PlayerController->GetPokemonParty();
-
-	for (FPokemonStruct Pokemon : Party) {
+	for (FPokemonStruct Pokemon : PlayerController->PokemonParty) {
 		ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 		UPokemonSlotWidget* PokemonSlotWidget = CreateWidget<UPokemonSlotWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetPokemonSlotWidgetClass());
 
@@ -368,14 +373,12 @@ void ABattleGameMode::ShowPokemonSummary(FPokemonStruct Pokemon)
 
 void ABattleGameMode::FillBagWidget()
 {
-	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-
-	TArray<FItemBaseStruct> Inventory = PlayerController->GetInventory();
+	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
 	TArray<FItemBaseStruct> UniqueItems;
 	TArray<int> ItemCount;
 
-	for (FItemBaseStruct Item : Inventory) {
+	for (FItemBaseStruct Item : PlayerController->Inventory) {
 		if (UniqueItems.Contains(Item) == false) {
 			UniqueItems.Add(Item);
 		}
@@ -384,7 +387,7 @@ void ABattleGameMode::FillBagWidget()
 	for (FItemBaseStruct Item : UniqueItems) {
 		int Count = 0;
 
-		for (FItemBaseStruct ItemToSearch : Inventory) {
+		for (FItemBaseStruct ItemToSearch : PlayerController->Inventory) {
 			if (Item == ItemToSearch) {
 				Count++;
 			}
@@ -418,11 +421,15 @@ void ABattleGameMode::ShowItemInfo(FItemBaseStruct InventoryItem)
 	ItemInfoDelegate.Broadcast(ItemInfo);
 }
 
+FPokemonStruct ABattleGameMode::GetCurrentOpponentStruct() {
+	return OpponentTeam[OpponentPokemonId];
+}
+
 void ABattleGameMode::ShowPokemonMoves()
 {
-	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
-	FPokemonStruct Attacker = (PlayerController->GetPokemonParty())[0];
+	FPokemonStruct Attacker = PlayerController->PokemonParty[PlayerPokemonId];
 
 	for (FMoveBaseStruct Move : Attacker.CurrentMoves) {
 		ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
@@ -436,27 +443,19 @@ void ABattleGameMode::ShowPokemonMoves()
 	}
 }
 
-FPokemonStruct ABattleGameMode::GetCurrentOpponent()
-{
-	for (FPokemonStruct Pokemon : OpponentTeam) {
-		if (Pokemon.bIsFainted == false) {
-			return Pokemon;
-		}
-	}
-	return FPokemonStruct();
-}
-
 void ABattleGameMode::ExitBattleMap()
 {
-	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (PlayerController == nullptr) {
 		return;
 	}
 
 	UWorldSaveData* SaveData = Cast<UWorldSaveData>(UGameplayStatics::CreateSaveGameObject(UWorldSaveData::StaticClass()));
 
-	SaveData->InventoryData = PlayerController->GetInventory();
-	SaveData->MoneyData = PlayerController->GetMoney();
+	SaveData->InventoryData = PlayerController->Inventory;
+	SaveData->MoneyData = PlayerController->Money;
+	SaveData->PartyData = PlayerController->PokemonParty;
+	SaveData->StorageData = PlayerController->PokemonStorage;
 
 	ABattleHUD* Hud = Cast<ABattleHUD>(PlayerController->GetHUD());
 

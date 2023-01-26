@@ -8,7 +8,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "../../GameModes/BattleGameMode.h"
-#include "../../Player/PlayerCharacterController.h"
+#include "../../Player/BattleController.h"
 #include "Engine/Engine.h"
 
 void ABattleHUD::BeginPlay()
@@ -141,6 +141,11 @@ void ABattleHUD::ShowPokemon()
 
 void ABattleHUD::ShowPlayerPokemonStatus()
 {
+	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
+
 	if (PlayerOwner && PlayerPokemonStatusWidget) {
 		RefreshPlayerPokemonStatus();
 		PlayerPokemonStatusWidget->AddToViewport();
@@ -151,6 +156,11 @@ void ABattleHUD::ShowPlayerPokemonStatus()
 
 void ABattleHUD::ShowOpponentPokemonStatus()
 {
+	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
+
 	if (PlayerOwner && OpponentPokemonStatusWidget) {
 		RefreshOpponentPokemonStatus();
 		OpponentPokemonStatusWidget->AddToViewport();
@@ -161,12 +171,12 @@ void ABattleHUD::ShowOpponentPokemonStatus()
 
 void ABattleHUD::RefreshPlayerPokemonStatus()
 {
-	if (PlayerOwner && PlayerPokemonStatusWidget) {
-		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(PlayerOwner);
-		PlayerPokemonStatusWidget->SetPokemonHP(Controller->GetLeadPokemon().CurrHP, Controller->GetPokemonParty()[0].MaxHP);
-		PlayerPokemonStatusWidget->SetPokemonLevel(Controller->GetLeadPokemon().Level);
-		PlayerPokemonStatusWidget->SetPokemonName(Controller->GetLeadPokemon().SpeciesData.Name);
-	}
+	ABattleController* Controller = Cast<ABattleController>(PlayerOwner);
+
+	FPokemonStruct PokemonData = Controller->PokemonParty[Controller->GetLeadPokemon()];
+	PlayerPokemonStatusWidget->SetPokemonHP(PokemonData.CurrHP, PokemonData.MaxHP);
+	PlayerPokemonStatusWidget->SetPokemonLevel(PokemonData.Level);
+	PlayerPokemonStatusWidget->SetPokemonName(PokemonData.SpeciesData.Name);
 }
 
 void ABattleHUD::RefreshOpponentPokemonStatus()
@@ -176,10 +186,10 @@ void ABattleHUD::RefreshOpponentPokemonStatus()
 		return;
 	}
 
-	FPokemonStruct Opponent = GameMode->GetCurrentOpponent();
-	OpponentPokemonStatusWidget->SetPokemonHP(Opponent.CurrHP, Opponent.MaxHP);
-	OpponentPokemonStatusWidget->SetPokemonLevel(Opponent.Level);
-	OpponentPokemonStatusWidget->SetPokemonName(Opponent.SpeciesData.Name);
+	FPokemonStruct PokemonData = GameMode->GetCurrentOpponentStruct();
+	OpponentPokemonStatusWidget->SetPokemonHP(PokemonData.CurrHP, PokemonData.MaxHP);
+	OpponentPokemonStatusWidget->SetPokemonLevel(PokemonData.Level);
+	OpponentPokemonStatusWidget->SetPokemonName(PokemonData.SpeciesData.Name);
 }
 
 void ABattleHUD::ShowBattleStartWidget()
