@@ -45,6 +45,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UProgressBar* HPBar;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UProgressBar* EXPBar;
+
 	virtual void NativeConstruct() override;
 
 public:
@@ -59,6 +62,9 @@ public:
 
 	UFUNCTION()
 	void SetPokemonHP(int CurrHP, int MaxHP);
+
+	UFUNCTION()
+	void SetPokemonEXP(int CurrExp, int MaxExp);
 
 	UFUNCTION()
 	void SetPokemon(FPokemonStruct InPokemon);

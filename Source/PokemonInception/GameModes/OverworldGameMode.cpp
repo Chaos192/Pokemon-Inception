@@ -33,11 +33,11 @@ void AOverworldGameMode::BeginPlay()
 		PlayerController->RecieveMoney(SaveData->MoneyData);
 		PlayerController->LoadPokemonParty(SaveData->PartyData);
 		PlayerController->LoadPokemonStorage(SaveData->StorageData);
-		PlayerOwner->SetActorLocation(SaveData->PlayerLocation);
-		PlayerOwner->SetActorRotation(SaveData->PlayerRotation, ETeleportType::None);
+		PlayerOwner->SetActorLocation(SaveData->GameMapData.PlayerLocation);
+		PlayerOwner->SetActorRotation(SaveData->GameMapData.PlayerRotation, ETeleportType::None);
 		
-		if (SaveData->ActorsToDestroy.Num() > 0) {
-			ActorsToDestroy = SaveData->ActorsToDestroy;
+		if (SaveData->GameMapData.ActorsToDestroy.Num() > 0) {
+			ActorsToDestroy = SaveData->GameMapData.ActorsToDestroy;
 		}
 
 		SaveData->OpponentData.Empty();
@@ -75,13 +75,13 @@ void AOverworldGameMode::SaveGame()
 	SaveData->InventoryData = PlayerController->GetInventory();
 	SaveData->PokedexData = PlayerController->GetPokedexData();
 	SaveData->MoneyData = PlayerController->GetMoney();
-	SaveData->PlayerLocation = PlayerOwner->GetActorLocation();
-	SaveData->PlayerRotation = PlayerOwner->GetActorRotation();
+	SaveData->GameMapData.PlayerLocation = PlayerOwner->GetActorLocation();
+	SaveData->GameMapData.PlayerRotation = PlayerOwner->GetActorRotation();
 	SaveData->PartyData = PlayerController->GetPokemonParty();
 	SaveData->StorageData = PlayerController->GetPokemonStorage();
 	
 	if (ActorsToDestroy.Num() > 0) {
-		SaveData->ActorsToDestroy = ActorsToDestroy;
+		SaveData->GameMapData.ActorsToDestroy = ActorsToDestroy;
 	}
 
 	UGameplayStatics::SaveGameToSlot(SaveData, "SaveSlot", 0);
@@ -330,6 +330,7 @@ void AOverworldGameMode::ShowPokemonInMenu()
 		PokemonSlotWidget->SetPokemonLevel(Pokemon.Level);
 		PokemonSlotWidget->SetPokemonImage(Pokemon.SpeciesData.Image);
 		PokemonSlotWidget->SetPokemonHP(Pokemon.CurrHP, Pokemon.MaxHP);
+		PokemonSlotWidget->SetPokemonEXP(Pokemon.CurrExp, Pokemon.RequiredExp);
 		PokemonSlotWidget->SetPokemon(Pokemon);
 
 		PokemonSlotWidget->PokemonClick.AddDynamic(this, &AOverworldGameMode::ShowPokemonSummary);

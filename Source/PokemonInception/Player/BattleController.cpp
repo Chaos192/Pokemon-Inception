@@ -26,8 +26,27 @@ int ABattleController::GetLeadPokemon()
 
 void ABattleController::ObtainPokemon(FPokemonStruct Pokemon)
 {
+	if (bIsRegisteredInPokedex(Pokemon.SpeciesData.PokemonID) == false) {
+		RegisterToPokedex(Pokemon.SpeciesData);
+	}
+
 	if (PokemonParty.Num() == 6) {
 		PokemonStorage.Add(Pokemon);
 	}
 	else PokemonParty.Add(Pokemon);
+}
+
+void ABattleController::RegisterToPokedex(FPokemonBaseStruct Species)
+{
+	Pokedex.Add(Species);
+}
+
+bool ABattleController::bIsRegisteredInPokedex(FName ID)
+{
+	for (FPokemonBaseStruct PokemonData : Pokedex) {
+		if (PokemonData.PokemonID == ID) {
+			return true;
+		}
+	}
+	return false;
 }

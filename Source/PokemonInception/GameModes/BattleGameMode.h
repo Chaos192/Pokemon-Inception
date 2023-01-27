@@ -46,6 +46,8 @@ private:
 	FMoveBaseStruct SelectedMove;
 	void UseMove(int AttackerId, int OpponentId, FMoveBaseStruct Move);
 
+	FGameMapData SavedGameMapData;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -53,7 +55,7 @@ protected:
 	void BattleStart();
 
 	UFUNCTION()
-	void BattleEnd();
+	void BattleEnd(FString BattleOutcome);
 
 	UFUNCTION()
 	void BattleTurn(EAction PlayerAction);

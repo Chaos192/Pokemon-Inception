@@ -27,7 +27,15 @@ void UPokemonSlotWidget::SetPokemonHP(int CurrHP, int MaxHP)
 {
 	PokemonCurrHP->SetText(FText::FromString(FString::FromInt(CurrHP)));
 	PokemonMaxHP->SetText(FText::FromString(FString::FromInt(MaxHP)));
-	HPBar->SetPercent(CurrHP / MaxHP);
+
+	float HpPercent = float(CurrHP) / float(MaxHP);
+	HPBar->SetPercent(HpPercent);
+}
+
+void UPokemonSlotWidget::SetPokemonEXP(int CurrExp, int MaxExp)
+{
+	float ExpPercent = float(CurrExp) / float(MaxExp);
+	EXPBar->SetPercent(ExpPercent);
 }
 
 void UPokemonSlotWidget::SetPokemon(FPokemonStruct InPokemon)

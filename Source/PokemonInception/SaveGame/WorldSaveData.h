@@ -9,6 +9,20 @@
 #include "../Pokemon/PokemonStruct.h"
 #include "WorldSaveData.generated.h"
 
+USTRUCT()
+struct FGameMapData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	FVector PlayerLocation;
+
+	UPROPERTY(EditDefaultsOnly)
+	FRotator PlayerRotation;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<AActor*> ActorsToDestroy;
+};
 
 UCLASS()
 class POKEMONINCEPTION_API UWorldSaveData : public USaveGame
@@ -17,10 +31,7 @@ class POKEMONINCEPTION_API UWorldSaveData : public USaveGame
 
 public:
 	UPROPERTY(EditDefaultsOnly)
-	FVector PlayerLocation;
-
-	UPROPERTY(EditDefaultsOnly)
-	FRotator PlayerRotation;
+	FGameMapData GameMapData;
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FItemBaseStruct> InventoryData;
@@ -40,6 +51,4 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FPokemonStruct> StorageData;
 
-	UPROPERTY(EditDefaultsOnly)
-	TArray<AActor*> ActorsToDestroy;
 };

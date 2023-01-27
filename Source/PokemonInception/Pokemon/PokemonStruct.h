@@ -68,9 +68,9 @@ struct FPokemonStruct
 		MaxHP = ((Level / 100 + 1) * SpeciesData.HP + Level);
 		CurrHP = MaxHP;
 
-		Attack = (int)(((Level / 50 + 1) * SpeciesData.Attack) / 1.5f);
-		Defence = (int)(((Level / 50 + 1) * SpeciesData.Defence) / 1.5f);
-		Speed = (int)(((Level / 50 + 1) * SpeciesData.Speed) / 1.5f);
+		Attack = (((Level / 50.0 + 1) * SpeciesData.Attack) / 1.5);
+		Defence = (((Level / 50.0 + 1) * SpeciesData.Defence) / 1.5);
+		Speed = (((Level / 50.0 + 1) * SpeciesData.Speed) / 1.5);
 
 		if (Level == 1) {
 			Exp = 0;
@@ -112,23 +112,46 @@ struct FPokemonStruct
 		}
 	}
 
-	bool CheckForNewMoves() {
+	bool CheckForNewMoves(TArray<UDataTable*> MoveTables) {
+		for (auto& Move : SpeciesData.MovePool) {
+			if (Move.Key <= Level) {
+				FMoveBaseStruct* AddedMove = nullptr;
+
+				for (UDataTable* DataTable : MoveTables) {
+					AddedMove = DataTable->FindRow<FMoveBaseStruct>(Move.Value, "");
+
+					if (AddedMove/* && Moves.Contains(*AddedMove) == false*/) {
+						Moves.Add(*AddedMove);
+
+						if (CurrentMoves.Num() < 4) {
+							CurrentMoves.Add(*AddedMove);
+						}
+
+						return true;
+					}
+				}
+			}
+		}
 		return false;
 	}
 
-	void GainExp(int GainedExp) {
+	bool GainExp(int GainedExp) {
 		if (Level == 100) {
-			return;
+			return false;
 		}
 
 		CurrExp += GainedExp;
 		if (CurrExp >= RequiredExp) {
 			LevelUp();
+			return true;
 		}
+
+		return false;
 	}
 
 	void LevelUp() {
 		Level++;
+
 		if (Level == 100) {
 			CurrExp = RequiredExp;
 		}
@@ -137,6 +160,9 @@ struct FPokemonStruct
 		}
 
 		CalculateStats();
+		if (CurrExp >= RequiredExp) {
+			LevelUp();
+		}
 	}
 
 	void RecieveDamage(int Damage) {

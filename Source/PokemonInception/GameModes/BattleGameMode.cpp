@@ -30,9 +30,12 @@ void ABattleGameMode::BeginPlay()
 		SaveData = Cast<UWorldSaveData>(UGameplayStatics::LoadGameFromSlot("SaveSlot", 0));
 
 		PlayerController->Inventory = SaveData->InventoryData;
+		PlayerController->Pokedex = SaveData->PokedexData;
 		PlayerController->Money = SaveData->MoneyData;
 		PlayerController->PokemonParty = SaveData->PartyData;
 		OpponentTeam = SaveData->OpponentData;
+
+		SavedGameMapData = SaveData->GameMapData;
 	}
 
 	TArray<AActor*> FoundActors;
@@ -241,7 +244,7 @@ void ABattleGameMode::UseMove(int AttackerId, int OpponentId, FMoveBaseStruct Mo
 	}
 
 	GetWorldTimerManager().SetTimer(MessageTimer, MoveMessageDelegate, 0.001, false);
-	GetWorldTimerManager().SetTimer(WidgetDelay, Hud, &ABattleHUD::ShowBattleStartWidget, 2, false);
+	
 
 	Move.CurrPowerPoints--;
 }
@@ -275,15 +278,66 @@ void ABattleGameMode::BattleStart()
 	GetWorldTimerManager().SetTimer(WidgetDelay, Hud, &ABattleHUD::ShowBattleStartWidget, 3, false);
 }
 
-void ABattleGameMode::BattleEnd()
+void ABattleGameMode::BattleEnd(FString BattleOutcome)
 {
+	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (BattleOutcome == "Win") {
+		int Money = 0;
+
+		for (FPokemonStruct Pokemon : OpponentTeam) {
+			Money += Pokemon.Level * 100;
+		}
+
+		PlayerController->Money += Money;
+		if (PlayerController->Money > 1000000) PlayerController->Money = 1000000;
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("You won and got " + FString::FromInt(Money) + " money!"));
+	}
+
+	else if(BattleOutcome == "Loss") {
+		int Money = 0;
+
+		for (FPokemonStruct Pokemon : OpponentTeam) {
+			Money += Pokemon.Level * 100;
+		}
+
+		PlayerController->Money -= Money;
+		if (PlayerController->Money < 0) PlayerController->Money = 0;
+	}
+
+	ExitBattleMap();
 }
 
 void ABattleGameMode::BattleTurn(EAction PlayerAction)
 {
+	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
 	if (PlayerAction == EAction::UseMove) {
 		UseMove(PlayerPokemonId, OpponentPokemonId, SelectedMove);
+
+		if (OpponentTeam[OpponentPokemonId].bIsFainted == true) {
+			OpponentPokemonActor->Destroy();
+
+			int Exp = OpponentTeam[OpponentPokemonId].Level * OpponentTeam[OpponentPokemonId].SpeciesData.BaseExp / 7;
+			PlayerController->PokemonParty[PlayerPokemonId].GainExp(Exp);
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Exp Gained: " + FString::FromInt(Exp)));
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Exp: " + FString::FromInt(PlayerController->PokemonParty[PlayerPokemonId].CurrExp) + "/" + FString::FromInt(PlayerController->PokemonParty[PlayerPokemonId].RequiredExp)));
+			
+			/*TArray<UDataTable*> MoveTables;
+			MoveTables.Add(AttackMovesDT);
+			MoveTables.Add(StatusMovesDT);
+			PlayerController->PokemonParty[PlayerPokemonId].CheckForNewMoves(MoveTables);*/
+			
+			if (bIsOpponentDefeated() == true) {
+				BattleEnd("Win");
+			}
+			else {
+				OpponentPokemonId = GetCurrentOpponent();
+				PlaceOpponentPokemon(OpponentPokemonId);
+			}
+		}
 	}
+	GetWorldTimerManager().SetTimer(WidgetDelay, Hud, &ABattleHUD::ShowBattleStartWidget, 2, false);
 }
 
 FString ABattleGameMode::ETypeToString(ETypes Type)
@@ -334,6 +388,7 @@ void ABattleGameMode::ShowPokemonInMenu()
 		PokemonSlotWidget->SetPokemonLevel(Pokemon.Level);
 		PokemonSlotWidget->SetPokemonImage(Pokemon.SpeciesData.Image);
 		PokemonSlotWidget->SetPokemonHP(Pokemon.CurrHP, Pokemon.MaxHP);
+		PokemonSlotWidget->SetPokemonEXP(Pokemon.CurrExp, Pokemon.RequiredExp);
 		PokemonSlotWidget->SetPokemon(Pokemon);
 
 		PokemonSlotWidget->PokemonClick.AddDynamic(this, &ABattleGameMode::ShowPokemonSummary);
@@ -452,10 +507,19 @@ void ABattleGameMode::ExitBattleMap()
 
 	UWorldSaveData* SaveData = Cast<UWorldSaveData>(UGameplayStatics::CreateSaveGameObject(UWorldSaveData::StaticClass()));
 
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("MoneyBefore: " + FString::FromInt(SaveData->MoneyData)));
+
 	SaveData->InventoryData = PlayerController->Inventory;
+	SaveData->PokedexData = PlayerController->Pokedex;
 	SaveData->MoneyData = PlayerController->Money;
 	SaveData->PartyData = PlayerController->PokemonParty;
 	SaveData->StorageData = PlayerController->PokemonStorage;
+
+	SaveData->GameMapData = SavedGameMapData;
+
+	UGameplayStatics::SaveGameToSlot(SaveData, "SaveSlot", 0);
+
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("MoneyNow: " + FString::FromInt(SaveData->MoneyData)));
 
 	ABattleHUD* Hud = Cast<ABattleHUD>(PlayerController->GetHUD());
 

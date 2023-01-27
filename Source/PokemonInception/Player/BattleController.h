@@ -24,8 +24,17 @@ public:
 	UFUNCTION()
 	void ObtainPokemon(FPokemonStruct Pokemon);
 
+	UFUNCTION()
+	void RegisterToPokedex(FPokemonBaseStruct Species);
+
+	UFUNCTION()
+	bool bIsRegisteredInPokedex(FName ID);
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<FItemBaseStruct> Inventory;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TArray<FPokemonBaseStruct> Pokedex;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<FPokemonStruct> PokemonParty;

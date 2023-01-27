@@ -9,6 +9,7 @@
 #include "MoveButtonWidget.h"
 #include "PokemonSlotWidget.h"
 #include "PokemonStatusWidget.h"
+#include "PlayerPokemonStatusWidget.h"
 #include "PokemonSummaryWidget.h"
 #include "../TextBoxWidget.h"
 #include "../OverworldUI/PokemonWidget.h"
@@ -43,6 +44,9 @@ protected:
 	TSubclassOf<UPokemonStatusWidget> PokemonStatusWidgetClass;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPlayerPokemonStatusWidget> PlayerPokemonStatusWidgetClass;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UPokemonStatusWidget> OpponentStatusWidgetClass;
 
 	UPROPERTY(EditAnywhere)
@@ -67,7 +71,7 @@ protected:
 	class UFightWidget* FightWidget;
 
 	UPROPERTY()
-	class UPokemonStatusWidget* PlayerPokemonStatusWidget;
+	class UPlayerPokemonStatusWidget* PlayerPokemonStatusWidget;
 
 	UPROPERTY()
 	class UPokemonStatusWidget* OpponentPokemonStatusWidget;
