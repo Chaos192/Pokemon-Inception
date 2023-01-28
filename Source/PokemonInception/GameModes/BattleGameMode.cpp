@@ -319,14 +319,13 @@ void ABattleGameMode::BattleTurn(EAction PlayerAction)
 			OpponentPokemonActor->Destroy();
 
 			int Exp = OpponentTeam[OpponentPokemonId].Level * OpponentTeam[OpponentPokemonId].SpeciesData.BaseExp / 7;
-			PlayerController->PokemonParty[PlayerPokemonId].GainExp(Exp);
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Exp Gained: " + FString::FromInt(Exp)));
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Exp: " + FString::FromInt(PlayerController->PokemonParty[PlayerPokemonId].CurrExp) + "/" + FString::FromInt(PlayerController->PokemonParty[PlayerPokemonId].RequiredExp)));
-			
-			/*TArray<UDataTable*> MoveTables;
-			MoveTables.Add(AttackMovesDT);
-			MoveTables.Add(StatusMovesDT);
-			PlayerController->PokemonParty[PlayerPokemonId].CheckForNewMoves(MoveTables);*/
+
+			if (PlayerController->PokemonParty[PlayerPokemonId].GainExp(Exp) == true) {
+				TArray<UDataTable*> MoveTables;
+				MoveTables.Add(AttackMovesDT);
+				MoveTables.Add(StatusMovesDT);
+				PlayerController->PokemonParty[PlayerPokemonId].CheckForNewMoves(MoveTables);
+			}
 			
 			if (bIsOpponentDefeated() == true) {
 				BattleEnd("Win");
@@ -503,6 +502,10 @@ void ABattleGameMode::ExitBattleMap()
 	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (PlayerController == nullptr) {
 		return;
+	}
+
+	for (int i = 0; i < PlayerController->PokemonParty.Num(); i++) {
+		PlayerController->PokemonParty[i].ClearEffects();
 	}
 
 	UWorldSaveData* SaveData = Cast<UWorldSaveData>(UGameplayStatics::CreateSaveGameObject(UWorldSaveData::StaticClass()));

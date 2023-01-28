@@ -113,26 +113,42 @@ struct FPokemonStruct
 	}
 
 	bool CheckForNewMoves(TArray<UDataTable*> MoveTables) {
+		bool bHasLearnedMove = false;
+
 		for (auto& Move : SpeciesData.MovePool) {
-			if (Move.Key <= Level) {
-				FMoveBaseStruct* AddedMove = nullptr;
+			if (Move.Key > Level) {
+				return false;
+			}
 
-				for (UDataTable* DataTable : MoveTables) {
-					AddedMove = DataTable->FindRow<FMoveBaseStruct>(Move.Value, "");
+			FMoveBaseStruct* AddedMove = nullptr;
 
-					if (AddedMove/* && Moves.Contains(*AddedMove) == false*/) {
-						Moves.Add(*AddedMove);
+			for (UDataTable* DataTable : MoveTables) {
+				AddedMove = DataTable->FindRow<FMoveBaseStruct>(Move.Value, "");
 
-						if (CurrentMoves.Num() < 4) {
-							CurrentMoves.Add(*AddedMove);
-						}
+				if (!AddedMove) {
+					continue;
+				}
 
-						return true;
+				bool bHasAlreadyLearned = false;
+
+				for (FMoveBaseStruct KnownMove : Moves) {
+					if (KnownMove.MoveID == AddedMove->MoveID) {
+						bHasAlreadyLearned = true;
 					}
 				}
-			}
+
+				if(bHasAlreadyLearned == false){
+					Moves.Add(*AddedMove);
+
+					if (CurrentMoves.Num() < 4) {
+						CurrentMoves.Add(*AddedMove);
+					}
+
+					bHasLearnedMove = true;	
+				}			
+			}	
 		}
-		return false;
+		return bHasLearnedMove;
 	}
 
 	bool GainExp(int GainedExp) {
@@ -168,10 +184,14 @@ struct FPokemonStruct
 	void RecieveDamage(int Damage) {
 		if (Damage > CurrHP) {
 			CurrHP = 0;
-			bIsFainted = true;
 		}
 		else {
 			CurrHP -= Damage;
+		}
+
+		if (CurrHP == 0) {
+			ClearEffects();
+			bIsFainted = true;
 		}
 	}
 
