@@ -57,7 +57,7 @@ public:
 	void ShowPokemonInMenu();
 
 	UFUNCTION()
-	void ShowPokemonSummary(FPokemonStruct Pokemon);
+	void ShowPokemonSummary(int PokemonID);
 
 	UFUNCTION()
 	void FillPokedex();

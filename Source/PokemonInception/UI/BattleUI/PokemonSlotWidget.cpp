@@ -5,7 +5,7 @@
 
 void UPokemonSlotWidget::OnPokemonClicked()
 {
-	PokemonClick.Broadcast(Pokemon);
+	PokemonClick.Broadcast(PokemonID);
 }
 
 void UPokemonSlotWidget::SetPokemonName(FText Name)
@@ -38,9 +38,9 @@ void UPokemonSlotWidget::SetPokemonEXP(int CurrExp, int MaxExp)
 	EXPBar->SetPercent(ExpPercent);
 }
 
-void UPokemonSlotWidget::SetPokemon(FPokemonStruct InPokemon)
+void UPokemonSlotWidget::SetPokemon(int InPokemonID)
 {
-	Pokemon = InPokemon;
+	PokemonID = InPokemonID;
 }
 
 void UPokemonSlotWidget::NativeConstruct()

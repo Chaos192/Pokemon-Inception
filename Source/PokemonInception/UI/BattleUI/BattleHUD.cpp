@@ -20,6 +20,7 @@ void ABattleHUD::BeginPlay()
 	BattleStartWidget = CreateWidget<UBattleStartWidget>(UGameplayStatics::GetGameInstance(GetWorld()), BattleStartWidgetClass);
 	FightWidget = CreateWidget<UFightWidget>(UGameplayStatics::GetGameInstance(GetWorld()), FightWidgetClass);
 	PokemonWidget = CreateWidget<UPokemonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonWidgetClass);
+	SwitchOutWidget = CreateWidget<UPopupSelectionWidget>(UGameplayStatics::GetGameInstance(GetWorld()), SwitchOutWidgetClass);
 	PlayerPokemonStatusWidget = CreateWidget<UPlayerPokemonStatusWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PlayerPokemonStatusWidgetClass);
 	OpponentPokemonStatusWidget = CreateWidget<UPokemonStatusWidget>(UGameplayStatics::GetGameInstance(GetWorld()), OpponentStatusWidgetClass);
 	BagWidget = CreateWidget<UBagWidget>(UGameplayStatics::GetGameInstance(GetWorld()), BagWidgetClass);
@@ -33,6 +34,9 @@ void ABattleHUD::BeginPlay()
 	FightWidget->BackClicked.AddDynamic(this, &ABattleHUD::ShowBattleStartWidget);
 	PokemonWidget->BackClicked.AddDynamic(this, &ABattleHUD::ShowBattleStartWidget);
 	BagWidget->BackClicked.AddDynamic(this, &ABattleHUD::ShowBattleStartWidget);
+
+	SwitchOutWidget->ActionClicked.AddDynamic(GameMode, &ABattleGameMode::SelectPokemon);
+	SwitchOutWidget->CancelClicked.AddDynamic(this, &ABattleHUD::ClearPopup);
 
 	GameMode->MessageUpdate.AddDynamic(TextBoxWidget, &UTextBoxWidget::ReturnMessage);
 	GameMode->ItemSlotDelegate.AddDynamic(BagWidget, &UBagWidget::AddToWrapBox);
@@ -70,6 +74,12 @@ TSubclassOf<UMoveButtonWidget> ABattleHUD::GetMoveButtonWidgetClass()
 void ABattleHUD::Clear()
 {
 	UWidgetLayoutLibrary::RemoveAllWidgets(this);
+}
+
+void ABattleHUD::ClearPopup()
+{
+	SwitchOutWidget->RemoveFromViewport();
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Cleared"));
 }
 
 void ABattleHUD::ShowText(FString Message)
@@ -134,6 +144,25 @@ void ABattleHUD::ShowPokemon()
 		PokemonWidget->ClearSummaryBox();
 		GameMode->ShowPokemonInMenu();
 		PokemonWidget->AddToViewport();
+		PlayerOwner->bShowMouseCursor = true;
+		PlayerOwner->SetInputMode(FInputModeUIOnly());
+	}
+}
+
+void ABattleHUD::ShowSwitchOutPopup(int PokemonId)
+{
+	if (SwitchOutWidget->IsInViewport() == true) {
+		return;
+	}
+
+	if (PlayerOwner && SwitchOutWidget) {
+		float MouseX;
+		float MouseY;
+
+		PlayerOwner->GetMousePosition(MouseX, MouseY);
+
+		SwitchOutWidget->AddToViewport();
+		SwitchOutWidget->SetPositionInViewport(FVector2D(MouseX, MouseY), false);
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
 	}

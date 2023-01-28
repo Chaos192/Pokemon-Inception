@@ -322,16 +322,16 @@ void AOverworldGameMode::ShowPokemonInMenu()
 	
 	TArray<FPokemonStruct> Party = PlayerController->GetPokemonParty();
 
-	for (FPokemonStruct Pokemon : Party) {
+	for (int i = 0; i < Party.Num(); i++) {
 		AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 		UPokemonSlotWidget* PokemonSlotWidget = CreateWidget<UPokemonSlotWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetPokemonSlotWidgetClass());
 
-		PokemonSlotWidget->SetPokemonName(Pokemon.SpeciesData.Name);
-		PokemonSlotWidget->SetPokemonLevel(Pokemon.Level);
-		PokemonSlotWidget->SetPokemonImage(Pokemon.SpeciesData.Image);
-		PokemonSlotWidget->SetPokemonHP(Pokemon.CurrHP, Pokemon.MaxHP);
-		PokemonSlotWidget->SetPokemonEXP(Pokemon.CurrExp, Pokemon.RequiredExp);
-		PokemonSlotWidget->SetPokemon(Pokemon);
+		PokemonSlotWidget->SetPokemonName(Party[i].SpeciesData.Name);
+		PokemonSlotWidget->SetPokemonLevel(Party[i].Level);
+		PokemonSlotWidget->SetPokemonImage(Party[i].SpeciesData.Image);
+		PokemonSlotWidget->SetPokemonHP(Party[i].CurrHP, Party[i].MaxHP);
+		PokemonSlotWidget->SetPokemonEXP(Party[i].CurrExp, Party[i].RequiredExp);
+		PokemonSlotWidget->SetPokemon(i);
 
 		PokemonSlotWidget->PokemonClick.AddDynamic(this, &AOverworldGameMode::ShowPokemonSummary);
 
@@ -339,10 +339,13 @@ void AOverworldGameMode::ShowPokemonInMenu()
 	}
 }
 
-void AOverworldGameMode::ShowPokemonSummary(FPokemonStruct Pokemon)
+void AOverworldGameMode::ShowPokemonSummary(int PokemonID)
 {
 	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 	UPokemonSummaryWidget* PokemonSummary = CreateWidget<UPokemonSummaryWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetPokemonSummaryWidgetClass());
+
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	FPokemonStruct Pokemon = PlayerController->GetPokemonParty()[PokemonID];
 
 	FString PokemonType;
 	if (Pokemon.SpeciesData.Type2 == ETypes::None) {

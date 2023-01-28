@@ -21,7 +21,7 @@ private:
 	UFUNCTION()
 	void OnPokemonClicked();
 
-	FPokemonStruct Pokemon;
+	int PokemonID;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
@@ -67,7 +67,7 @@ public:
 	void SetPokemonEXP(int CurrExp, int MaxExp);
 
 	UFUNCTION()
-	void SetPokemon(FPokemonStruct InPokemon);
+	void SetPokemon(int InPokemonID);
 
-	FPokemonSignature PokemonClick;
+	FElementIDSignature PokemonClick;
 };

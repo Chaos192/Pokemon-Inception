@@ -8,6 +8,9 @@
 
 UDELEGATE()
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FButtonClicked);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FElementIDSignature, int, Id);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FShopSignature, FItemBaseStruct, Item);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPokedexSignature, FPokemonBaseStruct, PokedexData);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPokemonSignature, FPokemonStruct, Pokemon);

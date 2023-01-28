@@ -40,10 +40,15 @@ private:
 	AStaticOverworldPokemon* PlayerPokemonActor = nullptr;
 	AStaticOverworldPokemon* OpponentPokemonActor = nullptr;
 
+	UFUNCTION()
 	void PlacePlayerPokemon(int PokemonId);
+
+	UFUNCTION()
 	void PlaceOpponentPokemon(int PokemonId);
 
 	FMoveBaseStruct SelectedMove;
+	int SwitchedPokemonID;
+
 	void UseMove(int AttackerId, int OpponentId, FMoveBaseStruct Move);
 
 	FGameMapData SavedGameMapData;
@@ -90,7 +95,10 @@ public:
 	void ShowPokemonInMenu();
 
 	UFUNCTION()
-	void ShowPokemonSummary(FPokemonStruct Pokemon);
+	void SelectPokemon(int InId);
+
+	UFUNCTION()
+	void ShowPokemonSummary(int PokemonID);
 
 	UFUNCTION()
 	void FillBagWidget();
