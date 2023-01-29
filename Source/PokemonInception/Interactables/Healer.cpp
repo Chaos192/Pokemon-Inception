@@ -1,14 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Shopkeeper.h"
+#include "Healer.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "../Player/PlayerCharacterController.h"
 #include "../GameModes/OverworldGameMode.h"
 #include "../UI/OverworldUI/OverworldHUD.h"
 
-AShopkeeper::AShopkeeper()
+AHealer::AHealer()
 {
 	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Skeletal Mesh"));
 	Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
@@ -16,10 +16,15 @@ AShopkeeper::AShopkeeper()
 	Capsule->SetupAttachment(SkeletalMesh);
 }
 
-void AShopkeeper::Interact(APlayerController* Controller)
+void AHealer::Interact(APlayerController* Controller)
 {
 	AOverworldHUD* Hud = Cast<AOverworldHUD>(Controller->GetHUD());
-	if (Hud != nullptr) {
-		Hud->ShowShop(ItemsToSell);
+	if (Hud == nullptr) {
+		return;
 	}
+
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Controller);
+
+	PlayerController->FullRestoreAllPokemon();
+	Hud->OnScreenMessage("Your Pokemon were fully healed!");
 }

@@ -49,27 +49,6 @@ void APlayerCharacterController::TogglePause()
 	PauseDelegate.Broadcast();
 }
 
-FPokemonStruct APlayerCharacterController::GetLeadPokemon()
-{
-	for (FPokemonStruct Pokemon : PokemonParty) {
-		if (Pokemon.bIsFainted == false) {
-			return Pokemon;
-		}
-	}
-
-	return FPokemonStruct();
-}
-
-bool APlayerCharacterController::bIsPartyDefeated()
-{
-	for (FPokemonStruct Pokemon : PokemonParty) {
-		if (Pokemon.bIsFainted == false) {
-			return false;
-		}
-	}
-	return true;
-}
-
 void APlayerCharacterController::ObtainItem(FItemBaseStruct Item)
 {
 	Inventory.Add(Item);
@@ -145,6 +124,16 @@ bool APlayerCharacterController::bIsRegisteredInPokedex(FName ID)
 		}
 	}
 	return false;
+}
+
+void APlayerCharacterController::FullRestoreAllPokemon()
+{
+	/*for (int i = 0; i < PokemonParty.Num(); i++) {
+		PokemonParty[i].FullRestore();
+	}
+	for (int i = 0; i < PokemonStorage.Num(); i++) {
+		PokemonStorage[i].FullRestore();
+	}*/
 }
 
 int APlayerCharacterController::GetMoney() const

@@ -201,7 +201,7 @@ struct FPokemonStruct
 			return false;
 		}
 		
-		if ((CurrHP + RestoredHP) == MaxHP) {
+		if ((CurrHP + RestoredHP) >= MaxHP) {
 			CurrHP = MaxHP;
 		}
 
@@ -212,9 +212,37 @@ struct FPokemonStruct
 		return true;
 	}
 
+	bool RestorePP(int RestoredPP, int MoveID) {
+		if (Moves[MoveID].CurrPowerPoints == Moves[MoveID].PowerPoints) {
+			return false;
+		}
+
+		if ((Moves[MoveID].CurrPowerPoints + RestoredPP) >= Moves[MoveID].PowerPoints) {
+			Moves[MoveID].CurrPowerPoints = Moves[MoveID].PowerPoints;
+		}
+
+		else {
+			Moves[MoveID].CurrPowerPoints += RestoredPP;
+		}
+
+		return true;
+	}
+
 	void RecoverStatus() {
 		bIsFainted = false;
 		CurrHP = 1;
+	}
+
+	void FullRestore() {
+		if (bIsFainted == true) {
+			RecoverStatus();
+		}
+
+		RestoreHP(MaxHP);
+
+		for (int i = 0; i < Moves.Num(); i++) {
+			RestorePP(Moves[i].PowerPoints, i);
+		}
 	}
 
 	bool AddEffect(EEffect Effect) {

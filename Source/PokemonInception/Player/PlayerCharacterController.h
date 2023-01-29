@@ -19,12 +19,6 @@ class POKEMONINCEPTION_API APlayerCharacterController : public APlayerController
 	
 public:
 	UFUNCTION()
-	FPokemonStruct GetLeadPokemon();
-
-	UFUNCTION()
-	bool bIsPartyDefeated();
-
-	UFUNCTION()
 	void ObtainItem(FItemBaseStruct Item);
 
 	UFUNCTION()
@@ -50,6 +44,9 @@ public:
 
 	UFUNCTION()
 	bool bIsRegisteredInPokedex(FName ID);
+
+	UFUNCTION()
+	void FullRestoreAllPokemon();
 
 	int GetMoney() const;
 
