@@ -196,6 +196,7 @@ void ABattleHUD::ShowSwitchOutPopup(int PokemonId)
 
 		PlayerOwner->GetMousePosition(MouseX, MouseY);
 
+		SwitchOutWidget->SetId(PokemonId);
 		SwitchOutWidget->AddToViewport();
 		SwitchOutWidget->SetPositionInViewport(FVector2D(MouseX, MouseY), false);
 		PlayerOwner->bShowMouseCursor = true;

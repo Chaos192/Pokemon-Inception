@@ -393,10 +393,12 @@ void ABattleGameMode::SelectMove(FMoveBaseStruct Move)
 void ABattleGameMode::SelectPokemon(int InId)
 {
 	if (PlayerPokemonId == InId) {
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("This pokemon is already in battle"));
 		return;
 	}
 
 	SwitchedPokemonID = InId;
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("switching pokemon"));
 	BattleTurn(EAction::SwitchOut);
 }
 
@@ -512,8 +514,6 @@ void ABattleGameMode::ExitBattleMap()
 
 	UWorldSaveData* SaveData = Cast<UWorldSaveData>(UGameplayStatics::CreateSaveGameObject(UWorldSaveData::StaticClass()));
 
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("MoneyBefore: " + FString::FromInt(SaveData->MoneyData)));
-
 	SaveData->InventoryData = PlayerController->Inventory;
 	SaveData->PokedexData = PlayerController->Pokedex;
 	SaveData->MoneyData = PlayerController->Money;
@@ -523,8 +523,6 @@ void ABattleGameMode::ExitBattleMap()
 	SaveData->GameMapData = SavedGameMapData;
 
 	UGameplayStatics::SaveGameToSlot(SaveData, "SaveSlot", 0);
-
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("MoneyNow: " + FString::FromInt(SaveData->MoneyData)));
 
 	ABattleHUD* Hud = Cast<ABattleHUD>(PlayerController->GetHUD());
 
