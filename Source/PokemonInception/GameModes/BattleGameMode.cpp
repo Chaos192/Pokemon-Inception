@@ -47,6 +47,10 @@ void ABattleGameMode::BeginPlay()
 
 void ABattleGameMode::PlacePlayerPokemon(int PokemonId)
 {
+	if (IsValid(PlayerPokemonActor)) {
+		PlayerPokemonActor->Destroy();
+	}
+
 	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 
 	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
@@ -341,6 +345,12 @@ void ABattleGameMode::BattleTurn(EAction PlayerAction)
 			}
 		}
 	}
+
+	if (PlayerAction == EAction::SwitchOut) {
+		PlayerPokemonId = SwitchedPokemonID;
+		PlacePlayerPokemon(PlayerPokemonId);
+	}
+
 	GetWorldTimerManager().SetTimer(WidgetDelay, Hud, &ABattleHUD::ShowBattleStartWidget, 2, false);
 }
 
@@ -382,8 +392,12 @@ void ABattleGameMode::SelectMove(FMoveBaseStruct Move)
 
 void ABattleGameMode::SelectPokemon(int InId)
 {
+	if (PlayerPokemonId == InId) {
+		return;
+	}
+
 	SwitchedPokemonID = InId;
-	//BattleTurn(EAction::SwitchOut);
+	BattleTurn(EAction::SwitchOut);
 }
 
 void ABattleGameMode::ShowPokemonInMenu()
@@ -459,10 +473,6 @@ void ABattleGameMode::ShowItemInfo(FItemBaseStruct InventoryItem)
 	ItemInfoDelegate.Broadcast(ItemInfo);
 }
 
-FPokemonStruct ABattleGameMode::GetCurrentOpponentStruct() {
-	return OpponentTeam[OpponentPokemonId];
-}
-
 void ABattleGameMode::ShowPokemonMoves()
 {
 	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
@@ -479,6 +489,14 @@ void ABattleGameMode::ShowPokemonMoves()
 
 		MoveDelegate.Broadcast(MoveButton);
 	}
+}
+
+FPokemonStruct ABattleGameMode::GetCurrentOpponentStruct() {
+	return OpponentTeam[OpponentPokemonId];
+}
+
+int ABattleGameMode::GetPlayerPokemonId() {
+	return PlayerPokemonId;
 }
 
 void ABattleGameMode::ExitBattleMap()

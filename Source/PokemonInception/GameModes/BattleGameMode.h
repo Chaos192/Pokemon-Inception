@@ -110,6 +110,9 @@ public:
 	FPokemonStruct GetCurrentOpponentStruct();
 
 	UFUNCTION()
+	int GetPlayerPokemonId();
+
+	UFUNCTION()
 	void Run();
 
 	FMessageSignature MessageUpdate;

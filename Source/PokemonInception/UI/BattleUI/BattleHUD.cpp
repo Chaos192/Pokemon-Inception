@@ -236,8 +236,12 @@ void ABattleHUD::ShowOpponentPokemonStatus()
 void ABattleHUD::RefreshPlayerPokemonStatus()
 {
 	ABattleController* Controller = Cast<ABattleController>(PlayerOwner);
+	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
 
-	FPokemonStruct PokemonData = Controller->PokemonParty[Controller->GetLeadPokemon()];
+	FPokemonStruct PokemonData = Controller->PokemonParty[GameMode->GetPlayerPokemonId()];
 	PlayerPokemonStatusWidget->SetPokemonHP(PokemonData.CurrHP, PokemonData.MaxHP);
 	PlayerPokemonStatusWidget->SetPokemonEXP(PokemonData.CurrExp, PokemonData.RequiredExp);
 	PlayerPokemonStatusWidget->SetPokemonLevel(PokemonData.Level);
