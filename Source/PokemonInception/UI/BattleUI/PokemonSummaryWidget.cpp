@@ -29,3 +29,10 @@ void UPokemonSummaryWidget::AddMove(UMoveButtonWidget* Move)
 {
 	MoveWrapBox->AddChildToWrapBox(Move);
 }
+
+void UPokemonSummaryWidget::ClearMoves()
+{
+	if (MoveWrapBox->HasAnyChildren()) {
+		MoveWrapBox->ClearChildren();
+	}
+}

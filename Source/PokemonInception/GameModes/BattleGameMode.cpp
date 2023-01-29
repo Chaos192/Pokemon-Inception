@@ -280,7 +280,6 @@ void ABattleGameMode::BattleStart()
 
 	GetWorldTimerManager().SetTimer(MessageTimer, SendOutOpponent, 0.001, false);
 	GetWorldTimerManager().SetTimer(MessageTimer2, SendOutPlayer, 1.5, false);
-	
 	GetWorldTimerManager().SetTimer(WidgetDelay, Hud, &ABattleHUD::ShowBattleStartWidget, 3, false);
 }
 
@@ -403,43 +402,11 @@ void ABattleGameMode::ShowPokemonInMenu()
 		PokemonSlotWidget->SetPokemonEXP(Party[i].CurrExp, Party[i].RequiredExp);
 		PokemonSlotWidget->SetPokemon(i);
 
-		PokemonSlotWidget->PokemonClick.AddDynamic(this, &ABattleGameMode::ShowPokemonSummary);
+		PokemonSlotWidget->PokemonClick.AddDynamic(Hud, &ABattleHUD::ShowPokemonSummary);
 		PokemonSlotWidget->PokemonClick.AddDynamic(Hud, &ABattleHUD::ShowSwitchOutPopup);
 
 		PokemonSlotDelegate.Broadcast(PokemonSlotWidget);
 	}
-}
-
-void ABattleGameMode::ShowPokemonSummary(int PokemonID)
-{
-	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
-	UPokemonSummaryWidget* PokemonSummary = CreateWidget<UPokemonSummaryWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetPokemonSummaryWidgetClass());
-
-	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	FPokemonStruct Pokemon = PlayerController->PokemonParty[PokemonID];
-
-	FString PokemonType;
-	if (Pokemon.SpeciesData.Type2 == ETypes::None) {
-		PokemonType = ETypeToString(Pokemon.SpeciesData.Type1);
-	}
-	else {
-		PokemonType = ETypeToString(Pokemon.SpeciesData.Type1) + " " + ETypeToString(Pokemon.SpeciesData.Type2);
-	} 
-
-	FString PokemonHP = FString::FromInt(Pokemon.CurrHP) + "/" + FString::FromInt(Pokemon.MaxHP);
-
-	PokemonSummary->SetImage(Pokemon.SpeciesData.Image);
-	PokemonSummary->SetGeneralInfo(Pokemon.SpeciesData.Name, Pokemon.SpeciesData.PokemonID, PokemonType, Pokemon.Level, (Pokemon.RequiredExp - Pokemon.CurrExp));
-	PokemonSummary->SetStats(PokemonHP, Pokemon.Attack, Pokemon.Defence, Pokemon.Speed);
-
-	for (FMoveBaseStruct Move : Pokemon.CurrentMoves) {
-		UMoveButtonWidget* MoveButton = CreateWidget<UMoveButtonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetMoveButtonWidgetClass());
-
-		MoveButton->InitButton(Move.Name, Move.CurrPowerPoints, Move.PowerPoints, Move.MoveType);
-		PokemonSummary->AddMove(MoveButton);
-	}
-
-	PokemonSummaryDelegate.Broadcast(PokemonSummary);
 }
 
 void ABattleGameMode::FillBagWidget()

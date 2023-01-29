@@ -20,6 +20,7 @@ void ABattleHUD::BeginPlay()
 	BattleStartWidget = CreateWidget<UBattleStartWidget>(UGameplayStatics::GetGameInstance(GetWorld()), BattleStartWidgetClass);
 	FightWidget = CreateWidget<UFightWidget>(UGameplayStatics::GetGameInstance(GetWorld()), FightWidgetClass);
 	PokemonWidget = CreateWidget<UPokemonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonWidgetClass);
+	PokemonSummaryWidget = CreateWidget<UPokemonSummaryWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonSummaryWidgetClass);
 	SwitchOutWidget = CreateWidget<UPopupSelectionWidget>(UGameplayStatics::GetGameInstance(GetWorld()), SwitchOutWidgetClass);
 	PlayerPokemonStatusWidget = CreateWidget<UPlayerPokemonStatusWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PlayerPokemonStatusWidgetClass);
 	OpponentPokemonStatusWidget = CreateWidget<UPokemonStatusWidget>(UGameplayStatics::GetGameInstance(GetWorld()), OpponentStatusWidgetClass);
@@ -42,7 +43,6 @@ void ABattleHUD::BeginPlay()
 	GameMode->ItemSlotDelegate.AddDynamic(BagWidget, &UBagWidget::AddToWrapBox);
 	GameMode->ItemInfoDelegate.AddDynamic(BagWidget, &UBagWidget::ShowInfo);
 	GameMode->PokemonSlotDelegate.AddDynamic(PokemonWidget, &UPokemonWidget::AddToWrapBox);
-	GameMode->PokemonSummaryDelegate.AddDynamic(PokemonWidget, &UPokemonWidget::AddToInfoWrapBox);
 	GameMode->MoveDelegate.AddDynamic(FightWidget, &UFightWidget::AddToWrapBox);
 }
 
@@ -61,11 +61,6 @@ TSubclassOf<UPokemonSlotWidget> ABattleHUD::GetPokemonSlotWidgetClass()
 	return PokemonSlotWidgetClass;
 }
 
-TSubclassOf<UPokemonSummaryWidget> ABattleHUD::GetPokemonSummaryWidgetClass()
-{
-	return PokemonSummaryWidgetClass;
-}
-
 TSubclassOf<UMoveButtonWidget> ABattleHUD::GetMoveButtonWidgetClass()
 {
 	return MoveButtonWidgetClass;
@@ -79,7 +74,6 @@ void ABattleHUD::Clear()
 void ABattleHUD::ClearPopup()
 {
 	SwitchOutWidget->RemoveFromViewport();
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Cleared"));
 }
 
 void ABattleHUD::ShowText(FString Message)
@@ -146,6 +140,47 @@ void ABattleHUD::ShowPokemon()
 		PokemonWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
+	}
+}
+
+void ABattleHUD::ShowPokemonSummary(int PokemonID)
+{
+	if (SwitchOutWidget->IsInViewport() == true) {
+		return;
+	}
+
+	PokemonSummaryWidget->ClearMoves();
+	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
+
+	if (PlayerOwner && PokemonSummaryWidget) {
+		ABattleController* Controller = Cast<ABattleController>(PlayerOwner);
+		FPokemonStruct Pokemon = Controller->PokemonParty[PokemonID];
+
+		FString PokemonType;
+		if (Pokemon.SpeciesData.Type2 == ETypes::None) {
+			PokemonType = GameMode->ETypeToString(Pokemon.SpeciesData.Type1);
+		}
+		else {
+			PokemonType = GameMode->ETypeToString(Pokemon.SpeciesData.Type1) + " " + GameMode->ETypeToString(Pokemon.SpeciesData.Type2);
+		}
+
+		FString PokemonHP = FString::FromInt(Pokemon.CurrHP) + "/" + FString::FromInt(Pokemon.MaxHP);
+
+		PokemonSummaryWidget->SetImage(Pokemon.SpeciesData.Image);
+		PokemonSummaryWidget->SetGeneralInfo(Pokemon.SpeciesData.Name, Pokemon.SpeciesData.PokemonID, PokemonType, Pokemon.Level, (Pokemon.RequiredExp - Pokemon.CurrExp));
+		PokemonSummaryWidget->SetStats(PokemonHP, Pokemon.Attack, Pokemon.Defence, Pokemon.Speed);
+
+		for (FMoveBaseStruct Move : Pokemon.CurrentMoves) {
+			UMoveButtonWidget* MoveButton = CreateWidget<UMoveButtonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveButtonWidgetClass);
+
+			MoveButton->InitButton(Move.Name, Move.CurrPowerPoints, Move.PowerPoints, Move.MoveType);
+			PokemonSummaryWidget->AddMove(MoveButton);
+		}
+
+		PokemonWidget->AddToInfoWrapBox(PokemonSummaryWidget);
 	}
 }
 

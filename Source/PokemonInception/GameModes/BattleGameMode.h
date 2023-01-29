@@ -66,9 +66,6 @@ protected:
 	void BattleTurn(EAction PlayerAction);
 
 	UFUNCTION()
-	FString ETypeToString(ETypes Type);
-
-	UFUNCTION()
 	void SelectMove(FMoveBaseStruct Move);
 
 	UFUNCTION()
@@ -92,13 +89,13 @@ protected:
 
 public:
 	UFUNCTION()
+	FString ETypeToString(ETypes Type);
+
+	UFUNCTION()
 	void ShowPokemonInMenu();
 
 	UFUNCTION()
 	void SelectPokemon(int InId);
-
-	UFUNCTION()
-	void ShowPokemonSummary(int PokemonID);
 
 	UFUNCTION()
 	void FillBagWidget();
@@ -122,7 +119,6 @@ public:
 	FItemInfoSignature ItemInfoDelegate;
 
 	FPokemonSlotSignature PokemonSlotDelegate;
-	FPokemonSummarySignature PokemonSummaryDelegate;
 
 	FMoveSignature MoveDelegate;
 };

@@ -64,5 +64,6 @@ public:
 	UFUNCTION()
 	void AddMove(UMoveButtonWidget* Move);
 
-
+	UFUNCTION()
+	void ClearMoves();
 };

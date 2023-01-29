@@ -84,6 +84,9 @@ protected:
 	class UPokemonWidget* PokemonWidget;
 
 	UPROPERTY()
+	class UPokemonSummaryWidget* PokemonSummaryWidget;
+
+	UPROPERTY()
 	class UPopupSelectionWidget* SwitchOutWidget;
 
 	UPROPERTY()
@@ -101,8 +104,6 @@ public:
 
 	TSubclassOf<UPokemonSlotWidget> GetPokemonSlotWidgetClass();
 
-	TSubclassOf<UPokemonSummaryWidget> GetPokemonSummaryWidgetClass();
-
 	TSubclassOf<UMoveButtonWidget> GetMoveButtonWidgetClass();
 
 	void Clear();
@@ -118,6 +119,9 @@ public:
 
 	UFUNCTION()
 	void ShowPokemon();
+
+	UFUNCTION()
+	void ShowPokemonSummary(int PokemonID);
 
 	UFUNCTION()
 	void ShowSwitchOutPopup(int PokemonId);
