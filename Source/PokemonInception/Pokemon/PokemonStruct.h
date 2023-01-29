@@ -34,7 +34,7 @@ struct FPokemonStruct
 	int Speed = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FMoveBaseStruct> CurrentMoves;
+	TArray<int> CurrentMoves;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FMoveBaseStruct> Moves;
@@ -66,7 +66,12 @@ struct FPokemonStruct
 
 	void CalculateStats() {
 		MaxHP = ((Level / 100 + 1) * SpeciesData.HP + Level);
-		CurrHP = MaxHP;
+		
+		if (bIsFainted == true) {
+			CurrHP = 1;
+			bIsFainted = false;
+		}
+		else CurrHP = MaxHP;
 
 		Attack = (((Level / 50.0 + 1) * SpeciesData.Attack) / 1.5);
 		Defence = (((Level / 50.0 + 1) * SpeciesData.Defence) / 1.5);
@@ -101,14 +106,10 @@ struct FPokemonStruct
 	}
 
 	void InitCurrentMoves() {
-		if (Moves.Num() <= 4) {
-			CurrentMoves = Moves;
-		}
+		for (int i = Moves.Num() - 4; i < Moves.Num(); i++) {
+			if (i < 0) continue;
 
-		else {
-			for (int i = Moves.Num() - 4; i < Moves.Num(); i++) {
-				CurrentMoves.Add(Moves[i]);
-			}
+			CurrentMoves.Add(i);
 		}
 	}
 
@@ -141,7 +142,7 @@ struct FPokemonStruct
 					Moves.Add(*AddedMove);
 
 					if (CurrentMoves.Num() < 4) {
-						CurrentMoves.Add(*AddedMove);
+						CurrentMoves.Add(CurrentMoves.Num());
 					}
 
 					bHasLearnedMove = true;	
@@ -195,13 +196,20 @@ struct FPokemonStruct
 		}
 	}
 
-	void RestoreHP(int RestoredHP) {
+	bool RestoreHP(int RestoredHP) {
+		if (CurrHP == MaxHP) {
+			return false;
+		}
+		
 		if ((CurrHP + RestoredHP) == MaxHP) {
 			CurrHP = MaxHP;
 		}
+
 		else {
 			CurrHP += RestoredHP;
 		}
+
+		return true;
 	}
 
 	void RecoverStatus() {

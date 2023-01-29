@@ -46,10 +46,10 @@ private:
 	UFUNCTION()
 	void PlaceOpponentPokemon(int PokemonId);
 
-	FMoveBaseStruct SelectedMove;
+	int SelectedMoveID;
 	int SwitchedPokemonID;
 
-	void UseMove(int AttackerId, int OpponentId, FMoveBaseStruct Move);
+	void UseMove(int MoveId, FString AttackerContextString);
 
 	FGameMapData SavedGameMapData;
 
@@ -66,7 +66,7 @@ protected:
 	void BattleTurn(EAction PlayerAction);
 
 	UFUNCTION()
-	void SelectMove(FMoveBaseStruct Move);
+	void SelectMove(int MoveId);
 
 	UFUNCTION()
 	void ExitBattleMap();

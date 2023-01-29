@@ -21,7 +21,7 @@ private:
 	UFUNCTION()
 	void OnButtonClicked();
 
-	FMoveBaseStruct Move;
+	int MoveId;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
@@ -43,7 +43,7 @@ public:
 	void InitButton(FText Name, int CurrPP, int MaxPP, ETypes MoveType);
 
 	UFUNCTION()
-	void SetMove(FMoveBaseStruct InMove);
+	void SetMove(int InMoveId);
 
-	FMoveStructSignature ButtonClicked;
+	FElementIDSignature ButtonClicked;
 };

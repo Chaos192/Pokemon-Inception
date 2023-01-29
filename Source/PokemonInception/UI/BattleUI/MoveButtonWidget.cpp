@@ -5,7 +5,7 @@
 
 void UMoveButtonWidget::OnButtonClicked()
 {
-	ButtonClicked.Broadcast(Move);
+	ButtonClicked.Broadcast(MoveId);
 }
 
 void UMoveButtonWidget::NativeConstruct()
@@ -46,7 +46,7 @@ void UMoveButtonWidget::InitButton(FText Name, int CurrPP, int MaxPP, ETypes Mov
 	}
 }
 
-void UMoveButtonWidget::SetMove(FMoveBaseStruct InMove)
+void UMoveButtonWidget::SetMove(int InMoveId)
 {
-	Move = InMove;
+	MoveId = InMoveId;
 }
