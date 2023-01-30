@@ -128,12 +128,13 @@ bool APlayerCharacterController::bIsRegisteredInPokedex(FName ID)
 
 void APlayerCharacterController::FullRestoreAllPokemon()
 {
-	/*for (int i = 0; i < PokemonParty.Num(); i++) {
+	for (int i = 0; i < PokemonParty.Num(); i++) {
 		PokemonParty[i].FullRestore();
+		GEngine->AddOnScreenDebugMessage(1, 1, FColor::Green, TEXT("RESTORED!"));
 	}
 	for (int i = 0; i < PokemonStorage.Num(); i++) {
 		PokemonStorage[i].FullRestore();
-	}*/
+	}
 }
 
 int APlayerCharacterController::GetMoney() const

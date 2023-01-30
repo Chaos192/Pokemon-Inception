@@ -30,6 +30,8 @@ class POKEMONINCEPTION_API ABattleGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 private:
+	int CurrentAction = 0;
+
 	TArray<FPokemonStruct> OpponentTeam;
 	int GetCurrentOpponent();
 	bool bIsOpponentDefeated();
@@ -49,7 +51,14 @@ private:
 	int SelectedMoveID;
 	int SwitchedPokemonID;
 
+	UFUNCTION()
 	void UseMove(int MoveId, FString AttackerContextString);
+
+	UFUNCTION()
+	void OpponentFaints();
+
+	UFUNCTION()
+	void PlayerFaints();
 
 	FGameMapData SavedGameMapData;
 
@@ -85,6 +94,9 @@ protected:
 
 	FTimerHandle MessageTimer;
 	FTimerHandle MessageTimer2;
+	FTimerHandle MessageTimer3;
+	FTimerHandle MessageTimer4;
+	FTimerHandle MessageTimer5;
 	FTimerHandle WidgetDelay;
 
 public:
