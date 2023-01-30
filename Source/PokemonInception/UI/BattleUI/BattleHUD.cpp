@@ -96,6 +96,11 @@ void ABattleHUD::ShowFightWidget()
 		return;
 	}
 
+	if (GameMode->HasPlayerRanOutOfPP() == true) {
+		GameMode->SelectMove(-1);
+		return;
+	}
+
 	if (PlayerOwner && FightWidget) {
 		ShowPlayerPokemonStatus();
 		ShowOpponentPokemonStatus();

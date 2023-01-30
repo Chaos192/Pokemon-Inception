@@ -28,6 +28,10 @@ void UPokemonSlotWidget::SetPokemonHP(int CurrHP, int MaxHP)
 	PokemonCurrHP->SetText(FText::FromString(FString::FromInt(CurrHP)));
 	PokemonMaxHP->SetText(FText::FromString(FString::FromInt(MaxHP)));
 
+	if (CurrHP == 0) {
+		PokemonButton->SetBackgroundColor(FLinearColor(0.583, 0.051, 0.051, 1));
+	}
+
 	float HpPercent = float(CurrHP) / float(MaxHP);
 	HPBar->SetPercent(HpPercent);
 }

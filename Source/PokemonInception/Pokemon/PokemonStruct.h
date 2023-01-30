@@ -233,6 +233,16 @@ struct FPokemonStruct
 		CurrHP = 1;
 	}
 
+	bool bHasRanOutOfPP() {
+		for (int i = 0; i < CurrentMoves.Num(); i++) {
+			if (Moves[CurrentMoves[i]].CurrPowerPoints > 0) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	void FullRestore() {
 		if (bIsFainted == true) {
 			RecoverStatus();

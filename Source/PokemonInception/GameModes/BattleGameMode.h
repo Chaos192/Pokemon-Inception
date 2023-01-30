@@ -31,6 +31,8 @@ class POKEMONINCEPTION_API ABattleGameMode : public AGameModeBase
 
 private:
 	int CurrentAction = 0;
+	bool bIsBattleVictory;
+	bool bSkipTurn;
 
 	TArray<FPokemonStruct> OpponentTeam;
 	int GetCurrentOpponent();
@@ -69,13 +71,10 @@ protected:
 	void BattleStart();
 
 	UFUNCTION()
-	void BattleEnd(FString BattleOutcome);
+	void BattleEnd();
 
 	UFUNCTION()
 	void BattleTurn(EAction PlayerAction);
-
-	UFUNCTION()
-	void SelectMove(int MoveId);
 
 	UFUNCTION()
 	void ExitBattleMap();
@@ -107,6 +106,9 @@ public:
 	void ShowPokemonInMenu();
 
 	UFUNCTION()
+	void SelectMove(int MoveId);
+
+	UFUNCTION()
 	void SelectPokemon(int InId);
 
 	UFUNCTION()
@@ -123,6 +125,9 @@ public:
 
 	UFUNCTION()
 	int GetPlayerPokemonId();
+
+	UFUNCTION()
+	bool HasPlayerRanOutOfPP();
 
 	UFUNCTION()
 	void Run();

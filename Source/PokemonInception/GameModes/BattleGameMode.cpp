@@ -132,8 +132,22 @@ void ABattleGameMode::UseMove(int MoveId, FString AttackerContextString)
 		Opponent = PlayerController->PokemonParty[PlayerPokemonId];
 	}
 
-	//HAS TO BE PLACED SOMEWHERE ELSE
-	if (Attacker.Moves[MoveId].CurrPowerPoints == 0) {
+	if (MoveId == -1) {
+		int Damage = (((100 + Attacker.Attack + 15 * Attacker.Level) * 50) / (Opponent.Defence + 50)) / 5;
+
+		if (AttackerContextString == "Player") {
+			OpponentTeam[OpponentPokemonId].RecieveDamage(Damage);
+			PlayerController->PokemonParty[PlayerPokemonId].RecieveDamage(Attacker.MaxHP/4);
+		}
+
+		else if (AttackerContextString == "Opponent") {
+			PlayerController->PokemonParty[PlayerPokemonId].RecieveDamage(Damage);
+			OpponentTeam[OpponentPokemonId].RecieveDamage(Attacker.MaxHP / 4);
+		}
+
+		MoveMessage = Attacker.SpeciesData.Name.ToString() + " used Struggle and dealt " + FString::FromInt(Damage) + " damage, but injured itself in the process!";
+		Hud->ShowText(MoveMessage);
+
 		return;
 	}
 
@@ -291,8 +305,9 @@ void ABattleGameMode::OpponentFaints()
 	}
 
 	Hud->ShowText("The opponent " + OpponentTeam[OpponentPokemonId].SpeciesData.Name.ToString() + " was defeated, " + 
-		PlayerController->PokemonParty[PlayerPokemonId].SpeciesData.Name.ToString() + " recieved " + FString::FromInt(Exp) + "Exp!");
+		PlayerController->PokemonParty[PlayerPokemonId].SpeciesData.Name.ToString() + " recieved " + FString::FromInt(Exp) + " Exp!");
 	
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("OpponentFaints"));
 }
 
 void ABattleGameMode::PlayerFaints()
@@ -303,6 +318,7 @@ void ABattleGameMode::PlayerFaints()
 	PlayerPokemonActor->Destroy();
 
 	Hud->ShowText(PlayerController->PokemonParty[PlayerPokemonId].SpeciesData.Name.ToString() + " was defeated!");
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("player faints"));
 }
 
 void ABattleGameMode::BattleStart()
@@ -328,14 +344,13 @@ void ABattleGameMode::BattleStart()
 	GetWorldTimerManager().SetTimer(WidgetDelay, Hud, &ABattleHUD::ShowBattleStartWidget, 3, false);
 }
 
-void ABattleGameMode::BattleEnd(FString BattleOutcome)
+void ABattleGameMode::BattleEnd()
 {
 	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
-	CurrentAction++;
 
-	if (BattleOutcome == "Win") {
+	if (bIsBattleVictory == true) {
 		int Money = 0;
 
 		for (FPokemonStruct Pokemon : OpponentTeam) {
@@ -349,9 +364,10 @@ void ABattleGameMode::BattleEnd(FString BattleOutcome)
 		PlayerController->Money += Money;
 
 		Hud->ShowText("You won! You recieved " + FString::FromInt(Money) + " money!");
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("win"));
 	}
 
-	else if(BattleOutcome == "Loss") {
+	else if(bIsBattleVictory == false) {
 		int Money = 0;
 
 		for (FPokemonStruct Pokemon : OpponentTeam) {
@@ -365,9 +381,10 @@ void ABattleGameMode::BattleEnd(FString BattleOutcome)
 		PlayerController->Money -= Money;
 
 		Hud->ShowText("You don't have any Pokemon that can fight! You lost " + FString::FromInt(Money) + " money!");
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("loss"));
 	}
 
-	GetWorldTimerManager().SetTimer(WidgetDelay, this, &ABattleGameMode::ExitBattleMap, CurrentAction, false);
+	GetWorldTimerManager().SetTimer(MessageTimer4, this, &ABattleGameMode::ExitBattleMap, CurrentAction, false);
 }
 
 void ABattleGameMode::BattleTurn(EAction PlayerAction)
@@ -375,27 +392,50 @@ void ABattleGameMode::BattleTurn(EAction PlayerAction)
 	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
+	bool bHasBattleEnded = false;
+	CurrentAction = 0;
+
 	if (PlayerAction == EAction::UseMove) {
 		UseMove(SelectedMoveID, "Player");
 		CurrentAction++;
 
-		if (OpponentTeam[OpponentPokemonId].bIsFainted == true) {
-			GetWorldTimerManager().SetTimer(WidgetDelay, this, &ABattleGameMode::OpponentFaints, 2, false);
+		if (PlayerController->PokemonParty[PlayerPokemonId].bIsFainted == true) {
+			GetWorldTimerManager().SetTimer(MessageTimer, this, &ABattleGameMode::PlayerFaints, CurrentAction, false);
+			CurrentAction++;
+
+			if (PlayerController->bIsPartyDefeated() == true) {
+				bHasBattleEnded = true;
+				bIsBattleVictory = false;
+				GetWorldTimerManager().SetTimer(MessageTimer5, this, &ABattleGameMode::BattleEnd, CurrentAction, false);
+			}
+			else {
+				bSkipTurn = true;
+			}
+		}
+
+		if (OpponentTeam[OpponentPokemonId].bIsFainted == true && PlayerController->bIsPartyDefeated() == false) {
+			GetWorldTimerManager().SetTimer(MessageTimer2, this, &ABattleGameMode::OpponentFaints, CurrentAction, false);
 			CurrentAction++;
 
 			if (bIsOpponentDefeated() == true) {
-				FTimerDelegate BattleWinDelegate;
-				BattleWinDelegate.BindUFunction(this, FName("BattleEnd"), "Win");
-				GetWorldTimerManager().SetTimer(WidgetDelay, BattleWinDelegate, 3, false);
+				bHasBattleEnded = true;
+				bIsBattleVictory = true;
+				GetWorldTimerManager().SetTimer(MessageTimer5, this, &ABattleGameMode::BattleEnd, CurrentAction, false);
 			}
 			else {
 				OpponentPokemonId = GetCurrentOpponent();
 
-				FTimerDelegate SendOutOpponent;
-				SendOutOpponent.BindUFunction(this, FName("PlaceOpponentPokemon"), OpponentPokemonId);
-				GetWorldTimerManager().SetTimer(MessageTimer, SendOutOpponent, 3, false);
+				FTimerDelegate SwitchOpponent;
+				SwitchOpponent.BindUFunction(this, FName("PlaceOpponentPokemon"), OpponentPokemonId);
+
+				GetWorldTimerManager().SetTimer(MessageTimer3, SwitchOpponent, CurrentAction, false);
 				CurrentAction++;
 			}
+		}
+
+		if (bSkipTurn == true && bHasBattleEnded == false) {
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("switching pokemon"));
+			GetWorldTimerManager().SetTimer(MessageTimer4, Hud, &ABattleHUD::ShowPokemon, CurrentAction, false);
 		}
 	}
 
@@ -404,9 +444,16 @@ void ABattleGameMode::BattleTurn(EAction PlayerAction)
 		PlayerPokemonId = SwitchedPokemonID;
 		PlacePlayerPokemon(PlayerPokemonId);
 		CurrentAction++;
+
+		if (bSkipTurn == false) {
+			//something
+		}
+		bSkipTurn = false;
 	}
 
-	GetWorldTimerManager().SetTimer(WidgetDelay, Hud, &ABattleHUD::ShowBattleStartWidget, CurrentAction, false);
+	if (bHasBattleEnded == false && PlayerController->PokemonParty[PlayerPokemonId].bIsFainted == false) {
+		GetWorldTimerManager().SetTimer(WidgetDelay, Hud, &ABattleHUD::ShowBattleStartWidget, CurrentAction, false);
+	}
 }
 
 FString ABattleGameMode::ETypeToString(ETypes Type)
@@ -447,8 +494,10 @@ void ABattleGameMode::SelectMove(int MoveId)
 
 void ABattleGameMode::SelectPokemon(int InId)
 {
-	if (PlayerPokemonId == InId) {
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("This pokemon is already in battle"));
+	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+	if (PlayerPokemonId == InId || PlayerController->PokemonParty[InId].bIsFainted == true) {
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("This pokemon can't enter"));
 		return;
 	}
 
@@ -543,7 +592,10 @@ void ABattleGameMode::ShowPokemonMoves()
 		MoveButton->InitButton(Attacker.Moves[Attacker.CurrentMoves[i]].Name, Attacker.Moves[Attacker.CurrentMoves[i]].CurrPowerPoints,
 			Attacker.Moves[Attacker.CurrentMoves[i]].PowerPoints, Attacker.Moves[Attacker.CurrentMoves[i]].MoveType);
 		MoveButton->SetMove(Attacker.CurrentMoves[i]);
-		MoveButton->ButtonClicked.AddDynamic(this, &ABattleGameMode::SelectMove);
+
+		if (Attacker.Moves[Attacker.CurrentMoves[i]].CurrPowerPoints > 0) {
+			MoveButton->ButtonClicked.AddDynamic(this, &ABattleGameMode::SelectMove);
+		}
 
 		MoveDelegate.Broadcast(MoveButton);
 	}
@@ -555,6 +607,13 @@ FPokemonStruct ABattleGameMode::GetCurrentOpponentStruct() {
 
 int ABattleGameMode::GetPlayerPokemonId() {
 	return PlayerPokemonId;
+}
+
+bool ABattleGameMode::HasPlayerRanOutOfPP()
+{
+	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+	return PlayerController->PokemonParty[PlayerPokemonId].bHasRanOutOfPP();
 }
 
 void ABattleGameMode::ExitBattleMap()
