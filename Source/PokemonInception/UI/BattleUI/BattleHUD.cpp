@@ -33,7 +33,7 @@ void ABattleHUD::BeginPlay()
 	BattleStartWidget->RunClicked.AddDynamic(GameMode, &ABattleGameMode::Run);
 
 	FightWidget->BackClicked.AddDynamic(this, &ABattleHUD::ShowBattleStartWidget);
-	PokemonWidget->BackClicked.AddDynamic(this, &ABattleHUD::ShowBattleStartWidget);
+	PokemonWidget->BackClicked.AddDynamic(this, &ABattleHUD::ClearPokemon);
 	BagWidget->BackClicked.AddDynamic(this, &ABattleHUD::ShowBattleStartWidget);
 
 	SwitchOutWidget->ActionClicked.AddDynamic(GameMode, &ABattleGameMode::SelectPokemon);
@@ -69,6 +69,20 @@ TSubclassOf<UMoveButtonWidget> ABattleHUD::GetMoveButtonWidgetClass()
 void ABattleHUD::Clear()
 {
 	UWidgetLayoutLibrary::RemoveAllWidgets(this);
+}
+
+void ABattleHUD::ClearPokemon()
+{
+	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
+
+	if (GameMode->bHasToSwitchPokemon() == true) {
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("You have to select a pokemon"));
+		return;
+	}
+	ShowBattleStartWidget();
 }
 
 void ABattleHUD::ClearPopup()

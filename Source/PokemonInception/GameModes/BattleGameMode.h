@@ -32,7 +32,7 @@ class POKEMONINCEPTION_API ABattleGameMode : public AGameModeBase
 private:
 	int CurrentAction = 0;
 	bool bIsBattleVictory;
-	bool bSkipTurn;
+	bool bDoesPlayerHaveToSwitch;
 
 	TArray<FPokemonStruct> OpponentTeam;
 	int GetCurrentOpponent();
@@ -128,6 +128,9 @@ public:
 
 	UFUNCTION()
 	bool HasPlayerRanOutOfPP();
+
+	UFUNCTION()
+	bool bHasToSwitchPokemon();
 
 	UFUNCTION()
 	void Run();

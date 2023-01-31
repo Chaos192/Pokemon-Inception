@@ -44,6 +44,16 @@ void APlayerCharacterController::Interact()
 	}
 }
 
+bool APlayerCharacterController::bIsPartyDefeated()
+{
+	for (FPokemonStruct Pokemon : PokemonParty) {
+		if (Pokemon.bIsFainted == false) {
+			return false;
+		}
+	}
+	return true;
+}
+
 void APlayerCharacterController::TogglePause()
 {
 	PauseDelegate.Broadcast();

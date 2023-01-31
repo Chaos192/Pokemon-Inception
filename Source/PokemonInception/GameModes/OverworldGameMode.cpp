@@ -33,8 +33,14 @@ void AOverworldGameMode::BeginPlay()
 		PlayerController->RecieveMoney(SaveData->MoneyData);
 		PlayerController->LoadPokemonParty(SaveData->PartyData);
 		PlayerController->LoadPokemonStorage(SaveData->StorageData);
-		PlayerOwner->SetActorLocation(SaveData->GameMapData.PlayerLocation);
-		PlayerOwner->SetActorRotation(SaveData->GameMapData.PlayerRotation, ETeleportType::None);
+
+		if (PlayerController->bIsPartyDefeated() == true) {
+			PlayerController->FullRestoreAllPokemon();
+		}
+		else {
+			PlayerOwner->SetActorLocation(SaveData->GameMapData.PlayerLocation);
+			PlayerOwner->SetActorRotation(SaveData->GameMapData.PlayerRotation, ETeleportType::None);
+		}
 		
 		if (SaveData->GameMapData.ActorsToDestroy.Num() > 0) {
 			ActorsToDestroy = SaveData->GameMapData.ActorsToDestroy;

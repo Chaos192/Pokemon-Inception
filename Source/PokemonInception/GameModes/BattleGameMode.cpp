@@ -147,6 +147,8 @@ void ABattleGameMode::UseMove(int MoveId, FString AttackerContextString)
 
 		MoveMessage = Attacker.SpeciesData.Name.ToString() + " used Struggle and dealt " + FString::FromInt(Damage) + " damage, but injured itself in the process!";
 		Hud->ShowText(MoveMessage);
+		Hud->ShowOpponentPokemonStatus();
+		Hud->ShowPlayerPokemonStatus();
 
 		return;
 	}
@@ -217,7 +219,6 @@ void ABattleGameMode::UseMove(int MoveId, FString AttackerContextString)
 			}
 		}
 
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Damage dealt: " + FString::FromInt(Damage)));
 		if (AttackerContextString == "Player") {
 			OpponentTeam[OpponentPokemonId].RecieveDamage(Damage);
 			PlayerController->PokemonParty[PlayerPokemonId].Moves[MoveId].CurrPowerPoints--;
@@ -409,7 +410,7 @@ void ABattleGameMode::BattleTurn(EAction PlayerAction)
 				GetWorldTimerManager().SetTimer(MessageTimer5, this, &ABattleGameMode::BattleEnd, CurrentAction, false);
 			}
 			else {
-				bSkipTurn = true;
+				bDoesPlayerHaveToSwitch = true;
 			}
 		}
 
@@ -433,7 +434,7 @@ void ABattleGameMode::BattleTurn(EAction PlayerAction)
 			}
 		}
 
-		if (bSkipTurn == true && bHasBattleEnded == false) {
+		if (bDoesPlayerHaveToSwitch == true && bHasBattleEnded == false) {
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("switching pokemon"));
 			GetWorldTimerManager().SetTimer(MessageTimer4, Hud, &ABattleHUD::ShowPokemon, CurrentAction, false);
 		}
@@ -445,10 +446,10 @@ void ABattleGameMode::BattleTurn(EAction PlayerAction)
 		PlacePlayerPokemon(PlayerPokemonId);
 		CurrentAction++;
 
-		if (bSkipTurn == false) {
+		if (bDoesPlayerHaveToSwitch == false) {
 			//something
 		}
-		bSkipTurn = false;
+		bDoesPlayerHaveToSwitch = false;
 	}
 
 	if (bHasBattleEnded == false && PlayerController->PokemonParty[PlayerPokemonId].bIsFainted == false) {
@@ -614,6 +615,11 @@ bool ABattleGameMode::HasPlayerRanOutOfPP()
 	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
 	return PlayerController->PokemonParty[PlayerPokemonId].bHasRanOutOfPP();
+}
+
+bool ABattleGameMode::bHasToSwitchPokemon()
+{
+	return bDoesPlayerHaveToSwitch;
 }
 
 void ABattleGameMode::ExitBattleMap()

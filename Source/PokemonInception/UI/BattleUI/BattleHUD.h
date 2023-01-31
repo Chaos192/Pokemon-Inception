@@ -109,6 +109,9 @@ public:
 	void Clear();
 
 	UFUNCTION()
+	void ClearPokemon();
+
+	UFUNCTION()
 	void ClearPopup();
 
 	UFUNCTION()
