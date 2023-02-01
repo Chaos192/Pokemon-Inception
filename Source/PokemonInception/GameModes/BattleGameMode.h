@@ -31,8 +31,10 @@ class POKEMONINCEPTION_API ABattleGameMode : public AGameModeBase
 
 private:
 	int CurrentAction = 0;
-	bool bIsBattleVictory;
-	bool bDoesPlayerHaveToSwitch;
+	bool bHasBattleEnded = false;
+	bool bIsBattleVictory = false;
+	bool bDoesPlayerHaveToSwitch = false;
+	bool bHasTurnEnded;
 
 	TArray<FPokemonStruct> OpponentTeam;
 	int GetCurrentOpponent();
@@ -62,6 +64,9 @@ private:
 	UFUNCTION()
 	void PlayerFaints();
 
+	UFUNCTION()
+	int SelectOpponentMove();
+
 	FGameMapData SavedGameMapData;
 
 protected:
@@ -75,6 +80,12 @@ protected:
 
 	UFUNCTION()
 	void BattleTurn(EAction PlayerAction);
+
+	UFUNCTION()
+	void PlayerTurn();
+
+	UFUNCTION()
+	void OpponentTurn();
 
 	UFUNCTION()
 	void ExitBattleMap();
