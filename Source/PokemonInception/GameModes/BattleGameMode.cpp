@@ -279,8 +279,8 @@ void ABattleGameMode::UseMove(int MoveId, FString AttackerContextString)
 		}
 
 		else if (AttackerContextString == "Opponent") {
-			PlayerController->PokemonParty[PlayerPokemonId] = Attacker;
-			OpponentTeam[OpponentPokemonId] = Opponent;
+			PlayerController->PokemonParty[PlayerPokemonId] = Opponent;
+			OpponentTeam[OpponentPokemonId] = Attacker;
 
 			//OpponentTeam[OpponentPokemonId].Moves[MoveId].CurrPowerPoints--;
 		}
@@ -412,8 +412,6 @@ void ABattleGameMode::BattleTurn(EAction PlayerAction)
 	CurrentAction = 0;
 	bHasTurnEnded = false;
 
-	SelectOpponentMove();
-
 	if (PlayerAction == EAction::UseMove) {
 		if (PlayerController->PokemonParty[PlayerPokemonId].Speed > OpponentTeam[OpponentPokemonId].Speed) {
 			PlayerTurn();
@@ -424,7 +422,7 @@ void ABattleGameMode::BattleTurn(EAction PlayerAction)
 
 			if (bDoesPlayerHaveToSwitch == true && bHasBattleEnded == false) {
 				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("switching pokemon"));
-				GetWorldTimerManager().SetTimer(MessageTimer4, Hud, &ABattleHUD::ShowPokemon, CurrentAction, false);
+				GetWorldTimerManager().SetTimer(MessageTimer2, Hud, &ABattleHUD::ShowPokemon, CurrentAction, false);
 			}
 		}
 
@@ -437,7 +435,7 @@ void ABattleGameMode::BattleTurn(EAction PlayerAction)
 
 			if (bDoesPlayerHaveToSwitch == true && bHasBattleEnded == false) {
 				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("switching pokemon"));
-				GetWorldTimerManager().SetTimer(MessageTimer4, Hud, &ABattleHUD::ShowPokemon, CurrentAction, false);
+				GetWorldTimerManager().SetTimer(MessageTimer3, Hud, &ABattleHUD::ShowPokemon, CurrentAction, false);
 			}
 		}
 		
@@ -469,29 +467,33 @@ void ABattleGameMode::PlayerTurn()
 {
 	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	
-	FTimerHandle MoveTimer;
-	FTimerHandle PlayerFaintTimer;
-	FTimerHandle OpponentFaintTimer;
-	FTimerHandle OpponentSwitchTimer;
-	FTimerHandle BattleEndTimer;
+	FTimerHandle P_MoveTimer;
+	FTimerHandle P_PlayerFaintTimer;
+	FTimerHandle P_OpponentFaintTimer;
+	FTimerHandle P_OpponentSwitchTimer;
+	FTimerHandle P_BattleEndTimer;
 
-	FTimerDelegate PlayerMoveDelegate;
-	PlayerMoveDelegate.BindUFunction(this, FName("UseMove"), SelectedMoveID, FString("Player"));
-
-	GetWorldTimerManager().SetTimer(MoveTimer, PlayerMoveDelegate, CurrentAction, false);
-	//UseMove(SelectedMoveID, "Player");
+	if (CurrentAction != 0) {
+		FTimerDelegate PlayerMoveDelegate;
+		PlayerMoveDelegate.BindUFunction(this, FName("UseMove"), SelectedMoveID, FString("Player"));
+		GetWorldTimerManager().SetTimer(P_MoveTimer, PlayerMoveDelegate, CurrentAction, false);
+	}
+	else {
+		UseMove(SelectedMoveID, "Player");
+	}
+	
 	CurrentAction++;
 
 	if (PlayerController->PokemonParty[PlayerPokemonId].bIsFainted == true) {
 		bHasTurnEnded = true;
 
-		GetWorldTimerManager().SetTimer(PlayerFaintTimer, this, &ABattleGameMode::PlayerFaints, CurrentAction, false);
+		GetWorldTimerManager().SetTimer(P_PlayerFaintTimer, this, &ABattleGameMode::PlayerFaints, CurrentAction, false);
 		CurrentAction++;
 
 		if (PlayerController->bIsPartyDefeated() == true) {
 			bHasBattleEnded = true;
 			bIsBattleVictory = false;
-			GetWorldTimerManager().SetTimer(BattleEndTimer, this, &ABattleGameMode::BattleEnd, CurrentAction, false);
+			GetWorldTimerManager().SetTimer(P_BattleEndTimer, this, &ABattleGameMode::BattleEnd, CurrentAction, false);
 		}
 		else {
 			bDoesPlayerHaveToSwitch = true;
@@ -501,13 +503,13 @@ void ABattleGameMode::PlayerTurn()
 	if (OpponentTeam[OpponentPokemonId].bIsFainted == true && PlayerController->bIsPartyDefeated() == false) {
 		bHasTurnEnded = true;
 
-		GetWorldTimerManager().SetTimer(OpponentFaintTimer, this, &ABattleGameMode::OpponentFaints, CurrentAction, false);
+		GetWorldTimerManager().SetTimer(P_OpponentFaintTimer, this, &ABattleGameMode::OpponentFaints, CurrentAction, false);
 		CurrentAction++;
 
 		if (bIsOpponentDefeated() == true) {
 			bHasBattleEnded = true;
 			bIsBattleVictory = true;
-			GetWorldTimerManager().SetTimer(BattleEndTimer, this, &ABattleGameMode::BattleEnd, CurrentAction, false);
+			GetWorldTimerManager().SetTimer(P_BattleEndTimer, this, &ABattleGameMode::BattleEnd, CurrentAction, false);
 		}
 		else {
 			OpponentPokemonId = GetCurrentOpponent();
@@ -515,7 +517,7 @@ void ABattleGameMode::PlayerTurn()
 			FTimerDelegate SwitchOpponent;
 			SwitchOpponent.BindUFunction(this, FName("PlaceOpponentPokemon"), OpponentPokemonId);
 
-			GetWorldTimerManager().SetTimer(OpponentSwitchTimer, SwitchOpponent, CurrentAction, false);
+			GetWorldTimerManager().SetTimer(P_OpponentSwitchTimer, SwitchOpponent, CurrentAction, false);
 			CurrentAction++;
 		}
 	}
@@ -525,29 +527,33 @@ void ABattleGameMode::OpponentTurn()
 {
 	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
-	FTimerHandle MoveTimer;
-	FTimerHandle PlayerFaintTimer;
-	FTimerHandle OpponentFaintTimer;
-	FTimerHandle OpponentSwitchTimer;
-	FTimerHandle BattleEndTimer;
+	FTimerHandle O_MoveTimer;
+	FTimerHandle O_PlayerFaintTimer;
+	FTimerHandle O_OpponentFaintTimer;
+	FTimerHandle O_OpponentSwitchTimer;
+	FTimerHandle O_BattleEndTimer;
 
-	FTimerDelegate OpponentMoveDelegate;
-	OpponentMoveDelegate.BindUFunction(this, FName("UseMove"), SelectOpponentMove(), FString("Opponent"));
-
-	GetWorldTimerManager().SetTimer(MoveTimer, OpponentMoveDelegate, CurrentAction, false);
-	//UseMove(SelectOpponentMove(), "Opponent");
+	if (CurrentAction != 0) {
+		FTimerDelegate OpponentMoveDelegate;
+		OpponentMoveDelegate.BindUFunction(this, FName("UseMove"), SelectOpponentMove(), FString("Opponent"));
+		GetWorldTimerManager().SetTimer(O_MoveTimer, OpponentMoveDelegate, CurrentAction, false);
+	}
+	else {
+		UseMove(SelectOpponentMove(), "Opponent");
+	}
+	
 	CurrentAction++;
 
 	if (PlayerController->PokemonParty[PlayerPokemonId].bIsFainted == true) {
 		bHasTurnEnded = true;
-		
-		GetWorldTimerManager().SetTimer(PlayerFaintTimer, this, &ABattleGameMode::PlayerFaints, CurrentAction, false);
+
+		GetWorldTimerManager().SetTimer(O_PlayerFaintTimer, this, &ABattleGameMode::PlayerFaints, CurrentAction, false);
 		CurrentAction++;
 
 		if (PlayerController->bIsPartyDefeated() == true) {
 			bHasBattleEnded = true;
 			bIsBattleVictory = false;
-			GetWorldTimerManager().SetTimer(BattleEndTimer, this, &ABattleGameMode::BattleEnd, CurrentAction, false);
+			GetWorldTimerManager().SetTimer(O_BattleEndTimer, this, &ABattleGameMode::BattleEnd, CurrentAction, false);
 		}
 		else {
 			bDoesPlayerHaveToSwitch = true;
@@ -557,13 +563,13 @@ void ABattleGameMode::OpponentTurn()
 	if (OpponentTeam[OpponentPokemonId].bIsFainted == true && PlayerController->bIsPartyDefeated() == false) {
 		bHasTurnEnded = true;
 		
-		GetWorldTimerManager().SetTimer(OpponentFaintTimer, this, &ABattleGameMode::OpponentFaints, CurrentAction, false);
+		GetWorldTimerManager().SetTimer(O_OpponentFaintTimer, this, &ABattleGameMode::OpponentFaints, CurrentAction, false);
 		CurrentAction++;
 
 		if (bIsOpponentDefeated() == true) {
 			bHasBattleEnded = true;
 			bIsBattleVictory = true;
-			GetWorldTimerManager().SetTimer(BattleEndTimer, this, &ABattleGameMode::BattleEnd, CurrentAction, false);
+			GetWorldTimerManager().SetTimer(O_BattleEndTimer, this, &ABattleGameMode::BattleEnd, CurrentAction, false);
 		}
 		else {
 			OpponentPokemonId = GetCurrentOpponent();
@@ -571,7 +577,7 @@ void ABattleGameMode::OpponentTurn()
 			FTimerDelegate SwitchOpponent;
 			SwitchOpponent.BindUFunction(this, FName("PlaceOpponentPokemon"), OpponentPokemonId);
 
-			GetWorldTimerManager().SetTimer(OpponentSwitchTimer, SwitchOpponent, CurrentAction, false);
+			GetWorldTimerManager().SetTimer(O_OpponentSwitchTimer, SwitchOpponent, CurrentAction, false);
 			CurrentAction++;
 		}
 	}

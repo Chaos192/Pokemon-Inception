@@ -183,14 +183,10 @@ struct FPokemonStruct
 	}
 
 	void RecieveDamage(int Damage) {
-		if (Damage > CurrHP) {
-			CurrHP = 0;
-		}
-		else {
-			CurrHP -= Damage;
-		}
+		CurrHP -= Damage;
 
-		if (CurrHP == 0) {
+		if (CurrHP <= 0) {
+			CurrHP = 0;
 			ClearEffects();
 			bIsFainted = true;
 		}
