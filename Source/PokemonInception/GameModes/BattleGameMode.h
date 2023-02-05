@@ -59,6 +59,9 @@ private:
 	void UseMove(int MoveId, FString AttackerContextString);
 
 	UFUNCTION()
+	void MoveOutcome(FString MoveMessage);
+
+	UFUNCTION()
 	void OpponentFaints();
 
 	UFUNCTION()
@@ -82,10 +85,7 @@ protected:
 	void BattleTurn(EAction PlayerAction);
 
 	UFUNCTION()
-	void PlayerTurn();
-
-	UFUNCTION()
-	void OpponentTurn();
+	void EndTurn();
 
 	UFUNCTION()
 	void ExitBattleMap();
