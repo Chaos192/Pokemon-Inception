@@ -213,7 +213,7 @@ void ABattleGameMode::UseMove(int MoveId, FString AttackerContextString)
 			Damage *= 0;
 		}
 
-		if (OpponentTeam[OpponentPokemonId].SpeciesData.Type2 != ETypes::None) {
+		if (Opponent.SpeciesData.Type2 != ETypes::None) {
 			if(MovetTypeStruct->SuperEffectiveAgainst.Contains(Opponent.SpeciesData.Type2)) {
 				Damage *= 2;
 			}
@@ -444,7 +444,7 @@ void ABattleGameMode::BattleTurn(EAction PlayerAction)
 	bHasTurnEnded = false;
 
 	if (PlayerAction == EAction::UseMove) {
-		if (PlayerController->PokemonParty[PlayerPokemonId].Speed > OpponentTeam[OpponentPokemonId].Speed) {
+		if (PlayerController->PokemonParty[PlayerPokemonId].GetSpeed() > OpponentTeam[OpponentPokemonId].GetSpeed()) {
 			UseMove(SelectedMoveID, "Player");
 			UseMove(SelectOpponentMove(), "Opponent");
 			EndTurn();

@@ -267,6 +267,7 @@ void ABattleHUD::RefreshPlayerPokemonStatus()
 	PlayerPokemonStatusWidget->SetPokemonEXP(PokemonData.CurrExp, PokemonData.RequiredExp);
 	PlayerPokemonStatusWidget->SetPokemonLevel(PokemonData.Level);
 	PlayerPokemonStatusWidget->SetPokemonName(PokemonData.SpeciesData.Name);
+	PlayerPokemonStatusWidget->SetPokemonStatus(PokemonData.Effects);
 }
 
 void ABattleHUD::RefreshOpponentPokemonStatus()
@@ -280,6 +281,7 @@ void ABattleHUD::RefreshOpponentPokemonStatus()
 	OpponentPokemonStatusWidget->SetPokemonHP(PokemonData.CurrHP, PokemonData.MaxHP);
 	OpponentPokemonStatusWidget->SetPokemonLevel(PokemonData.Level);
 	OpponentPokemonStatusWidget->SetPokemonName(PokemonData.SpeciesData.Name);
+	OpponentPokemonStatusWidget->SetPokemonStatus(PokemonData.Effects);
 }
 
 void ABattleHUD::ShowBattleStartWidget()

@@ -98,6 +98,24 @@ protected:
 	virtual void BeginPlay() override;
 	
 public:
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D* AttackUpImage;
+
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D* AttackDownImage;
+
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D* DefenceUpImage;
+
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D* DefenceDownImage;
+
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D* SpeedUpImage;
+
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D* SpeedDownImage;
+
 	TSubclassOf<UItemSlotWidget> GetItemSlotWidgetClass();
 
 	TSubclassOf<UItemInfoWidget> GetItemInfoWidgetClass();

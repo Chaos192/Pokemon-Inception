@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
+#include "Components/Image.h"
+#include "../../Pokemon/PokemonStruct.h"
 #include "PokemonStatusWidget.generated.h"
 
 
@@ -30,6 +32,15 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UProgressBar* HPBar;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UImage* AttackStatus;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UImage* DefenceStatus;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UImage* SpeedStatus;
+
 public:
 	UFUNCTION()
 	void SetPokemonName(FText Name);
@@ -39,4 +50,7 @@ public:
 
 	UFUNCTION()
 	void SetPokemonHP(int CurrHP, int MaxHP);
+
+	UFUNCTION()
+	void SetPokemonStatus(TArray<EEffect> Effects);
 };

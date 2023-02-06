@@ -251,6 +251,18 @@ struct FPokemonStruct
 		}
 	}
 
+	int GetSpeed() {
+		if (Effects.Contains(EEffect::SpeedUp)) {
+			return Speed * 1.5;
+		}
+
+		if (Effects.Contains(EEffect::SpeedDown)) {
+			return Speed * 0.5;
+		}
+
+		return Speed;
+	}
+
 	bool AddEffect(EEffect Effect) {
 		if (Effects.Contains(Effect) == true) {
 			return false;
