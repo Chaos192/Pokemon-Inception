@@ -5,12 +5,17 @@
 
 void UItemInfoWidget::OnUseClicked()
 {
-	UseClicked.Broadcast();
+	UseClicked.Broadcast(ItemID);
 }
 
 void UItemInfoWidget::SetDescription(FText Description)
 {
 	DescriptionText->SetText(Description);
+}
+
+void UItemInfoWidget::SetID(int InItemID)
+{
+	ItemID = InItemID;
 }
 
 void UItemInfoWidget::NativeConstruct()

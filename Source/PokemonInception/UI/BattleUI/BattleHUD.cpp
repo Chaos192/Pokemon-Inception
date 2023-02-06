@@ -22,9 +22,11 @@ void ABattleHUD::BeginPlay()
 	PokemonWidget = CreateWidget<UPokemonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonWidgetClass);
 	PokemonSummaryWidget = CreateWidget<UPokemonSummaryWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonSummaryWidgetClass);
 	SwitchOutWidget = CreateWidget<UPopupSelectionWidget>(UGameplayStatics::GetGameInstance(GetWorld()), SwitchOutWidgetClass);
+	UseItemWidget = CreateWidget<UPopupSelectionWidget>(UGameplayStatics::GetGameInstance(GetWorld()), UseItemWidgetClass);
 	PlayerPokemonStatusWidget = CreateWidget<UPlayerPokemonStatusWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PlayerPokemonStatusWidgetClass);
 	OpponentPokemonStatusWidget = CreateWidget<UPokemonStatusWidget>(UGameplayStatics::GetGameInstance(GetWorld()), OpponentStatusWidgetClass);
 	BagWidget = CreateWidget<UBagWidget>(UGameplayStatics::GetGameInstance(GetWorld()), BagWidgetClass);
+	ItemInfoWidget = CreateWidget<UItemInfoWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ItemInfoWidgetClass);
 	TextBoxWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TextBoxWidgetClass);
 
 	BattleStartWidget->FightClicked.AddDynamic(this, &ABattleHUD::ShowFightWidget);
@@ -36,12 +38,16 @@ void ABattleHUD::BeginPlay()
 	PokemonWidget->BackClicked.AddDynamic(this, &ABattleHUD::ClearPokemon);
 	BagWidget->BackClicked.AddDynamic(this, &ABattleHUD::ShowBattleStartWidget);
 
+	ItemInfoWidget->UseClicked.AddDynamic(GameMode, &ABattleGameMode::SelectItem);
+
 	SwitchOutWidget->ActionClicked.AddDynamic(GameMode, &ABattleGameMode::SelectPokemon);
 	SwitchOutWidget->CancelClicked.AddDynamic(this, &ABattleHUD::ClearPopup);
 
+	UseItemWidget->ActionClicked.AddDynamic(GameMode, &ABattleGameMode::SelectPokemonToUseItem);
+	UseItemWidget->CancelClicked.AddDynamic(this, &ABattleHUD::ClearPopup);
+
 	GameMode->MessageUpdate.AddDynamic(TextBoxWidget, &UTextBoxWidget::ReturnMessage);
 	GameMode->ItemSlotDelegate.AddDynamic(BagWidget, &UBagWidget::AddToWrapBox);
-	GameMode->ItemInfoDelegate.AddDynamic(BagWidget, &UBagWidget::ShowInfo);
 	GameMode->PokemonSlotDelegate.AddDynamic(PokemonWidget, &UPokemonWidget::AddToWrapBox);
 	GameMode->MoveDelegate.AddDynamic(FightWidget, &UFightWidget::AddToWrapBox);
 }
@@ -49,11 +55,6 @@ void ABattleHUD::BeginPlay()
 TSubclassOf<UItemSlotWidget> ABattleHUD::GetItemSlotWidgetClass()
 {
 	return ItemSlotWidgetClass; 
-}
-
-TSubclassOf<UItemInfoWidget> ABattleHUD::GetItemInfoWidgetClass()
-{
-	return ItemInfoWidgetClass;
 }
 
 TSubclassOf<UPokemonSlotWidget> ABattleHUD::GetPokemonSlotWidgetClass()
@@ -88,6 +89,7 @@ void ABattleHUD::ClearPokemon()
 void ABattleHUD::ClearPopup()
 {
 	SwitchOutWidget->RemoveFromViewport();
+	UseItemWidget->RemoveFromViewport();
 }
 
 void ABattleHUD::ShowText(FString Message)
@@ -144,6 +146,18 @@ void ABattleHUD::ShowBag()
 	}
 }
 
+void ABattleHUD::ShowItemInfo(int ItemID)
+{
+	if (PlayerOwner && ItemInfoWidget) {
+		ABattleController* Controller = Cast<ABattleController>(PlayerOwner);
+
+		ItemInfoWidget->SetDescription(Controller->Inventory[ItemID].Description);
+		ItemInfoWidget->SetID(ItemID);
+
+		BagWidget->ShowInfo(ItemInfoWidget);
+	}
+}
+
 void ABattleHUD::ShowPokemon()
 {
 	Clear();
@@ -164,7 +178,7 @@ void ABattleHUD::ShowPokemon()
 
 void ABattleHUD::ShowPokemonSummary(int PokemonID)
 {
-	if (SwitchOutWidget->IsInViewport() == true) {
+	if (SwitchOutWidget->IsInViewport() == true || UseItemWidget->IsInViewport() == true) {
 		return;
 	}
 
@@ -219,6 +233,26 @@ void ABattleHUD::ShowSwitchOutPopup(int PokemonId)
 		SwitchOutWidget->SetId(PokemonId);
 		SwitchOutWidget->AddToViewport();
 		SwitchOutWidget->SetPositionInViewport(FVector2D(MouseX, MouseY), false);
+		PlayerOwner->bShowMouseCursor = true;
+		PlayerOwner->SetInputMode(FInputModeUIOnly());
+	}
+}
+
+void ABattleHUD::ShowUseItemPopup(int PokemonId)
+{
+	if (UseItemWidget->IsInViewport() == true) {
+		return;
+	}
+
+	if (PlayerOwner && UseItemWidget) {
+		float MouseX;
+		float MouseY;
+
+		PlayerOwner->GetMousePosition(MouseX, MouseY);
+
+		UseItemWidget->SetId(PokemonId);
+		UseItemWidget->AddToViewport();
+		UseItemWidget->SetPositionInViewport(FVector2D(MouseX, MouseY), false);
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
 	}
@@ -287,6 +321,12 @@ void ABattleHUD::RefreshOpponentPokemonStatus()
 void ABattleHUD::ShowBattleStartWidget()
 {
 	Clear();
+	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
+
+	GameMode->bHasSelectedItem = false;
 
 	if (PlayerOwner && BattleStartWidget) {
 		BattleStartWidget->AddToViewport();

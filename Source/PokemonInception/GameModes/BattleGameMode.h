@@ -54,12 +54,16 @@ private:
 
 	int SelectedMoveID;
 	int SwitchedPokemonID;
+	int SelectedItemID;
 
 	UFUNCTION()
 	void UseMove(int MoveId, FString AttackerContextString);
 
 	UFUNCTION()
 	void MoveOutcome(FString MoveMessage);
+
+	UFUNCTION()
+	void UseItem();
 
 	UFUNCTION()
 	void OpponentFaints();
@@ -102,6 +106,18 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	class UDataTable* TypesDT;
 
+	UPROPERTY(EditDefaultsOnly)
+	class UDataTable* BallsDT;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UDataTable* PotionsDT;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UDataTable* EthersDT;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UDataTable* RevivesDT;
+
 	FTimerHandle MessageTimer;
 	FTimerHandle MessageTimer2;
 	FTimerHandle MessageTimer3;
@@ -110,6 +126,8 @@ protected:
 	FTimerHandle WidgetDelay;
 
 public:
+	bool bHasSelectedItem;
+
 	UFUNCTION()
 	FString ETypeToString(ETypes Type);
 
@@ -123,13 +141,16 @@ public:
 	void SelectPokemon(int InId);
 
 	UFUNCTION()
+	void SelectItem(int InId);
+
+	UFUNCTION()
+	void SelectPokemonToUseItem(int InId);
+
+	UFUNCTION()
 	void FillBagWidget();
 
 	UFUNCTION()
 	void ShowPokemonMoves();
-
-	UFUNCTION()
-	void ShowItemInfo(FItemBaseStruct InventoryItem);
 
 	UFUNCTION()
 	FPokemonStruct GetCurrentOpponentStruct();
@@ -150,7 +171,6 @@ public:
 	FWidgetSignature WidgetUpdate;
 
 	FItemSlotSignature ItemSlotDelegate;
-	FItemInfoSignature ItemInfoDelegate;
 
 	FPokemonSlotSignature PokemonSlotDelegate;
 

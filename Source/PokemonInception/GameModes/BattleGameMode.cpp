@@ -13,6 +13,10 @@
 #include "../Pokemon/AttackMoveStruct.h"
 #include "../Pokemon/StatusMoveStruct.h"
 #include "../Pokemon/TypeStruct.h"
+#include "../Items/BallBaseStruct.h"
+#include "../Items/EtherBaseStruct.h"
+#include "../Items/PotionBaseStruct.h"
+#include "../Items/ReviveBaseStruct.h"
 
 
 void ABattleGameMode::BeginPlay()
@@ -361,6 +365,49 @@ void ABattleGameMode::MoveOutcome(FString MoveMessage)
 	}
 }
 
+void ABattleGameMode::UseItem()
+{
+	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+	if (PlayerController->Inventory[SelectedItemID].ItemStructType == "Potion") {
+		if (PlayerController->PokemonParty[SwitchedPokemonID].bIsFainted == true || PlayerController->PokemonParty[SwitchedPokemonID].bIsFullHp() == true) {
+			//fail
+		}
+
+		FPotionBaseStruct* Potion = PotionsDT->FindRow<FPotionBaseStruct>(PlayerController->Inventory[SelectedItemID].ItemID, "");
+		PlayerController->PokemonParty[SwitchedPokemonID].RestoreHP(Potion->RestoredHP);
+
+		PlayerController->Inventory.RemoveAt(SelectedItemID);
+		//message
+	}
+
+	if (PlayerController->Inventory[SelectedItemID].ItemStructType == "Revive") {
+		if (PlayerController->PokemonParty[SwitchedPokemonID].bIsFainted == false) {
+			//fail
+		}
+
+		FReviveBaseStruct* Revive = RevivesDT->FindRow<FReviveBaseStruct>(PlayerController->Inventory[SelectedItemID].ItemID, "");
+		PlayerController->PokemonParty[SwitchedPokemonID].RecoverStatus();
+		PlayerController->PokemonParty[SwitchedPokemonID].RestoreHP(PlayerController->PokemonParty[SwitchedPokemonID].MaxHP * Revive->RevivePercent);
+
+		PlayerController->Inventory.RemoveAt(SelectedItemID);
+		//message
+	}
+
+	if (PlayerController->Inventory[SelectedItemID].ItemStructType == "Ether") {
+		if (PlayerController->PokemonParty[SwitchedPokemonID].bIsFainted == true || 
+			PlayerController->PokemonParty[SwitchedPokemonID].Moves[SelectedMoveID].bHasMaxPP() == true) {
+			//fail
+		}
+
+		FEtherBaseStruct* Ether = EthersDT->FindRow<FEtherBaseStruct>(PlayerController->Inventory[SelectedItemID].ItemID, "");
+		PlayerController->PokemonParty[SwitchedPokemonID].RestorePP(Ether->RestoredPP, SelectedMoveID);
+
+		PlayerController->Inventory.RemoveAt(SelectedItemID);
+		//message
+	}
+}
+
 void ABattleGameMode::OpponentFaints()
 {
 	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
@@ -582,6 +629,38 @@ void ABattleGameMode::SelectPokemon(int InId)
 	BattleTurn(EAction::SwitchOut);
 }
 
+void ABattleGameMode::SelectItem(int InId)
+{
+	bHasSelectedItem = true;
+
+	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+
+	if (PlayerController->Inventory[InId].bUsableInBattle == false) {
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Can't use this item!"));
+		return;
+	}
+
+	if (PlayerController->Inventory[InId].ItemStructType == "Ball") {
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Ball"));
+		SelectedItemID = InId;
+	}
+	else {
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Healing Item"));
+		SelectedItemID = InId;
+		Hud->ShowPokemon();
+	}
+}
+
+void ABattleGameMode::SelectPokemonToUseItem(int InId)
+{
+	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+	SwitchedPokemonID = InId;
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Using item on " + PlayerController->PokemonParty[InId].SpeciesData.Name.ToString()));
+	//BattleTurn(EAction::UseHealingItem);
+}
+
 void ABattleGameMode::ShowPokemonInMenu()
 {
 	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
@@ -599,7 +678,12 @@ void ABattleGameMode::ShowPokemonInMenu()
 		PokemonSlotWidget->SetPokemon(i);
 
 		PokemonSlotWidget->PokemonClick.AddDynamic(Hud, &ABattleHUD::ShowPokemonSummary);
-		PokemonSlotWidget->PokemonClick.AddDynamic(Hud, &ABattleHUD::ShowSwitchOutPopup);
+		if (bHasSelectedItem) {
+			PokemonSlotWidget->PokemonClick.AddDynamic(Hud, &ABattleHUD::ShowUseItemPopup);
+		}
+		else {
+			PokemonSlotWidget->PokemonClick.AddDynamic(Hud, &ABattleHUD::ShowSwitchOutPopup);
+		}
 
 		PokemonSlotDelegate.Broadcast(PokemonSlotWidget);
 	}
@@ -637,22 +721,12 @@ void ABattleGameMode::FillBagWidget()
 		ItemSlotWidget->SetItemName(UniqueItems[i].Name);
 		ItemSlotWidget->SetItemImage(UniqueItems[i].Image);
 		ItemSlotWidget->SetItemCount(ItemCount[i]);
-		ItemSlotWidget->SetItem(UniqueItems[i]);
+		ItemSlotWidget->SetItemID(PlayerController->Inventory.Find(UniqueItems[i]));
 
-		ItemSlotWidget->ItemClicked.AddDynamic(this, &ABattleGameMode::ShowItemInfo);
+		ItemSlotWidget->ItemClicked.AddDynamic(Hud, &ABattleHUD::ShowItemInfo);
 
 		ItemSlotDelegate.Broadcast(ItemSlotWidget);
 	}
-}
-
-void ABattleGameMode::ShowItemInfo(FItemBaseStruct InventoryItem)
-{
-	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
-	UItemInfoWidget* ItemInfo = CreateWidget<UItemInfoWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetItemInfoWidgetClass());
-
-	ItemInfo->SetDescription(InventoryItem.Description);
-
-	ItemInfoDelegate.Broadcast(ItemInfo);
 }
 
 void ABattleGameMode::ShowPokemonMoves()

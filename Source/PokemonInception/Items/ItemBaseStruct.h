@@ -34,6 +34,9 @@ struct FItemBaseStruct : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bUsableOutsideBattle;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString ItemStructType;
+
 	bool operator==(const FItemBaseStruct& Item) const {
 		if (ItemID == Item.ItemID) {
 			return true;

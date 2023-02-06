@@ -19,6 +19,8 @@ private:
 	UFUNCTION()
 	void OnUseClicked();
 
+	int ItemID;
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* Use;
@@ -32,5 +34,8 @@ public:
 	UFUNCTION()
 	void SetDescription(FText Description);
 
-	FButtonClicked UseClicked;
+	UFUNCTION()
+	void SetID(int InItemID);
+
+	FElementIDSignature UseClicked;
 };

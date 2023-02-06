@@ -5,7 +5,7 @@
 
 void UItemSlotWidget::OnItemClicked()
 {
-	ItemClicked.Broadcast(Item);
+	ItemClicked.Broadcast(ItemID);
 }
 
 void UItemSlotWidget::SetItemName(FText Name)
@@ -23,14 +23,9 @@ void UItemSlotWidget::SetItemCount(int Count)
 	ItemCount->SetText(FText::FromString(FString::FromInt(Count)));
 }
 
-void UItemSlotWidget::SetItem(FItemBaseStruct ItemStruct)
+void UItemSlotWidget::SetItemID(int InID)
 {
-	Item = ItemStruct;
-}
-
-FItemBaseStruct UItemSlotWidget::GetItem()
-{
-	return Item;
+	ItemID = InID;
 }
 
 void UItemSlotWidget::NativeConstruct()

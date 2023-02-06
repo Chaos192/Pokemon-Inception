@@ -21,9 +21,9 @@ private:
 	UFUNCTION()
 	void OnItemClicked();
 
-protected:
-	FItemBaseStruct Item;
+	int ItemID;
 
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* ItemButton;
 
@@ -39,9 +39,7 @@ protected:
 	virtual void NativeConstruct() override;
 
 public:
-	void SetItem(FItemBaseStruct ItemStruct);
-
-	FItemBaseStruct GetItem();
+	void SetItemID(int InID);
 
 	UFUNCTION()
 	void SetItemName(FText Name);
@@ -52,5 +50,5 @@ public:
 	UFUNCTION()
 	void SetItemCount(int Count);
 
-	FShopSignature ItemClicked;
+	FElementIDSignature ItemClicked;
 };

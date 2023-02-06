@@ -45,7 +45,7 @@ public:
 	void FillBagWidget();
 
 	UFUNCTION()
-	void ShowItemInfo(FItemBaseStruct InventoryItem);
+	void ShowItemInfo(int ItemID);
 
 	UFUNCTION()
 	void InitShop(TArray<FName> ItemsToSell);

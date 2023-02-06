@@ -239,6 +239,14 @@ struct FPokemonStruct
 		return true;
 	}
 
+	bool bIsFullHp() {
+		if (CurrHP == MaxHP) {
+			return true;
+		}
+
+		return false;
+	}
+
 	void FullRestore() {
 		if (bIsFainted == true) {
 			RecoverStatus();

@@ -202,7 +202,7 @@ void AOverworldGameMode::FillBagWidget()
 		ItemSlotWidget->SetItemName(UniqueItems[i].Name);
 		ItemSlotWidget->SetItemImage(UniqueItems[i].Image);
 		ItemSlotWidget->SetItemCount(ItemCount[i]);
-		ItemSlotWidget->SetItem(UniqueItems[i]);
+		ItemSlotWidget->SetItemID(Inventory.Find(UniqueItems[i]));
 
 		ItemSlotWidget->ItemClicked.AddDynamic(this, &AOverworldGameMode::ShowItemInfo);
 
@@ -210,12 +210,17 @@ void AOverworldGameMode::FillBagWidget()
 	}
 }
 
-void AOverworldGameMode::ShowItemInfo(FItemBaseStruct InventoryItem)
+void AOverworldGameMode::ShowItemInfo(int ItemID)
 {
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+	TArray<FItemBaseStruct> Inventory = PlayerController->GetInventory();
+
 	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 	UItemInfoWidget* ItemInfo = CreateWidget<UItemInfoWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetItemInfoWidgetClass());
 
-	ItemInfo->SetDescription(InventoryItem.Description);
+	ItemInfo->SetDescription(Inventory[ItemID].Description);
+	ItemInfo->SetID(ItemID);
 
 	ItemInfoDelegate.Broadcast(ItemInfo);
 }

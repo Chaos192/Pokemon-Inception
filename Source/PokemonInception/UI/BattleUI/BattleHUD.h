@@ -42,6 +42,9 @@ protected:
 	TSubclassOf<UPopupSelectionWidget> SwitchOutWidgetClass;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPopupSelectionWidget> UseItemWidgetClass;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UPokemonSummaryWidget> PokemonSummaryWidgetClass;
 
 	UPROPERTY(EditAnywhere)
@@ -90,7 +93,13 @@ protected:
 	class UPopupSelectionWidget* SwitchOutWidget;
 
 	UPROPERTY()
+	class UPopupSelectionWidget* UseItemWidget;
+
+	UPROPERTY()
 	class UBagWidget* BagWidget;
+
+	UPROPERTY()
+	class UItemInfoWidget* ItemInfoWidget;
 
 	UPROPERTY()
 	class UTextBoxWidget* TextBoxWidget;
@@ -118,8 +127,6 @@ public:
 
 	TSubclassOf<UItemSlotWidget> GetItemSlotWidgetClass();
 
-	TSubclassOf<UItemInfoWidget> GetItemInfoWidgetClass();
-
 	TSubclassOf<UPokemonSlotWidget> GetPokemonSlotWidgetClass();
 
 	TSubclassOf<UMoveButtonWidget> GetMoveButtonWidgetClass();
@@ -139,6 +146,9 @@ public:
 	void ShowBag();
 
 	UFUNCTION()
+	void ShowItemInfo(int ItemID);
+
+	UFUNCTION()
 	void ShowPokemon();
 
 	UFUNCTION()
@@ -146,6 +156,9 @@ public:
 
 	UFUNCTION()
 	void ShowSwitchOutPopup(int PokemonId);
+
+	UFUNCTION()
+	void ShowUseItemPopup(int PokemonId);
 
 	UFUNCTION()
 	void ShowPlayerPokemonStatus();

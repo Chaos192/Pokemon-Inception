@@ -33,4 +33,12 @@ struct FMoveBaseStruct : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString MoveStructType;
+
+	bool bHasMaxPP() {
+		if (CurrPowerPoints == PowerPoints) {
+			return true;
+		}
+
+		return false;
+	}
 };
