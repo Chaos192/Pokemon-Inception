@@ -377,12 +377,14 @@ void ABattleGameMode::UseItem()
 			ItemMessage += "but it failed!";
 		}
 
-		FPotionBaseStruct* Potion = PotionsDT->FindRow<FPotionBaseStruct>(PlayerController->Inventory[SelectedItemID].ItemID, "");
-		PlayerController->PokemonParty[SelectedPokemonID].RestoreHP(Potion->RestoredHP);
+		else {
+			FPotionBaseStruct* Potion = PotionsDT->FindRow<FPotionBaseStruct>(PlayerController->Inventory[SelectedItemID].ItemID, "");
+			PlayerController->PokemonParty[SelectedPokemonID].RestoreHP(Potion->RestoredHP);
 
-		PlayerController->Inventory.RemoveAt(SelectedItemID);
-		
-		ItemMessage += PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString() + "'s HP was restored!";
+			PlayerController->Inventory.RemoveAt(SelectedItemID);
+
+			ItemMessage += PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString() + "'s HP was restored!";
+		}
 	}
 
 	else if (PlayerController->Inventory[SelectedItemID].ItemStructType == "Revive") {
@@ -390,13 +392,15 @@ void ABattleGameMode::UseItem()
 			ItemMessage += "but it failed!";
 		}
 
-		FReviveBaseStruct* Revive = RevivesDT->FindRow<FReviveBaseStruct>(PlayerController->Inventory[SelectedItemID].ItemID, "");
-		PlayerController->PokemonParty[SelectedPokemonID].RecoverStatus();
-		PlayerController->PokemonParty[SelectedPokemonID].RestoreHP(PlayerController->PokemonParty[SelectedPokemonID].MaxHP * Revive->RevivePercent);
+		else {
+			FReviveBaseStruct* Revive = RevivesDT->FindRow<FReviveBaseStruct>(PlayerController->Inventory[SelectedItemID].ItemID, "");
+			PlayerController->PokemonParty[SelectedPokemonID].RecoverStatus();
+			PlayerController->PokemonParty[SelectedPokemonID].RestoreHP(PlayerController->PokemonParty[SelectedPokemonID].MaxHP * Revive->RevivePercent);
 
-		PlayerController->Inventory.RemoveAt(SelectedItemID);
+			PlayerController->Inventory.RemoveAt(SelectedItemID);
 
-		ItemMessage += PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString() + " was revived!";
+			ItemMessage += PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString() + " was revived!";
+		}
 	}
 
 	else if (PlayerController->Inventory[SelectedItemID].ItemStructType == "Ether") {
@@ -404,12 +408,14 @@ void ABattleGameMode::UseItem()
 			ItemMessage += "but it failed!";
 		}
 
-		FEtherBaseStruct* Ether = EthersDT->FindRow<FEtherBaseStruct>(PlayerController->Inventory[SelectedItemID].ItemID, "");
-		PlayerController->PokemonParty[SelectedPokemonID].RestorePP(Ether->RestoredPP, SelectedMoveID);
+		else {
+			FEtherBaseStruct* Ether = EthersDT->FindRow<FEtherBaseStruct>(PlayerController->Inventory[SelectedItemID].ItemID, "");
+			PlayerController->PokemonParty[SelectedPokemonID].RestorePP(Ether->RestoredPP, SelectedMoveID);
 
-		PlayerController->Inventory.RemoveAt(SelectedItemID);
-		ItemMessage += "restored PP to " + PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString() + 
-			"'s move " + PlayerController->PokemonParty[SelectedPokemonID].Moves[SelectedMoveID].Name.ToString() + "!";
+			PlayerController->Inventory.RemoveAt(SelectedItemID);
+			ItemMessage += "restored PP to " + PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString() +
+				"'s move " + PlayerController->PokemonParty[SelectedPokemonID].Moves[SelectedMoveID].Name.ToString() + "!";
+		}
 	}
 
 	Hud->ShowText(ItemMessage);
