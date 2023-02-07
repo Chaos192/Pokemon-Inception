@@ -368,43 +368,51 @@ void ABattleGameMode::MoveOutcome(FString MoveMessage)
 void ABattleGameMode::UseItem()
 {
 	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+
+	FString ItemMessage = "You used a " + PlayerController->Inventory[SelectedItemID].Name.ToString() + ", ";
 
 	if (PlayerController->Inventory[SelectedItemID].ItemStructType == "Potion") {
-		if (PlayerController->PokemonParty[SwitchedPokemonID].bIsFainted == true || PlayerController->PokemonParty[SwitchedPokemonID].bIsFullHp() == true) {
-			//fail
+		if (PlayerController->PokemonParty[SelectedPokemonID].bIsFainted == true || PlayerController->PokemonParty[SelectedPokemonID].bIsFullHp() == true) {
+			ItemMessage += "but it failed!";
 		}
 
 		FPotionBaseStruct* Potion = PotionsDT->FindRow<FPotionBaseStruct>(PlayerController->Inventory[SelectedItemID].ItemID, "");
-		PlayerController->PokemonParty[SwitchedPokemonID].RestoreHP(Potion->RestoredHP);
+		PlayerController->PokemonParty[SelectedPokemonID].RestoreHP(Potion->RestoredHP);
 
 		PlayerController->Inventory.RemoveAt(SelectedItemID);
-		//message
+		
+		ItemMessage += PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString() + "'s HP was restored!";
 	}
 
-	if (PlayerController->Inventory[SelectedItemID].ItemStructType == "Revive") {
-		if (PlayerController->PokemonParty[SwitchedPokemonID].bIsFainted == false) {
-			//fail
+	else if (PlayerController->Inventory[SelectedItemID].ItemStructType == "Revive") {
+		if (PlayerController->PokemonParty[SelectedPokemonID].bIsFainted == false) {
+			ItemMessage += "but it failed!";
 		}
 
 		FReviveBaseStruct* Revive = RevivesDT->FindRow<FReviveBaseStruct>(PlayerController->Inventory[SelectedItemID].ItemID, "");
-		PlayerController->PokemonParty[SwitchedPokemonID].RecoverStatus();
-		PlayerController->PokemonParty[SwitchedPokemonID].RestoreHP(PlayerController->PokemonParty[SwitchedPokemonID].MaxHP * Revive->RevivePercent);
+		PlayerController->PokemonParty[SelectedPokemonID].RecoverStatus();
+		PlayerController->PokemonParty[SelectedPokemonID].RestoreHP(PlayerController->PokemonParty[SelectedPokemonID].MaxHP * Revive->RevivePercent);
 
 		PlayerController->Inventory.RemoveAt(SelectedItemID);
-		//message
+
+		ItemMessage += PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString() + " was revived!";
 	}
 
-	if (PlayerController->Inventory[SelectedItemID].ItemStructType == "Ether") {
-		if ( PlayerController->PokemonParty[SwitchedPokemonID].Moves[SelectedMoveID].bHasMaxPP() == true) {
-			//fail
+	else if (PlayerController->Inventory[SelectedItemID].ItemStructType == "Ether") {
+		if ( PlayerController->PokemonParty[SelectedPokemonID].Moves[SelectedMoveID].bHasMaxPP() == true) {
+			ItemMessage += "but it failed!";
 		}
 
 		FEtherBaseStruct* Ether = EthersDT->FindRow<FEtherBaseStruct>(PlayerController->Inventory[SelectedItemID].ItemID, "");
-		PlayerController->PokemonParty[SwitchedPokemonID].RestorePP(Ether->RestoredPP, SelectedMoveID);
+		PlayerController->PokemonParty[SelectedPokemonID].RestorePP(Ether->RestoredPP, SelectedMoveID);
 
 		PlayerController->Inventory.RemoveAt(SelectedItemID);
-		//message
+		ItemMessage += "restored PP to " + PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString() + 
+			"'s move " + PlayerController->PokemonParty[SelectedPokemonID].Moves[SelectedMoveID].Name.ToString() + "!";
 	}
+
+	Hud->ShowText(ItemMessage);
 
 	CurrentAction++;
 }
@@ -507,7 +515,7 @@ void ABattleGameMode::BattleTurn(EAction PlayerAction)
 
 	if (PlayerAction == EAction::SwitchOut) {
 		PlayerController->PokemonParty[PlayerPokemonId].ClearEffects();
-		PlayerPokemonId = SwitchedPokemonID;
+		PlayerPokemonId = SelectedPokemonID;
 		PlacePlayerPokemon(PlayerPokemonId);
 		CurrentAction++;
 
@@ -516,6 +524,12 @@ void ABattleGameMode::BattleTurn(EAction PlayerAction)
 		}
 		EndTurn();
 		bDoesPlayerHaveToSwitch = false;
+	}
+
+	if (PlayerAction == EAction::UseHealingItem) {
+		UseItem();
+		UseMove(SelectOpponentMove(), "Opponent");
+		EndTurn();
 	}
 }
 
@@ -625,7 +639,7 @@ void ABattleGameMode::SelectPokemon(int InId)
 		return;
 	}
 
-	SwitchedPokemonID = InId;
+	SelectedPokemonID = InId;
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("switching pokemon"));
 	BattleTurn(EAction::SwitchOut);
 }
@@ -662,9 +676,22 @@ void ABattleGameMode::SelectPokemonToUseItem(int InId)
 {
 	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
-	SwitchedPokemonID = InId;
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Using item on " + PlayerController->PokemonParty[InId].SpeciesData.Name.ToString()));
-	//BattleTurn(EAction::UseHealingItem);
+	SelectedPokemonID = InId;
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Using item on " + PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString()));
+
+	if (bHasSelectedItem) {
+		BattleTurn(EAction::UseHealingItem);
+	}
+}
+
+void ABattleGameMode::SelectMoveToUseItem(int InId)
+{
+	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+	SelectedMoveID = InId;
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Using ether on " + PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString() +
+	" to restore " + PlayerController->PokemonParty[SelectedPokemonID].Moves[SelectedMoveID].Name.ToString()));
+	BattleTurn(EAction::UseHealingItem);
 }
 
 void ABattleGameMode::ShowPokemonInMenu()
@@ -689,6 +716,7 @@ void ABattleGameMode::ShowPokemonInMenu()
 		}
 		else if (bHasSelectedEther) {
 			PokemonSlotWidget->PokemonClick.AddDynamic(Hud, &ABattleHUD::ShowMoveSelectionPopup);
+			PokemonSlotWidget->PokemonClick.AddDynamic(this, &ABattleGameMode::SelectPokemonToUseItem);
 		}
 		else {
 			PokemonSlotWidget->PokemonClick.AddDynamic(Hud, &ABattleHUD::ShowSwitchOutPopup);

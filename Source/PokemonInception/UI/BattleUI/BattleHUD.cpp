@@ -98,7 +98,6 @@ void ABattleHUD::ClearPopup()
 void ABattleHUD::ClearMovePopup()
 {
 	MoveSelectionPopupWidget->RemoveFromViewport();
-	MoveSelectionPopupWidget->ClearWrapBox();
 }
 
 void ABattleHUD::ShowText(FString Message)
@@ -273,7 +272,13 @@ void ABattleHUD::ShowMoveSelectionPopup(int PokemonId)
 		return;
 	}
 
+	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
+
 	if (PlayerOwner && MoveSelectionPopupWidget) {
+		MoveSelectionPopupWidget->ClearWrapBox();
 		ABattleController* Controller = Cast<ABattleController>(PlayerOwner);
 
 		FPokemonStruct Pokemon = Controller->PokemonParty[PokemonId];
@@ -282,11 +287,12 @@ void ABattleHUD::ShowMoveSelectionPopup(int PokemonId)
 
 			MoveButton->InitButton(Pokemon.Moves[Pokemon.CurrentMoves[i]].Name, Pokemon.Moves[Pokemon.CurrentMoves[i]].CurrPowerPoints,
 				Pokemon.Moves[Pokemon.CurrentMoves[i]].PowerPoints, Pokemon.Moves[Pokemon.CurrentMoves[i]].MoveType);
+			MoveButton->SetMove(Pokemon.CurrentMoves[i]);
+			MoveButton->ButtonClicked.AddDynamic(GameMode, &ABattleGameMode::SelectMoveToUseItem);
 			MoveSelectionPopupWidget->AddToWrapBox(MoveButton);
 		}
 
 		MoveSelectionPopupWidget->AddToViewport();
-		MoveSelectionPopupWidget->SetPositionInViewport(FVector2D(0, 0), false);
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
 	}
@@ -361,6 +367,7 @@ void ABattleHUD::ShowBattleStartWidget()
 	}
 
 	GameMode->bHasSelectedItem = false;
+	GameMode->bHasSelectedEther = false;
 
 	if (PlayerOwner && BattleStartWidget) {
 		BattleStartWidget->AddToViewport();

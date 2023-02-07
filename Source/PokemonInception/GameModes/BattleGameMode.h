@@ -53,7 +53,7 @@ private:
 	void PlaceOpponentPokemon(int PokemonId);
 
 	int SelectedMoveID;
-	int SwitchedPokemonID;
+	int SelectedPokemonID;
 	int SelectedItemID;
 
 	UFUNCTION()
@@ -146,6 +146,9 @@ public:
 
 	UFUNCTION()
 	void SelectPokemonToUseItem(int InId);
+
+	UFUNCTION()
+	void SelectMoveToUseItem(int InId);
 
 	UFUNCTION()
 	void FillBagWidget();
