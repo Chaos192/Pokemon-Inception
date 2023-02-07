@@ -127,6 +127,7 @@ protected:
 
 public:
 	bool bHasSelectedItem;
+	bool bHasSelectedEther;
 
 	UFUNCTION()
 	FString ETypeToString(ETypes Type);

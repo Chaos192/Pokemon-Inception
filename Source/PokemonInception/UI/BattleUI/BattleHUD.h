@@ -12,6 +12,7 @@
 #include "PlayerPokemonStatusWidget.h"
 #include "PokemonSummaryWidget.h"
 #include "PopupSelectionWidget.h"
+#include "MoveSelectionPopupWidget.h"
 #include "../TextBoxWidget.h"
 #include "../OverworldUI/PokemonWidget.h"
 #include "../OverworldUI/BagWidget.h"
@@ -43,6 +44,9 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UPopupSelectionWidget> UseItemWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UMoveSelectionPopupWidget> MoveSelectionPopupWidgetClass;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UPokemonSummaryWidget> PokemonSummaryWidgetClass;
@@ -96,6 +100,9 @@ protected:
 	class UPopupSelectionWidget* UseItemWidget;
 
 	UPROPERTY()
+	class UMoveSelectionPopupWidget* MoveSelectionPopupWidget;
+
+	UPROPERTY()
 	class UBagWidget* BagWidget;
 
 	UPROPERTY()
@@ -140,6 +147,9 @@ public:
 	void ClearPopup();
 
 	UFUNCTION()
+	void ClearMovePopup();
+
+	UFUNCTION()
 	void ShowFightWidget();
 
 	UFUNCTION()
@@ -159,6 +169,9 @@ public:
 
 	UFUNCTION()
 	void ShowUseItemPopup(int PokemonId);
+
+	UFUNCTION()
+	void ShowMoveSelectionPopup(int PokemonId);
 
 	UFUNCTION()
 	void ShowPlayerPokemonStatus();

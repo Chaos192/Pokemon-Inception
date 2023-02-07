@@ -395,8 +395,7 @@ void ABattleGameMode::UseItem()
 	}
 
 	if (PlayerController->Inventory[SelectedItemID].ItemStructType == "Ether") {
-		if (PlayerController->PokemonParty[SwitchedPokemonID].bIsFainted == true || 
-			PlayerController->PokemonParty[SwitchedPokemonID].Moves[SelectedMoveID].bHasMaxPP() == true) {
+		if ( PlayerController->PokemonParty[SwitchedPokemonID].Moves[SelectedMoveID].bHasMaxPP() == true) {
 			//fail
 		}
 
@@ -406,6 +405,8 @@ void ABattleGameMode::UseItem()
 		PlayerController->Inventory.RemoveAt(SelectedItemID);
 		//message
 	}
+
+	CurrentAction++;
 }
 
 void ABattleGameMode::OpponentFaints()
@@ -631,8 +632,6 @@ void ABattleGameMode::SelectPokemon(int InId)
 
 void ABattleGameMode::SelectItem(int InId)
 {
-	bHasSelectedItem = true;
-
 	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 
@@ -646,6 +645,13 @@ void ABattleGameMode::SelectItem(int InId)
 		SelectedItemID = InId;
 	}
 	else {
+		if(PlayerController->Inventory[InId].ItemStructType == "Ether") {
+			bHasSelectedEther = true;
+		}
+		else {
+			bHasSelectedItem = true;
+		}
+
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Healing Item"));
 		SelectedItemID = InId;
 		Hud->ShowPokemon();
@@ -680,6 +686,9 @@ void ABattleGameMode::ShowPokemonInMenu()
 		PokemonSlotWidget->PokemonClick.AddDynamic(Hud, &ABattleHUD::ShowPokemonSummary);
 		if (bHasSelectedItem) {
 			PokemonSlotWidget->PokemonClick.AddDynamic(Hud, &ABattleHUD::ShowUseItemPopup);
+		}
+		else if (bHasSelectedEther) {
+			PokemonSlotWidget->PokemonClick.AddDynamic(Hud, &ABattleHUD::ShowMoveSelectionPopup);
 		}
 		else {
 			PokemonSlotWidget->PokemonClick.AddDynamic(Hud, &ABattleHUD::ShowSwitchOutPopup);
