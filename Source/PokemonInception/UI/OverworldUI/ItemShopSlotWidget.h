@@ -42,8 +42,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* Sell;
 
-	virtual void NativeConstruct() override;
-
 public:
 	void SetItem(FItemBaseStruct ItemStruct);
 

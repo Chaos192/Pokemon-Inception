@@ -36,9 +36,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* MoveButton;
 
-	virtual void NativeConstruct() override;
-
 public:
+	virtual void NativeOnInitialized() override;
+
 	UFUNCTION()
 	void InitButton(FText Name, int CurrPP, int MaxPP, ETypes MoveType);
 

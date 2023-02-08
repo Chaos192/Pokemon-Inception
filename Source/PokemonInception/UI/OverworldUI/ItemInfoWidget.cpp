@@ -18,8 +18,8 @@ void UItemInfoWidget::SetID(int InItemID)
 	ItemID = InItemID;
 }
 
-void UItemInfoWidget::NativeConstruct()
+void UItemInfoWidget::NativeOnInitialized()
 {
-	Super::NativeConstruct();
+	Super::NativeOnInitialized();
 	Use->OnClicked.AddDynamic(this, &UItemInfoWidget::OnUseClicked);
 }

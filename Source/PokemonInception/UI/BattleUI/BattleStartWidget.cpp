@@ -23,9 +23,9 @@ void UBattleStartWidget::OnRunClicked()
 	RunClicked.Broadcast();
 }
 
-void UBattleStartWidget::NativeConstruct()
+void UBattleStartWidget::NativeOnInitialized()
 {
-	Super::NativeConstruct();
+	Super::NativeOnInitialized();
 	Fight->OnClicked.AddDynamic(this, &UBattleStartWidget::OnFightClicked);
 	Pokemon->OnClicked.AddDynamic(this, &UBattleStartWidget::OnPokemonClicked);
 	Bag->OnClicked.AddDynamic(this, &UBattleStartWidget::OnBagClicked);

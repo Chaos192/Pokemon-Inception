@@ -33,9 +33,9 @@ void UPokedexWidget::ClearInfoBox()
 	}
 }
 
-void UPokedexWidget::NativeConstruct()
+void UPokedexWidget::NativeOnInitialized()
 {
-	Super::NativeConstruct();
+	Super::NativeOnInitialized();
 	Back->OnClicked.AddDynamic(this, &UPokedexWidget::OnBackClicked);
 }
 

@@ -20,8 +20,8 @@ void UMoveSelectionPopupWidget::ClearWrapBox()
 	}
 }
 
-void UMoveSelectionPopupWidget::NativeConstruct()
+void UMoveSelectionPopupWidget::NativeOnInitialized()
 {
-	Super::NativeConstruct();
+	Super::NativeOnInitialized();
 	Back->OnClicked.AddDynamic(this, &UMoveSelectionPopupWidget::OnBackClicked);
 }

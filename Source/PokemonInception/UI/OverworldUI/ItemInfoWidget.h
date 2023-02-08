@@ -28,9 +28,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UTextBlock* DescriptionText;
 
-	virtual void NativeConstruct() override;
-
 public:
+	virtual void NativeOnInitialized() override;
+
 	UFUNCTION()
 	void SetDescription(FText Description);
 

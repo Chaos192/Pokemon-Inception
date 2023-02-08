@@ -8,8 +8,8 @@ void UPokemonStorageWidget::OnBackClicked()
 	BackClicked.Broadcast();
 }
 
-void UPokemonStorageWidget::NativeConstruct()
+void UPokemonStorageWidget::NativeOnInitialized()
 {
-	Super::NativeConstruct();
+	Super::NativeOnInitialized();
 	Back->OnClicked.AddDynamic(this, &UPokemonStorageWidget::OnBackClicked);
 }

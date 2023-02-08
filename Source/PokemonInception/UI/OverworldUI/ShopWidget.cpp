@@ -25,8 +25,8 @@ void UShopWidget::ClearShop()
 	}
 }
 
-void UShopWidget::NativeConstruct()
+void UShopWidget::NativeOnInitialized()
 {
-	Super::NativeConstruct();
+	Super::NativeOnInitialized();
 	Exit->OnClicked.AddDynamic(this, &UShopWidget::OnExitClicked);
 }

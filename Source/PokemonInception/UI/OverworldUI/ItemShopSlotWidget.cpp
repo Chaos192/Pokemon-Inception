@@ -48,11 +48,6 @@ void UItemShopSlotWidget::SetSellState(bool enabled)
 	}
 }
 
-void UItemShopSlotWidget::NativeConstruct()
-{
-	Super::NativeConstruct();
-}
-
 void UItemShopSlotWidget::SetItem(FItemBaseStruct ItemStruct)
 {
 	Item = ItemStruct;

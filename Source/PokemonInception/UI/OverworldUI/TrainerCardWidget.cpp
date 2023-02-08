@@ -6,10 +6,11 @@
 void UTrainerCardWidget::OnBackClicked()
 {
 	BackClicked.Broadcast();
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Native On Initialize"));
 }
 
-void UTrainerCardWidget::NativeConstruct()
+void UTrainerCardWidget::NativeOnInitialized()
 {
-	Super::NativeConstruct();
+	Super::NativeOnInitialized();
 	Back->OnClicked.AddDynamic(this, &UTrainerCardWidget::OnBackClicked);
 }

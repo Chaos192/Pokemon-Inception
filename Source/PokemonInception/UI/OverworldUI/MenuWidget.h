@@ -46,9 +46,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* Save;
 
-	virtual void NativeConstruct() override;
-
 public:
+	virtual void NativeOnInitialized() override;
+
 	FButtonClicked PokedexClicked;
 	FButtonClicked PokemonClicked;
 	FButtonClicked BagClicked;

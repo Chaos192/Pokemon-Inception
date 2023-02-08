@@ -18,9 +18,9 @@ void UPopupSelectionWidget::SetId(int InId)
 	Id = InId;
 }
 
-void UPopupSelectionWidget::NativeConstruct()
+void UPopupSelectionWidget::NativeOnInitialized()
 {
-	Super::NativeConstruct();
+	Super::NativeOnInitialized();
 	Action->OnClicked.AddDynamic(this, &UPopupSelectionWidget::OnActionClicked);
 	Cancel->OnClicked.AddDynamic(this, &UPopupSelectionWidget::OnCancelClicked);
 }

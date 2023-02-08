@@ -48,9 +48,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UProgressBar* EXPBar;
 
-	virtual void NativeConstruct() override;
-
 public:
+	virtual void NativeOnInitialized() override;
+
 	UFUNCTION()
 	void SetPokemonName(FText Name);
 

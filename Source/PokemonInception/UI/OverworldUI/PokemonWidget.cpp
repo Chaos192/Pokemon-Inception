@@ -6,6 +6,7 @@
 void UPokemonWidget::OnBackClicked()
 {
 	BackClicked.Broadcast();
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Native Construct"));
 }
 
 void UPokemonWidget::AddToWrapBox(UPokemonSlotWidget* PokemonWidget)
@@ -33,8 +34,8 @@ void UPokemonWidget::ClearSummaryBox()
 	}
 }
 
-void UPokemonWidget::NativeConstruct()
+void UPokemonWidget::NativeOnInitialized()
 {
-	Super::NativeConstruct();
+	Super::NativeOnInitialized();
 	Back->OnClicked.AddDynamic(this, &UPokemonWidget::OnBackClicked);
 }

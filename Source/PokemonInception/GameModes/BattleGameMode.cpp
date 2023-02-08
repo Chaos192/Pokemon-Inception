@@ -435,10 +435,9 @@ void ABattleGameMode::UseBall()
 
 	OpponentPokemonActor->Destroy();
 
-	FRotator Rotation;
-	Rotation.Yaw = 180;
-	FActorSpawnParameters SpawnInfo;
+	FRotator Rotation = FRotator(0, 180, 0);
 	FVector Position = FVector(-350, 440, 120);
+	FActorSpawnParameters SpawnInfo;
 
 	ThrownBallActor = GetWorld()->SpawnActor<ABallActor>(Ball->BallActor, Position, Rotation, SpawnInfo);
 

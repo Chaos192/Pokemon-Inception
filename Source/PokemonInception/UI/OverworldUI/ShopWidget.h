@@ -31,9 +31,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UTextBlock* TextBox;
 
-	virtual void NativeConstruct() override;
-
 public:
+	virtual void NativeOnInitialized() override;
+
 	UFUNCTION()
 	void DisplayInShop(UItemShopSlotWidget* ItemWidget);
 

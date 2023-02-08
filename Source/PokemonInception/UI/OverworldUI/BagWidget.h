@@ -32,9 +32,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UWrapBox* InfoBox;
 
-	virtual void NativeConstruct() override;
-
 public:
+	virtual void NativeOnInitialized() override;
+
 	UFUNCTION()
 	void AddToWrapBox(UItemSlotWidget* ItemWidget);
 

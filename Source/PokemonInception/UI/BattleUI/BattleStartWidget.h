@@ -40,9 +40,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* Run;
 
-	virtual void NativeConstruct() override;
-
 public:
+	virtual void NativeOnInitialized() override;
+
 	FButtonClicked FightClicked;
 	FButtonClicked PokemonClicked;
 	FButtonClicked BagClicked;

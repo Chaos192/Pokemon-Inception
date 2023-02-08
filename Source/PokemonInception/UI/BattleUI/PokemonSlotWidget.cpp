@@ -47,8 +47,8 @@ void UPokemonSlotWidget::SetPokemon(int InPokemonID)
 	PokemonID = InPokemonID;
 }
 
-void UPokemonSlotWidget::NativeConstruct()
+void UPokemonSlotWidget::NativeOnInitialized()
 {
-	Super::NativeConstruct();
+	Super::NativeOnInitialized();
 	PokemonButton->OnClicked.AddDynamic(this, &UPokemonSlotWidget::OnPokemonClicked);
 }

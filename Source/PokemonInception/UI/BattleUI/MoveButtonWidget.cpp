@@ -8,9 +8,9 @@ void UMoveButtonWidget::OnButtonClicked()
 	ButtonClicked.Broadcast(MoveId);
 }
 
-void UMoveButtonWidget::NativeConstruct()
+void UMoveButtonWidget::NativeOnInitialized()
 {
-	Super::NativeConstruct();
+	Super::NativeOnInitialized();
 	MoveButton->OnClicked.AddDynamic(this, &UMoveButtonWidget::OnButtonClicked);
 }
 

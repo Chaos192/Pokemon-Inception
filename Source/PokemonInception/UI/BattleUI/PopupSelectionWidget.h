@@ -30,9 +30,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* Cancel;
 
-	virtual void NativeConstruct() override;
-
 public:
+	virtual void NativeOnInitialized() override;
+
 	FElementIDSignature ActionClicked;
 	FButtonClicked CancelClicked;
 

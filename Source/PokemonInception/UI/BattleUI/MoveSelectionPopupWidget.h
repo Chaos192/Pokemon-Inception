@@ -27,9 +27,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UWrapBox* WrapBox;
 
-	virtual void NativeConstruct() override;
-
 public:
+	virtual void NativeOnInitialized() override;
+
 	UFUNCTION()
 	void AddToWrapBox(UMoveButtonWidget* MoveButton);
 

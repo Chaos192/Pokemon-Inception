@@ -33,8 +33,8 @@ void UBagWidget::ClearInfoBox()
 	}
 }
 
-void UBagWidget::NativeConstruct()
+void UBagWidget::NativeOnInitialized()
 {
-	Super::NativeConstruct();
+	Super::NativeOnInitialized();
 	Back->OnClicked.AddDynamic(this, &UBagWidget::OnBackClicked);
 }

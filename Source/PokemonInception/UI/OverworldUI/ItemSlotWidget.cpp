@@ -28,8 +28,8 @@ void UItemSlotWidget::SetItemID(int InID)
 	ItemID = InID;
 }
 
-void UItemSlotWidget::NativeConstruct()
+void UItemSlotWidget::NativeOnInitialized()
 {
-	Super::NativeConstruct();
+	Super::NativeOnInitialized();
 	ItemButton->OnClicked.AddDynamic(this, &UItemSlotWidget::OnItemClicked);
 }

@@ -20,8 +20,8 @@ void UFightWidget::ClearWrapBox()
 	}
 }
 
-void UFightWidget::NativeConstruct()
+void UFightWidget::NativeOnInitialized()
 {
-	Super::NativeConstruct();
+	Super::NativeOnInitialized();
 	Back->OnClicked.AddDynamic(this, &UFightWidget::OnBackClicked);
 }

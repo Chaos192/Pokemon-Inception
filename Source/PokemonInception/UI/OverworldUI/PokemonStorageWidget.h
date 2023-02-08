@@ -29,9 +29,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UWrapBox* StorageWrapBox;
 
-	virtual void NativeConstruct() override;
-
 public:
+	virtual void NativeOnInitialized() override;
 	/*UFUNCTION()
 	void AddToWrapBox(UPokemonSlotWidget* PokemonWidget);
 
