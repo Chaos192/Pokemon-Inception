@@ -11,6 +11,7 @@
 #include "../SaveGame/WorldSaveData.h"
 #include "../UI/OverworldUI/ItemInfoWidget.h"
 #include "../UI/WidgetDelegates.h"
+#include "../Items/BallActor.h"
 #include "BattleGameMode.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageSignature, FString, String);
@@ -46,6 +47,8 @@ private:
 	AStaticOverworldPokemon* PlayerPokemonActor = nullptr;
 	AStaticOverworldPokemon* OpponentPokemonActor = nullptr;
 
+	ABallActor* ThrownBallActor = nullptr;
+
 	UFUNCTION()
 	void PlacePlayerPokemon(int PokemonId);
 
@@ -64,6 +67,15 @@ private:
 
 	UFUNCTION()
 	void UseItem();
+
+	UFUNCTION()
+	void UseBall();
+
+	UFUNCTION()
+	void CatchSuccess();
+
+	UFUNCTION()
+	void CatchFail();
 
 	UFUNCTION()
 	void OpponentFaints();

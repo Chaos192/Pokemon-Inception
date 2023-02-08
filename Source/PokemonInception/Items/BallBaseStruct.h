@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ItemBaseStruct.h"
+#include "BallActor.h"
 #include "BallBaseStruct.generated.h"
 
 USTRUCT(BlueprintType)
@@ -13,4 +14,7 @@ struct FBallBaseStruct : public FItemBaseStruct
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int CatchMultiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class ABallActor> BallActor;
 };

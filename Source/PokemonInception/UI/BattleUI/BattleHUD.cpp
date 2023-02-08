@@ -366,9 +366,6 @@ void ABattleHUD::ShowBattleStartWidget()
 		return;
 	}
 
-	GameMode->bHasSelectedItem = false;
-	GameMode->bHasSelectedEther = false;
-
 	if (PlayerOwner && BattleStartWidget) {
 		BattleStartWidget->AddToViewport();
 		ShowPlayerPokemonStatus();

@@ -69,7 +69,6 @@ void ABattleGameMode::PlacePlayerPokemon(int PokemonId)
 	PlayerPokemonActor = GetWorld()->SpawnActor<AStaticOverworldPokemon>(PlayerController->PokemonParty[PokemonId].SpeciesData.PokemonActor, Position, Rotation, SpawnInfo);
 
 	Hud->ShowText("You sent out " + PlayerController->PokemonParty[PokemonId].SpeciesData.Name.ToString() + "!");
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Current Action: " + FString::FromInt(CurrentAction)));
 }
 
 void ABattleGameMode::PlaceOpponentPokemon(int PokemonId)
@@ -93,7 +92,6 @@ void ABattleGameMode::PlaceOpponentPokemon(int PokemonId)
 	}
 
 	Hud->ShowText(OpponentMessage);
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Current Action: " + FString::FromInt(CurrentAction)));
 }
 
 bool ABattleGameMode::bIsOpponentDefeated()
@@ -119,7 +117,7 @@ int ABattleGameMode::GetCurrentOpponent()
 
 void ABattleGameMode::UseMove(int MoveId, FString AttackerContextString)
 {
-	if (bHasTurnEnded == true || bHasBattleEnded == true) {
+	if (bHasTurnEnded == true || bHasBattleEnded == true || bDoesPlayerHaveToSwitch == true) {
 		return;
 	}
 
@@ -420,7 +418,80 @@ void ABattleGameMode::UseItem()
 
 	Hud->ShowText(ItemMessage);
 
+	bHasSelectedItem = false;
+	bHasSelectedEther = false;
 	CurrentAction++;
+}
+
+void ABattleGameMode::UseBall()
+{
+	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+
+	FTimerHandle CatchTimer;
+	FTimerHandle BattleEndTimer;
+
+	FBallBaseStruct* Ball = BallsDT->FindRow<FBallBaseStruct>(PlayerController->Inventory[SelectedItemID].ItemID, "");
+
+	OpponentPokemonActor->Destroy();
+
+	FRotator Rotation;
+	Rotation.Yaw = 180;
+	FActorSpawnParameters SpawnInfo;
+	FVector Position = FVector(-350, 440, 120);
+
+	ThrownBallActor = GetWorld()->SpawnActor<ABallActor>(Ball->BallActor, Position, Rotation, SpawnInfo);
+
+	FString BallMessage = "You threw a " + PlayerController->Inventory[SelectedItemID].Name.ToString() + "...";
+	Hud->ShowText(BallMessage);
+	CurrentAction++;
+
+	PlayerController->Inventory.RemoveAt(SelectedItemID);
+
+	int CatchRate = OpponentTeam[OpponentPokemonId].SpeciesData.CatchRate * Ball->CatchMultiplier;
+	int RandomPercent = FMath::FMath::RandRange(1, 100);
+
+	if (CatchRate > RandomPercent) {
+		bHasBattleEnded = true;
+		bIsBattleVictory = true;
+
+		GetWorldTimerManager().SetTimer(CatchTimer, this, &ABattleGameMode::CatchSuccess, CurrentAction, false);
+		CurrentAction++;
+		GetWorldTimerManager().SetTimer(BattleEndTimer, this, &ABattleGameMode::BattleEnd, CurrentAction, false);
+
+		return;
+	}
+	else {
+		GetWorldTimerManager().SetTimer(CatchTimer, this, &ABattleGameMode::CatchFail, CurrentAction, false);
+		CurrentAction++;
+
+		return;
+	}
+}
+
+void ABattleGameMode::CatchSuccess()
+{
+	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+
+	PlayerController->ObtainPokemon(OpponentTeam[OpponentPokemonId]);
+	Hud->ShowText("You caught " + OpponentTeam[OpponentPokemonId].SpeciesData.Name.ToString() + "!");
+}
+
+void ABattleGameMode::CatchFail()
+{
+	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+
+	ThrownBallActor->Destroy();
+
+	FRotator Rotation;
+	Rotation.Yaw = 180;
+	FActorSpawnParameters SpawnInfo;
+	FVector Position = FVector(-350, 440, 115);
+
+	OpponentPokemonActor = GetWorld()->SpawnActor<AStaticOverworldPokemon>(OpponentTeam[OpponentPokemonId].SpeciesData.PokemonActor, Position, Rotation, SpawnInfo);
+	Hud->ShowText(OpponentTeam[OpponentPokemonId].SpeciesData.Name.ToString() + " got out!");
 }
 
 void ABattleGameMode::OpponentFaints()
@@ -443,7 +514,7 @@ void ABattleGameMode::OpponentFaints()
 		PlayerController->PokemonParty[PlayerPokemonId].SpeciesData.Name.ToString() + " recieved " + FString::FromInt(Exp) + " Exp!");
 
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("OpponentFaints"));
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Current Action: " + FString::FromInt(CurrentAction)));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Current Action: " + FString::FromInt(CurrentAction)));
 }
 
 void ABattleGameMode::PlayerFaints()
@@ -455,7 +526,7 @@ void ABattleGameMode::PlayerFaints()
 
 	Hud->ShowText(PlayerController->PokemonParty[PlayerPokemonId].SpeciesData.Name.ToString() + " was defeated!");
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("player faints"));
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Current Action: " + FString::FromInt(CurrentAction)));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Current Action: " + FString::FromInt(CurrentAction)));
 }
 
 int ABattleGameMode::SelectOpponentMove()
@@ -525,7 +596,7 @@ void ABattleGameMode::BattleTurn(EAction PlayerAction)
 		PlacePlayerPokemon(PlayerPokemonId);
 		CurrentAction++;
 
-		if (bDoesPlayerHaveToSwitch != true) {
+		if (!bDoesPlayerHaveToSwitch) {
 			UseMove(SelectOpponentMove(), "Opponent");
 		}
 		EndTurn();
@@ -534,6 +605,12 @@ void ABattleGameMode::BattleTurn(EAction PlayerAction)
 
 	if (PlayerAction == EAction::UseHealingItem) {
 		UseItem();
+		UseMove(SelectOpponentMove(), "Opponent");
+		EndTurn();
+	}
+
+	if (PlayerAction == EAction::UsePokeball) {
+		UseBall();
 		UseMove(SelectOpponentMove(), "Opponent");
 		EndTurn();
 	}
@@ -546,8 +623,12 @@ void ABattleGameMode::EndTurn()
 	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
+	SelectedItemID = 0;
+	SelectedMoveID = 0;
+	SelectedPokemonID = 0;
+
 	if (bDoesPlayerHaveToSwitch == true && bHasBattleEnded == false) {
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("switching pokemon"));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("time to switch pokemon"));
 		GetWorldTimerManager().SetTimer(EndTurnTimer, Hud, &ABattleHUD::ShowPokemon, CurrentAction, false);
 	}
 
@@ -597,7 +678,6 @@ void ABattleGameMode::BattleEnd()
 	}
 
 	GetWorldTimerManager().SetTimer(MessageTimer4, this, &ABattleGameMode::ExitBattleMap, CurrentAction, false);
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Current Action: " + FString::FromInt(CurrentAction)));
 }
 
 FString ABattleGameMode::ETypeToString(ETypes Type)
@@ -663,6 +743,7 @@ void ABattleGameMode::SelectItem(int InId)
 	if (PlayerController->Inventory[InId].ItemStructType == "Ball") {
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Ball"));
 		SelectedItemID = InId;
+		BattleTurn(EAction::UsePokeball);
 	}
 	else {
 		if(PlayerController->Inventory[InId].ItemStructType == "Ether") {
