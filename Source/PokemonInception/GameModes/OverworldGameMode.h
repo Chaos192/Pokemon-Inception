@@ -26,6 +26,13 @@ private:
 	UFUNCTION()
 	void TogglePause();
 
+	UFUNCTION()
+	void UseItem();
+
+	int SelectedItemID;
+	int SelectedPokemonID;
+	int SelectedMoveID;
+
 	bool bIsPaused = false;
 
 	TArray<AActor*> ActorsToDestroy;
@@ -45,12 +52,30 @@ protected:
 	class UDataTable* PokemonDT;
 
 	UPROPERTY(EditDefaultsOnly)
-	TArray<class UDataTable*> ItemDT;
+	class UDataTable* BallsDT;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UDataTable* PotionsDT;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UDataTable* ValuablesDT;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UDataTable* EthersDT;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UDataTable* RevivesDT;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UDataTable* CandyDT;
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<class UDataTable*> MoveDT;
 
 public:
+	bool bHasSelectedItem;
+	bool bHasSelectedEther;
+
 	UFUNCTION()
 	FString ETypeToString(ETypes Type);
 
@@ -65,6 +90,15 @@ public:
 
 	UFUNCTION()
 	void MarkActorAsDestroyed(AActor* Actor);
+
+	UFUNCTION()
+	void SelectMove(int InId);
+
+	UFUNCTION()
+	void SelectPokemon(int InId);
+
+	UFUNCTION()
+	void SelectItem(int InId);
 
 	UFUNCTION()
 	void OnScreenMessage(FString MessageToDisplay);

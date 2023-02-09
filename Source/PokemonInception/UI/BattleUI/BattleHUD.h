@@ -138,6 +138,8 @@ public:
 
 	TSubclassOf<UMoveButtonWidget> GetMoveButtonWidgetClass();
 
+	bool BIsMovePopupInViewport();
+
 	void Clear();
 
 	UFUNCTION()

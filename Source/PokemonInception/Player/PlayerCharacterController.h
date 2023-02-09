@@ -57,6 +57,10 @@ public:
 
 	void LoseMoney(int LostMoney);
 
+	FItemBaseStruct GetItemByID(int InId);
+
+	FPokemonStruct GetPokemonByID(int InId);
+
 	TArray<FItemBaseStruct> GetInventory() const;
 
 	TArray<FPokemonStruct> GetPokemonParty() const;

@@ -28,6 +28,8 @@ void AOverworldHUD::BeginPlay()
 	PokemonSummaryWidget = CreateWidget<UPokemonSummaryWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonSummaryWidgetClass);
 	BagWidget = CreateWidget<UBagWidget>(UGameplayStatics::GetGameInstance(GetWorld()), BagWidgetClass);
 	ItemInfoWidget = CreateWidget<UItemInfoWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ItemInfoWidgetClass);
+	UseItemWidget = CreateWidget<UPopupSelectionWidget>(UGameplayStatics::GetGameInstance(GetWorld()), UseItemWidgetClass);
+	MoveSelectionPopupWidget = CreateWidget<UMoveSelectionPopupWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveSelectionPopupWidgetClass);
 	TrainerCardWidget = CreateWidget<UTrainerCardWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TrainerCardWidgetClass);
 	ShopWidget = CreateWidget<UShopWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ShopWidgetClass);
 
@@ -35,12 +37,9 @@ void AOverworldHUD::BeginPlay()
 	GameMode->OnScreenMessageDelegate.AddDynamic(OnScreenMessageWidget, &UTextBoxWidget::ReturnMessage);
 	GameMode->ShopMessageDelegate.AddDynamic(ShopWidget, &UShopWidget::ShowText);
 	GameMode->ItemSlotDelegate.AddDynamic(BagWidget, &UBagWidget::AddToWrapBox);
-	GameMode->ItemInfoDelegate.AddDynamic(BagWidget, &UBagWidget::ShowInfo);
 	GameMode->ItemShopSlotDelegate.AddDynamic(ShopWidget, &UShopWidget::DisplayInShop);
 	GameMode->PokemonSlotDelegate.AddDynamic(PokemonWidget, &UPokemonWidget::AddToWrapBox);
-	GameMode->PokemonSummaryDelegate.AddDynamic(PokemonWidget, &UPokemonWidget::AddToInfoWrapBox);
 	GameMode->PokedexSlotDelegate.AddDynamic(PokedexWidget, &UPokedexWidget::AddPokedexSlotToBox);
-	GameMode->PokedexInfoDelegate.AddDynamic(PokedexWidget, &UPokedexWidget::AddPokedexInfoToBox);
 
 	MenuWidget->PokedexClicked.AddDynamic(this, &AOverworldHUD::ShowPokedex);
 	MenuWidget->PokemonClicked.AddDynamic(this, &AOverworldHUD::ShowPokemon);
@@ -53,6 +52,13 @@ void AOverworldHUD::BeginPlay()
 	BagWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ShowMenu);
 	TrainerCardWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ShowMenu);
 	ShopWidget->ExitClicked.AddDynamic(this, &AOverworldHUD::ClearShop);
+
+	ItemInfoWidget->UseClicked.AddDynamic(GameMode, &AOverworldGameMode::SelectItem);
+
+	UseItemWidget->ActionClicked.AddDynamic(GameMode, &AOverworldGameMode::SelectPokemon);
+	UseItemWidget->CancelClicked.AddDynamic(this, &AOverworldHUD::ClearPopup);
+
+	MoveSelectionPopupWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ClearMovePopup);
 
 }
 
@@ -128,6 +134,11 @@ void AOverworldHUD::ShowPokemon()
 
 void AOverworldHUD::ShowPokemonSummary(int PokemonID)
 {
+	if (UseItemWidget->IsInViewport() == true || MoveSelectionPopupWidget->IsInViewport() == true) {
+		return;
+	}
+
+	PokemonSummaryWidget->ClearMoves();
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (GameMode == nullptr) {
 		return;
@@ -192,6 +203,58 @@ void AOverworldHUD::ShowItemInfo(int ItemID)
 		ItemInfoWidget->SetID(ItemID);
 
 		BagWidget->ShowInfo(ItemInfoWidget);
+	}
+}
+
+void AOverworldHUD::ShowUseItemPopup(int PokemonId)
+{
+	if (UseItemWidget->IsInViewport() == true) {
+		return;
+	}
+
+	if (PlayerOwner && UseItemWidget) {
+		float MouseX;
+		float MouseY;
+
+		PlayerOwner->GetMousePosition(MouseX, MouseY);
+
+		UseItemWidget->SetId(PokemonId);
+		UseItemWidget->AddToViewport();
+		UseItemWidget->SetPositionInViewport(FVector2D(MouseX, MouseY), false);
+		PlayerOwner->bShowMouseCursor = true;
+		PlayerOwner->SetInputMode(FInputModeUIOnly());
+	}
+}
+
+void AOverworldHUD::ShowMoveSelectionPopup(int PokemonId)
+{
+	if (MoveSelectionPopupWidget->IsInViewport() == true) {
+		return;
+	}
+
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
+
+	if (PlayerOwner && MoveSelectionPopupWidget) {
+		MoveSelectionPopupWidget->ClearWrapBox();
+		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(PlayerOwner);
+
+		FPokemonStruct Pokemon = Controller->GetPokemonByID(PokemonId);
+		for (int i = 0; i < Pokemon.CurrentMoves.Num(); i++) {
+			UMoveButtonWidget* MoveButton = CreateWidget<UMoveButtonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveButtonWidgetClass);
+
+			MoveButton->InitButton(Pokemon.Moves[Pokemon.CurrentMoves[i]].Name, Pokemon.Moves[Pokemon.CurrentMoves[i]].CurrPowerPoints,
+				Pokemon.Moves[Pokemon.CurrentMoves[i]].PowerPoints, Pokemon.Moves[Pokemon.CurrentMoves[i]].MoveType);
+			MoveButton->SetMove(Pokemon.CurrentMoves[i]);
+			MoveButton->ButtonClicked.AddDynamic(GameMode, &AOverworldGameMode::SelectMove);
+			MoveSelectionPopupWidget->AddToWrapBox(MoveButton);
+		}
+
+		MoveSelectionPopupWidget->AddToViewport();
+		PlayerOwner->bShowMouseCursor = true;
+		PlayerOwner->SetInputMode(FInputModeUIOnly());
 	}
 }
 
@@ -284,14 +347,24 @@ void AOverworldHUD::ClearShop()
 	PlayerOwner->SetPause(false);
 }
 
+void AOverworldHUD::ClearPopup()
+{
+	UseItemWidget->RemoveFromViewport();
+}
+
+void AOverworldHUD::ClearMovePopup()
+{
+	MoveSelectionPopupWidget->RemoveFromViewport();
+}
+
+bool AOverworldHUD::BIsMovePopupInViewport()
+{
+	return MoveSelectionPopupWidget->IsInViewport();
+}
+
 TSubclassOf<UItemSlotWidget> AOverworldHUD::GetItemSlotWidgetClass()
 {
 	return ItemSlotWidgetClass;
-}
-
-TSubclassOf<UItemInfoWidget> AOverworldHUD::GetItemInfoWidgetClass()
-{
-	return ItemInfoWidgetClass;
 }
 
 TSubclassOf<UItemShopSlotWidget> AOverworldHUD::GetItemShopSlotWidgetClass()
@@ -304,19 +377,9 @@ TSubclassOf<UPokedexSlotWidget> AOverworldHUD::GetPokedexSlotWidgetClass()
 	return PokedexSlotWidgetClass;
 }
 
-TSubclassOf<UPokedexInfoWidget> AOverworldHUD::GetPokedexInfoWidgetClass()
-{
-	return PokedexInfoWidgetClass;
-}
-
 TSubclassOf<UPokemonSlotWidget> AOverworldHUD::GetPokemonSlotWidgetClass()
 {
 	return PokemonSlotWidgetClass;
-}
-
-TSubclassOf<UPokemonSummaryWidget> AOverworldHUD::GetPokemonSummaryWidgetClass()
-{
-	return PokemonSummaryWidgetClass;
 }
 
 TSubclassOf<UMoveButtonWidget> AOverworldHUD::GetMoveButtonWidgetClass()

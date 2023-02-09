@@ -10,7 +10,7 @@ void UPokedexSlotWidget::OnSlotClicked()
 
 void UPokedexSlotWidget::InitEmptySlot(FName InID)
 {
-	PokemonID->SetText(FText::FromName(ID));
+	PokemonID->SetText(FText::FromName(InID));
 }
 
 void UPokedexSlotWidget::InitFilledSlot(FPokemonBaseStruct PokedexData)

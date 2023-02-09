@@ -15,6 +15,8 @@
 #include "ItemSlotWidget.h"
 #include "ItemShopSlotWidget.h"
 #include "../BattleUI/PokemonSlotWidget.h"
+#include "../BattleUI/MoveSelectionPopupWidget.h"
+#include "../BattleUI/PopupSelectionWidget.h"
 #include "../TextBoxWidget.h"
 #include "OverworldHUD.generated.h"
 
@@ -55,6 +57,12 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UItemInfoWidget> ItemInfoWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPopupSelectionWidget> UseItemWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UMoveSelectionPopupWidget> MoveSelectionPopupWidgetClass;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UItemShopSlotWidget> ItemShopSlotWidgetClass;
@@ -102,6 +110,12 @@ protected:
 	class UItemInfoWidget* ItemInfoWidget;
 
 	UPROPERTY()
+	class UPopupSelectionWidget* UseItemWidget;
+
+	UPROPERTY()
+	class UMoveSelectionPopupWidget* MoveSelectionPopupWidget;
+
+	UPROPERTY()
 	class UTrainerCardWidget* TrainerCardWidget;
 
 	UPROPERTY()
@@ -117,19 +131,21 @@ public:
 	UFUNCTION()
 	void ClearShop();
 
-	TSubclassOf<UItemSlotWidget> GetItemSlotWidgetClass();
+	UFUNCTION()
+	void ClearPopup();
 
-	TSubclassOf<UItemInfoWidget> GetItemInfoWidgetClass();
+	UFUNCTION()
+	void ClearMovePopup();
+
+	bool BIsMovePopupInViewport();
+
+	TSubclassOf<UItemSlotWidget> GetItemSlotWidgetClass();
 
 	TSubclassOf<UItemShopSlotWidget> GetItemShopSlotWidgetClass();
 
 	TSubclassOf<UPokedexSlotWidget> GetPokedexSlotWidgetClass();
 
-	TSubclassOf<UPokedexInfoWidget> GetPokedexInfoWidgetClass();
-
 	TSubclassOf<UPokemonSlotWidget> GetPokemonSlotWidgetClass();
-
-	TSubclassOf<UPokemonSummaryWidget> GetPokemonSummaryWidgetClass();
 
 	TSubclassOf<UMoveButtonWidget> GetMoveButtonWidgetClass();
 
@@ -153,6 +169,12 @@ public:
 
 	UFUNCTION()
 	void ShowItemInfo(int ItemID);
+
+	UFUNCTION()
+	void ShowUseItemPopup(int PokemonId);
+
+	UFUNCTION()
+	void ShowMoveSelectionPopup(int PokemonId);
 
 	UFUNCTION()
 	void ShowTrainerCard();

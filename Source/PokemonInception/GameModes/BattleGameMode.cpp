@@ -766,6 +766,11 @@ void ABattleGameMode::SelectItem(int InId)
 void ABattleGameMode::SelectPokemonToUseItem(int InId)
 {
 	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+
+	if (Hud->BIsMovePopupInViewport()) {
+		return;
+	}
 
 	SelectedPokemonID = InId;
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Using item on " + PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString()));

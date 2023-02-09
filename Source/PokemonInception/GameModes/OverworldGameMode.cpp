@@ -8,6 +8,10 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/WorldSettings.h"
 #include "../Player/PlayerCharacterController.h"
+#include "../Items/ExpCandyBaseStruct.h"
+#include "../Items/EtherBaseStruct.h"
+#include "../Items/PotionBaseStruct.h"
+#include "../Items/ReviveBaseStruct.h"
 
 
 void AOverworldGameMode::BeginPlay()
@@ -96,6 +100,62 @@ void AOverworldGameMode::SaveGame()
 void AOverworldGameMode::MarkActorAsDestroyed(AActor* Actor)
 {
 	ActorsToDestroy.Add(Actor);
+}
+
+void AOverworldGameMode::SelectMove(int InId)
+{
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+	SelectedMoveID = InId;
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Using ether on " + PlayerController->GetPokemonByID(SelectedPokemonID).SpeciesData.Name.ToString() +
+		" to restore " + PlayerController->GetPokemonByID(SelectedPokemonID).Moves[SelectedMoveID].Name.ToString()));
+	
+	UseItem();
+}
+
+void AOverworldGameMode::SelectPokemon(int InId)
+{
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+
+	if (Hud->BIsMovePopupInViewport()) {
+		return;
+	}
+
+	SelectedPokemonID = InId;
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Using item on " + PlayerController->GetPokemonByID(SelectedPokemonID).SpeciesData.Name.ToString()));
+
+	if (bHasSelectedItem) {
+		UseItem();
+	}
+}
+
+void AOverworldGameMode::SelectItem(int InId)
+{
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (PlayerController == nullptr) {
+		return;
+	}
+
+	FItemBaseStruct Item = PlayerController->GetItemByID(InId);
+
+	if (!Item.bUsableOutsideBattle) {
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Can't use this item!"));
+		return;
+	}
+
+	if (Item.ItemStructType == "Ether") {
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Using an ether!"));
+		bHasSelectedEther = true;
+	}
+	else {
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Using a healing item/candy!"));
+		bHasSelectedItem = true;
+	}
+
+	SelectedItemID = InId;
+	Hud->ShowPokemon();
 }
 
 void AOverworldGameMode::SaveOpponent(FPokemonStruct Opponent)
@@ -223,7 +283,7 @@ void AOverworldGameMode::InitShop(TArray<FName> ItemsToSell)
 
 	for (FName ItemID : ItemsToSell) 
 	{
-		for (UDataTable* ItemTable : ItemDT) 
+		for (UDataTable* ItemTable : GetItemDT()) 
 		{
 			FItemBaseStruct* Item = ItemTable->FindRow<FItemBaseStruct>(ItemID, "");
 
@@ -333,6 +393,14 @@ void AOverworldGameMode::ShowPokemonInMenu()
 
 		PokemonSlotWidget->PokemonClick.AddDynamic(Hud, &AOverworldHUD::ShowPokemonSummary);
 
+		if (bHasSelectedItem) {
+			PokemonSlotWidget->PokemonClick.AddDynamic(Hud, &AOverworldHUD::ShowUseItemPopup);
+		}
+		else if (bHasSelectedEther) {
+			PokemonSlotWidget->PokemonClick.AddDynamic(Hud, &AOverworldHUD::ShowMoveSelectionPopup);
+			PokemonSlotWidget->PokemonClick.AddDynamic(this, &AOverworldGameMode::SelectPokemon);
+		}
+
 		PokemonSlotDelegate.Broadcast(PokemonSlotWidget);
 	}
 }
@@ -375,8 +443,81 @@ void AOverworldGameMode::TogglePause()
 	OnGamePaused.Broadcast(bIsPaused);
 }
 
+void AOverworldGameMode::UseItem()
+{
+	/*APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+
+	FString ItemMessage = "You used a " + PlayerController->GetItemByID(SelectedItemID).Name.ToString() + ", ";
+
+	if (PlayerController->GetItemByID(SelectedItemID).ItemStructType == "Potion") {
+		if (PlayerController->GetPokemonByID(SelectedPokemonID).bIsFainted == true || PlayerController->GetPokemonByID(SelectedPokemonID).bIsFullHp() == true) {
+			ItemMessage += "but it failed!";
+		}
+
+		else {
+			FPotionBaseStruct* Potion = PotionsDT->FindRow<FPotionBaseStruct>(PlayerController->Inventory[SelectedItemID].ItemID, "");
+			PlayerController->PokemonParty[SelectedPokemonID].RestoreHP(Potion->RestoredHP);
+
+			PlayerController->Inventory.RemoveAt(SelectedItemID);
+
+			ItemMessage += PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString() + "'s HP was restored!";
+		}
+	}
+
+	else if (PlayerController->GetItemByID(SelectedItemID).ItemStructType == "Revive") {
+		if (PlayerController->PokemonParty[SelectedPokemonID].bIsFainted == false) {
+			ItemMessage += "but it failed!";
+		}
+
+		else {
+			FReviveBaseStruct* Revive = RevivesDT->FindRow<FReviveBaseStruct>(PlayerController->Inventory[SelectedItemID].ItemID, "");
+			PlayerController->PokemonParty[SelectedPokemonID].RecoverStatus();
+			PlayerController->PokemonParty[SelectedPokemonID].RestoreHP(PlayerController->PokemonParty[SelectedPokemonID].MaxHP * Revive->RevivePercent);
+
+			PlayerController->Inventory.RemoveAt(SelectedItemID);
+
+			ItemMessage += PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString() + " was revived!";
+		}
+	}
+
+	else if (PlayerController->GetItemByID(SelectedItemID).ItemStructType == "Ether") {
+		if (PlayerController->PokemonParty[SelectedPokemonID].Moves[SelectedMoveID].bHasMaxPP() == true) {
+			ItemMessage += "but it failed!";
+		}
+
+		else {
+			FEtherBaseStruct* Ether = EthersDT->FindRow<FEtherBaseStruct>(PlayerController->Inventory[SelectedItemID].ItemID, "");
+			PlayerController->PokemonParty[SelectedPokemonID].RestorePP(Ether->RestoredPP, SelectedMoveID);
+
+			PlayerController->Inventory.RemoveAt(SelectedItemID);
+			ItemMessage += "restored PP to " + PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString() +
+				"'s move " + PlayerController->PokemonParty[SelectedPokemonID].Moves[SelectedMoveID].Name.ToString() + "!";
+		}
+	}
+
+	else if (PlayerController->GetItemByID(SelectedItemID).ItemStructType == "Candy") {
+
+	}
+
+	Hud->ShowBag();
+	OnScreenMessage(ItemMessage);
+
+	bHasSelectedItem = false;
+	bHasSelectedEther = false;*/
+}
+
 TArray<class UDataTable*> AOverworldGameMode::GetItemDT() const
 {
+	TArray<class UDataTable*> ItemDT;
+
+	ItemDT.Add(BallsDT);
+	ItemDT.Add(PotionsDT);
+	ItemDT.Add(ValuablesDT);
+	ItemDT.Add(EthersDT);
+	ItemDT.Add(RevivesDT);
+	ItemDT.Add(CandyDT);
+
 	return ItemDT;
 }
 

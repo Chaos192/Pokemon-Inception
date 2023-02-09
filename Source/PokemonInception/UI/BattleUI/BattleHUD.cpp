@@ -70,6 +70,11 @@ TSubclassOf<UMoveButtonWidget> ABattleHUD::GetMoveButtonWidgetClass()
 	return MoveButtonWidgetClass;
 }
 
+bool ABattleHUD::BIsMovePopupInViewport()
+{
+	return MoveSelectionPopupWidget->IsInViewport();
+}
+
 void ABattleHUD::Clear()
 {
 	UWidgetLayoutLibrary::RemoveAllWidgets(this);

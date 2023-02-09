@@ -162,6 +162,16 @@ void APlayerCharacterController::LoseMoney(int LostMoney)
 	money -= LostMoney;
 }
 
+FItemBaseStruct APlayerCharacterController::GetItemByID(int InId)
+{
+	return Inventory[InId];
+}
+
+FPokemonStruct APlayerCharacterController::GetPokemonByID(int InId)
+{
+	return PokemonParty[InId];
+}
+
 void APlayerCharacterController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
