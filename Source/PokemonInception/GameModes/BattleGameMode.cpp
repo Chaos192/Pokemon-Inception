@@ -553,6 +553,10 @@ void ABattleGameMode::BattleStart()
 		return;
 	}
 
+	FTimerHandle SendOutOpponentTimer;
+	FTimerHandle SendOutPlayerTimer;
+	FTimerHandle StartTimer;
+
 	PlayerPokemonId = PlayerController->GetLeadPokemon();
 	OpponentPokemonId = GetCurrentOpponent();
 
@@ -562,9 +566,9 @@ void ABattleGameMode::BattleStart()
 	SendOutOpponent.BindUFunction(this, FName("PlaceOpponentPokemon"), OpponentPokemonId);
 	SendOutPlayer.BindUFunction(this, FName("PlacePlayerPokemon"), PlayerPokemonId);
 
-	GetWorldTimerManager().SetTimer(MessageTimer, SendOutOpponent, 0.001, false);
-	GetWorldTimerManager().SetTimer(MessageTimer2, SendOutPlayer, 1.5, false);
-	GetWorldTimerManager().SetTimer(WidgetDelay, Hud, &ABattleHUD::ShowBattleStartWidget, 3, false);
+	GetWorldTimerManager().SetTimer(SendOutOpponentTimer, SendOutOpponent, 0.001, false);
+	GetWorldTimerManager().SetTimer(SendOutPlayerTimer, SendOutPlayer, 1.5, false);
+	GetWorldTimerManager().SetTimer(StartTimer, Hud, &ABattleHUD::ShowBattleStartWidget, 3, false);
 }
 
 void ABattleGameMode::BattleTurn(EAction PlayerAction)
@@ -641,6 +645,7 @@ void ABattleGameMode::BattleEnd()
 	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
+	FTimerHandle ExitTimer;
 
 	if (bIsBattleVictory == true) {
 		int Money = 0;
@@ -676,7 +681,7 @@ void ABattleGameMode::BattleEnd()
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("loss"));
 	}
 
-	GetWorldTimerManager().SetTimer(MessageTimer4, this, &ABattleGameMode::ExitBattleMap, CurrentAction, false);
+	GetWorldTimerManager().SetTimer(ExitTimer, this, &ABattleGameMode::ExitBattleMap, CurrentAction, false);
 }
 
 FString ABattleGameMode::ETypeToString(ETypes Type)
@@ -929,7 +934,9 @@ void ABattleGameMode::Run()
 {
 	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 
+	FTimerHandle ExitTimer;
+
 	Hud->ShowText("Got away safely...");
-	GetWorldTimerManager().SetTimer(WidgetDelay, this, &ABattleGameMode::ExitBattleMap, 2, false);
+	GetWorldTimerManager().SetTimer(ExitTimer, this, &ABattleGameMode::ExitBattleMap, 2, false);
 }
 

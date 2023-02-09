@@ -130,13 +130,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	class UDataTable* RevivesDT;
 
-	FTimerHandle MessageTimer;
-	FTimerHandle MessageTimer2;
-	FTimerHandle MessageTimer3;
-	FTimerHandle MessageTimer4;
-	FTimerHandle MessageTimer5;
-	FTimerHandle WidgetDelay;
-
 public:
 	bool bHasSelectedItem;
 	bool bHasSelectedEther;

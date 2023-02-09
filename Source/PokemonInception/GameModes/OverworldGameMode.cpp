@@ -156,6 +156,8 @@ void AOverworldGameMode::OnScreenMessage(FString MessageToDisplay)
 {
 	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 
+	FTimerHandle ScreenMessageTimer;
+
 	OnScreenMessageDelegate.Broadcast(MessageToDisplay);
 	GetWorldTimerManager().SetTimer(ScreenMessageTimer, Hud, &AOverworldHUD::ClearOnScreenMessage, 1, false);
 }

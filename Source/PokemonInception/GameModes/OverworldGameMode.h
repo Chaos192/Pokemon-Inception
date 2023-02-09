@@ -107,9 +107,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<class UDataTable*> MoveDT;
-	
-	FTimerHandle MessageTimer;
-	FTimerHandle ScreenMessageTimer;
 
 private:
 	UFUNCTION()
