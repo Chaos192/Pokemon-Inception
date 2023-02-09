@@ -5,17 +5,17 @@
 
 void UPokedexSlotWidget::OnSlotClicked()
 {
-	SlotClicked.Broadcast(Data);
+	SlotClicked.Broadcast(ID);
 }
 
-void UPokedexSlotWidget::InitEmptySlot(FName ID)
+void UPokedexSlotWidget::InitEmptySlot(FName InID)
 {
 	PokemonID->SetText(FText::FromName(ID));
 }
 
 void UPokedexSlotWidget::InitFilledSlot(FPokemonBaseStruct PokedexData)
 {
-	Data = PokedexData;
+	ID = PokedexData.PokemonID;
 	PokemonID->SetText(FText::FromName(PokedexData.PokemonID));
 	PokemonImage->SetBrushFromTexture(PokedexData.Image);
 	SlotButton->OnClicked.AddDynamic(this, &UPokedexSlotWidget::OnSlotClicked);

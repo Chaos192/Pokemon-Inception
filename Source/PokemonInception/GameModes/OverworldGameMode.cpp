@@ -206,25 +206,10 @@ void AOverworldGameMode::FillBagWidget()
 		ItemSlotWidget->SetItemCount(ItemCount[i]);
 		ItemSlotWidget->SetItemID(Inventory.Find(UniqueItems[i]));
 
-		ItemSlotWidget->ItemClicked.AddDynamic(this, &AOverworldGameMode::ShowItemInfo);
+		ItemSlotWidget->ItemClicked.AddDynamic(Hud, &AOverworldHUD::ShowItemInfo);
 
 		ItemSlotDelegate.Broadcast(ItemSlotWidget);
 	}
-}
-
-void AOverworldGameMode::ShowItemInfo(int ItemID)
-{
-	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-
-	TArray<FItemBaseStruct> Inventory = PlayerController->GetInventory();
-
-	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
-	UItemInfoWidget* ItemInfo = CreateWidget<UItemInfoWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetItemInfoWidgetClass());
-
-	ItemInfo->SetDescription(Inventory[ItemID].Description);
-	ItemInfo->SetID(ItemID);
-
-	ItemInfoDelegate.Broadcast(ItemInfo);
 }
 
 void AOverworldGameMode::InitShop(TArray<FName> ItemsToSell)
@@ -346,44 +331,10 @@ void AOverworldGameMode::ShowPokemonInMenu()
 		PokemonSlotWidget->SetPokemonEXP(Party[i].CurrExp, Party[i].RequiredExp);
 		PokemonSlotWidget->SetPokemon(i);
 
-		PokemonSlotWidget->PokemonClick.AddDynamic(this, &AOverworldGameMode::ShowPokemonSummary);
+		PokemonSlotWidget->PokemonClick.AddDynamic(Hud, &AOverworldHUD::ShowPokemonSummary);
 
 		PokemonSlotDelegate.Broadcast(PokemonSlotWidget);
 	}
-}
-
-void AOverworldGameMode::ShowPokemonSummary(int PokemonID)
-{
-	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
-	UPokemonSummaryWidget* PokemonSummary = CreateWidget<UPokemonSummaryWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetPokemonSummaryWidgetClass());
-
-	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	FPokemonStruct Pokemon = PlayerController->GetPokemonParty()[PokemonID];
-
-	FString PokemonType;
-	if (Pokemon.SpeciesData.Type2 == ETypes::None) {
-		PokemonType = ETypeToString(Pokemon.SpeciesData.Type1);
-	}
-	else {
-		PokemonType = ETypeToString(Pokemon.SpeciesData.Type1) + " " + ETypeToString(Pokemon.SpeciesData.Type2);
-	}
-
-	FString PokemonHP = FString::FromInt(Pokemon.CurrHP) + "/" + FString::FromInt(Pokemon.MaxHP);
-
-	PokemonSummary->SetImage(Pokemon.SpeciesData.Image);
-	PokemonSummary->SetGeneralInfo(Pokemon.SpeciesData.Name, Pokemon.SpeciesData.PokemonID, PokemonType, Pokemon.Level, (Pokemon.RequiredExp - Pokemon.CurrExp));
-	PokemonSummary->SetStats(PokemonHP, Pokemon.Attack, Pokemon.Defence, Pokemon.Speed);
-
-
-	for (int i = 0; i < Pokemon.CurrentMoves.Num(); i++) {
-		UMoveButtonWidget* MoveButton = CreateWidget<UMoveButtonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetMoveButtonWidgetClass());
-
-		MoveButton->InitButton(Pokemon.Moves[Pokemon.CurrentMoves[i]].Name, Pokemon.Moves[Pokemon.CurrentMoves[i]].CurrPowerPoints,
-			Pokemon.Moves[Pokemon.CurrentMoves[i]].PowerPoints, Pokemon.Moves[Pokemon.CurrentMoves[i]].MoveType);
-		PokemonSummary->AddMove(MoveButton);
-	}
-
-	PokemonSummaryDelegate.Broadcast(PokemonSummary);
 }
 
 void AOverworldGameMode::FillPokedex()
@@ -399,7 +350,7 @@ void AOverworldGameMode::FillPokedex()
 
 		if (PlayerController->bIsRegisteredInPokedex(PokemonSpecies->PokemonID)) {
 			PokedexSlotWidget->InitFilledSlot(*PokemonSpecies);
-			PokedexSlotWidget->SlotClicked.AddDynamic(this, &AOverworldGameMode::ShowPokedexInfo);
+			PokedexSlotWidget->SlotClicked.AddDynamic(Hud, &AOverworldHUD::ShowPokedexInfo);
 		}
 		else {
 			PokedexSlotWidget->InitEmptySlot(PokemonSpecies->PokemonID);
@@ -410,21 +361,10 @@ void AOverworldGameMode::FillPokedex()
 	}
 }
 
-void AOverworldGameMode::ShowPokedexInfo(FPokemonBaseStruct PokemonData)
+FPokemonBaseStruct AOverworldGameMode::GetPokemonSpeciesData(FName PokemonID)
 {
-	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
-	UPokedexInfoWidget* PokedexInfo = CreateWidget<UPokedexInfoWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetPokedexInfoWidgetClass());
-
-	FString PokemonType;
-	if (PokemonData.Type2 == ETypes::None) {
-		PokemonType = ETypeToString(PokemonData.Type1);
-	}
-	else {
-		PokemonType = ETypeToString(PokemonData.Type1) + " " + ETypeToString(PokemonData.Type2);
-	}
-
-	PokedexInfo->SetPokedexInfo(PokemonData, PokemonType);
-	PokedexInfoDelegate.Broadcast(PokedexInfo);
+	FPokemonBaseStruct* SpeciesData = PokemonDT->FindRow<FPokemonBaseStruct>(PokemonID, "");
+	return *SpeciesData;
 }
 
 void AOverworldGameMode::TogglePause()

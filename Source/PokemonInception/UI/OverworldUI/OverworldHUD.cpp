@@ -23,8 +23,11 @@ void AOverworldHUD::BeginPlay()
 	TextBoxWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TextBoxWidgetClass);
 	OnScreenMessageWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), OnScreenMessageWidgetClass);
 	PokedexWidget = CreateWidget<UPokedexWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokedexWidgetClass);
+	PokedexInfoWidget = CreateWidget<UPokedexInfoWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokedexInfoWidgetClass);
 	PokemonWidget = CreateWidget<UPokemonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonWidgetClass);
+	PokemonSummaryWidget = CreateWidget<UPokemonSummaryWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonSummaryWidgetClass);
 	BagWidget = CreateWidget<UBagWidget>(UGameplayStatics::GetGameInstance(GetWorld()), BagWidgetClass);
+	ItemInfoWidget = CreateWidget<UItemInfoWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ItemInfoWidgetClass);
 	TrainerCardWidget = CreateWidget<UTrainerCardWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TrainerCardWidgetClass);
 	ShopWidget = CreateWidget<UShopWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ShopWidgetClass);
 
@@ -82,6 +85,29 @@ void AOverworldHUD::ShowPokedex()
 	}
 }
 
+void AOverworldHUD::ShowPokedexInfo(FName PokemonID)
+{
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
+
+	if (PlayerOwner && PokedexInfoWidget) {
+		FPokemonBaseStruct PokemonData = GameMode->GetPokemonSpeciesData(PokemonID);
+		
+		FString PokemonType;
+		if (PokemonData.Type2 == ETypes::None) {
+			PokemonType = GameMode->ETypeToString(PokemonData.Type1);
+		}
+		else {
+			PokemonType = GameMode->ETypeToString(PokemonData.Type1) + " " + GameMode->ETypeToString(PokemonData.Type2);
+		}
+
+		PokedexInfoWidget->SetPokedexInfo(PokemonData, PokemonType);
+		PokedexWidget->AddPokedexInfoToBox(PokedexInfoWidget);
+	}
+}
+
 void AOverworldHUD::ShowPokemon()
 {
 	Clear();
@@ -100,6 +126,44 @@ void AOverworldHUD::ShowPokemon()
 	}
 }
 
+void AOverworldHUD::ShowPokemonSummary(int PokemonID)
+{
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
+
+	if (PlayerOwner && PokemonSummaryWidget) {
+		APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+		FPokemonStruct Pokemon = PlayerController->GetPokemonParty()[PokemonID];
+
+		FString PokemonType;
+		if (Pokemon.SpeciesData.Type2 == ETypes::None) {
+			PokemonType = GameMode->ETypeToString(Pokemon.SpeciesData.Type1);
+		}
+		else {
+			PokemonType = GameMode->ETypeToString(Pokemon.SpeciesData.Type1) + " " + GameMode->ETypeToString(Pokemon.SpeciesData.Type2);
+		}
+
+		FString PokemonHP = FString::FromInt(Pokemon.CurrHP) + "/" + FString::FromInt(Pokemon.MaxHP);
+
+		PokemonSummaryWidget->SetImage(Pokemon.SpeciesData.Image);
+		PokemonSummaryWidget->SetGeneralInfo(Pokemon.SpeciesData.Name, Pokemon.SpeciesData.PokemonID, PokemonType, Pokemon.Level, (Pokemon.RequiredExp - Pokemon.CurrExp));
+		PokemonSummaryWidget->SetStats(PokemonHP, Pokemon.Attack, Pokemon.Defence, Pokemon.Speed);
+
+
+		for (int i = 0; i < Pokemon.CurrentMoves.Num(); i++) {
+			UMoveButtonWidget* MoveButton = CreateWidget<UMoveButtonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveButtonWidgetClass);
+
+			MoveButton->InitButton(Pokemon.Moves[Pokemon.CurrentMoves[i]].Name, Pokemon.Moves[Pokemon.CurrentMoves[i]].CurrPowerPoints,
+				Pokemon.Moves[Pokemon.CurrentMoves[i]].PowerPoints, Pokemon.Moves[Pokemon.CurrentMoves[i]].MoveType);
+			PokemonSummaryWidget->AddMove(MoveButton);
+		}
+
+		PokemonWidget->AddToInfoWrapBox(PokemonSummaryWidget);
+	}
+}
+
 void AOverworldHUD::ShowBag()
 {
 	Clear();
@@ -115,6 +179,19 @@ void AOverworldHUD::ShowBag()
 		BagWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
+	}
+}
+
+void AOverworldHUD::ShowItemInfo(int ItemID)
+{
+	if (PlayerOwner && BagWidget) {
+		APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(PlayerOwner);
+		TArray<FItemBaseStruct> Inventory = PlayerController->GetInventory();
+
+		ItemInfoWidget->SetDescription(Inventory[ItemID].Description);
+		ItemInfoWidget->SetID(ItemID);
+
+		BagWidget->ShowInfo(ItemInfoWidget);
 	}
 }
 

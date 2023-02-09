@@ -87,10 +87,19 @@ protected:
 	class UPokedexWidget* PokedexWidget;
 
 	UPROPERTY()
+	class UPokedexInfoWidget* PokedexInfoWidget;
+
+	UPROPERTY()
 	class UPokemonWidget* PokemonWidget;
 
 	UPROPERTY()
+	class UPokemonSummaryWidget* PokemonSummaryWidget;
+
+	UPROPERTY()
 	class UBagWidget* BagWidget;
+
+	UPROPERTY()
+	class UItemInfoWidget* ItemInfoWidget;
 
 	UPROPERTY()
 	class UTrainerCardWidget* TrainerCardWidget;
@@ -131,10 +140,19 @@ public:
 	void ShowPokedex();
 
 	UFUNCTION()
+	void ShowPokedexInfo(FName PokemonID);
+
+	UFUNCTION()
 	void ShowPokemon();
 
 	UFUNCTION()
+	void ShowPokemonSummary(int PokemonID);
+
+	UFUNCTION()
 	void ShowBag();
+
+	UFUNCTION()
+	void ShowItemInfo(int ItemID);
 
 	UFUNCTION()
 	void ShowTrainerCard();

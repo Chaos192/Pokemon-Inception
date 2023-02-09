@@ -21,7 +21,7 @@ private:
 	UFUNCTION()
 	void OnSlotClicked();
 
-	FPokemonBaseStruct Data;
+	FName ID;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
@@ -35,10 +35,10 @@ protected:
 
 public:
 	UFUNCTION()
-	void InitEmptySlot(FName ID);
+	void InitEmptySlot(FName InID);
 
 	UFUNCTION()
 	void InitFilledSlot(FPokemonBaseStruct PokedexData);
 	
-	FPokedexSignature SlotClicked;
+	FPokedexIDSignature SlotClicked;
 };

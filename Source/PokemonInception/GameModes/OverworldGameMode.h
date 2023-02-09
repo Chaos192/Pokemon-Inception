@@ -22,18 +22,49 @@ class AOverworldGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
-public:
+private:
 	UFUNCTION()
-	void SaveGame();
+	void TogglePause();
+
+	bool bIsPaused = false;
+
+	TArray<AActor*> ActorsToDestroy;
+
+	TArray<UItemShopSlotWidget*> ShopSlots;
+
+protected:
+	virtual void BeginPlay() override;
 
 	UFUNCTION()
-	void MarkActorAsDestroyed(AActor* Actor);
+	void BuyItem(FItemBaseStruct Item);
+
+	UFUNCTION()
+	void SellItem(FItemBaseStruct Item);
+
+	UPROPERTY(EditDefaultsOnly)
+	class UDataTable* PokemonDT;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<class UDataTable*> ItemDT;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<class UDataTable*> MoveDT;
+
+public:
+	UFUNCTION()
+	FString ETypeToString(ETypes Type);
+
+	UFUNCTION()
+	void SaveGame();
 
 	UFUNCTION()
 	void SaveOpponent(FPokemonStruct Opponent);
 
 	UFUNCTION()
 	void SaveAndExit();
+
+	UFUNCTION()
+	void MarkActorAsDestroyed(AActor* Actor);
 
 	UFUNCTION()
 	void OnScreenMessage(FString MessageToDisplay);
@@ -45,9 +76,6 @@ public:
 	void FillBagWidget();
 
 	UFUNCTION()
-	void ShowItemInfo(int ItemID);
-
-	UFUNCTION()
 	void InitShop(TArray<FName> ItemsToSell);
 
 	UFUNCTION()
@@ -57,13 +85,9 @@ public:
 	void ShowPokemonInMenu();
 
 	UFUNCTION()
-	void ShowPokemonSummary(int PokemonID);
-
-	UFUNCTION()
 	void FillPokedex();
 
-	UFUNCTION()
-	void ShowPokedexInfo(FPokemonBaseStruct PokemonData);
+	FPokemonBaseStruct GetPokemonSpeciesData(FName PokemonID);
 
 	TArray<class UDataTable*> GetItemDT() const;
 
@@ -87,36 +111,6 @@ public:
 	FPokemonSlotSignature PokemonSlotDelegate;
 	FPokemonSummarySignature PokemonSummaryDelegate;
 
-protected:
-	virtual void BeginPlay() override;
-
-	UFUNCTION()
-	FString ETypeToString(ETypes Type);
-
-	UFUNCTION()
-	void BuyItem(FItemBaseStruct Item);
-
-	UFUNCTION()
-	void SellItem(FItemBaseStruct Item);
-
-	UPROPERTY(EditDefaultsOnly)
-	class UDataTable* PokemonDT;
-
-	UPROPERTY(EditDefaultsOnly)
-	TArray<class UDataTable*> ItemDT;
-
-	UPROPERTY(EditDefaultsOnly)
-	TArray<class UDataTable*> MoveDT;
-
-private:
-	UFUNCTION()
-	void TogglePause();
-
-	bool bIsPaused = false;
-
-	TArray<AActor*> ActorsToDestroy;
-
-	TArray<UItemShopSlotWidget*> ShopSlots;
 };
 
 
