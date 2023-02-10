@@ -101,12 +101,6 @@ public:
 	void SelectItem(int InId);
 
 	UFUNCTION()
-	void OnScreenMessage(FString MessageToDisplay);
-
-	UFUNCTION()
-	void EndOnScreenMessage();
-
-	UFUNCTION()
 	void FillBagWidget();
 
 	UFUNCTION()
@@ -127,24 +121,15 @@ public:
 
 	TArray<class UDataTable*> GetMoveDT() const;
 
-	FEndTextSignature RemoveText;
-
 	FGamePauseSignature OnGamePaused;
 
-	FTextSignature MessageUpdate;
-	FTextSignature OnScreenMessageDelegate;
 	FTextSignature ShopMessageDelegate;
 
 	FItemSlotSignature ItemSlotDelegate;
 	FShopSlotSignature ItemShopSlotDelegate;
-	FItemInfoSignature ItemInfoDelegate;
 
 	FPokedexSlotSignature PokedexSlotDelegate;
-	FPokedexInfoSignature PokedexInfoDelegate;
-
 	FPokemonSlotSignature PokemonSlotDelegate;
-	FPokemonSummarySignature PokemonSummaryDelegate;
-
 };
 
 

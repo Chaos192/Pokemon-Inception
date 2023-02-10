@@ -86,46 +86,6 @@ void APlayerCharacterController::RegisterToPokedex(FPokemonBaseStruct Species)
 	Pokedex.Add(Species);
 }
 
-TArray<FItemBaseStruct> APlayerCharacterController::GetInventory() const
-{
-	return Inventory;
-}
-
-TArray<FPokemonStruct> APlayerCharacterController::GetPokemonParty() const
-{
-	return PokemonParty;
-}
-
-TArray<FPokemonStruct> APlayerCharacterController::GetPokemonStorage() const
-{
-	return PokemonStorage;
-}
-
-TArray<FPokemonBaseStruct> APlayerCharacterController::GetPokedexData() const
-{
-	return Pokedex;
-}
-
-void APlayerCharacterController::LoadInventory(TArray<FItemBaseStruct> InventoryData)
-{
-	Inventory = InventoryData;
-}
-
-void APlayerCharacterController::LoadPokemonParty(TArray<FPokemonStruct> PartyData)
-{
-	PokemonParty = PartyData;
-}
-
-void APlayerCharacterController::LoadPokemonStorage(TArray<FPokemonStruct> StorageData)
-{
-	PokemonStorage = StorageData;
-}
-
-void APlayerCharacterController::LoadPokedexData(TArray<FPokemonBaseStruct> PokedexData)
-{
-	Pokedex = PokedexData;
-}
-
 bool APlayerCharacterController::bIsRegisteredInPokedex(FName ID)
 {
 	for (FPokemonBaseStruct PokemonData : Pokedex) {
@@ -160,16 +120,6 @@ void APlayerCharacterController::RecieveMoney(int AddedMoney)
 void APlayerCharacterController::LoseMoney(int LostMoney)
 {
 	money -= LostMoney;
-}
-
-FItemBaseStruct APlayerCharacterController::GetItemByID(int InId)
-{
-	return Inventory[InId];
-}
-
-FPokemonStruct APlayerCharacterController::GetPokemonByID(int InId)
-{
-	return PokemonParty[InId];
 }
 
 void APlayerCharacterController::SetupInputComponent()

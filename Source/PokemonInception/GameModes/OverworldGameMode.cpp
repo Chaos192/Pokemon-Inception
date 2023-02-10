@@ -33,10 +33,11 @@ void AOverworldGameMode::BeginPlay()
 	if (UGameplayStatics::DoesSaveGameExist("SaveSlot", 0)) {
 		SaveData = Cast<UWorldSaveData>(UGameplayStatics::LoadGameFromSlot("SaveSlot", 0));
 
-		PlayerController->LoadInventory(SaveData->InventoryData);
+		PlayerController->Inventory = SaveData->InventoryData;
 		PlayerController->RecieveMoney(SaveData->MoneyData);
-		PlayerController->LoadPokemonParty(SaveData->PartyData);
-		PlayerController->LoadPokemonStorage(SaveData->StorageData);
+		PlayerController->PokemonParty = SaveData->PartyData;
+		PlayerController->PokemonStorage = SaveData->StorageData;
+		PlayerController->Pokedex = SaveData->PokedexData;
 
 		if (PlayerController->bIsPartyDefeated() == true) {
 			PlayerController->FullRestoreAllPokemon();
@@ -51,10 +52,6 @@ void AOverworldGameMode::BeginPlay()
 		}
 
 		SaveData->OpponentData.Empty();
-
-		for (FPokemonBaseStruct SpeciesData : SaveData->PokedexData) {
-			PlayerController->RegisterToPokedex(SpeciesData);
-		}
 
 		if (ActorsToDestroy.Num() > 0) {
 			for (AActor* Actor : ActorsToDestroy) {
@@ -82,13 +79,13 @@ void AOverworldGameMode::SaveGame()
 
 	UWorldSaveData* SaveData = Cast<UWorldSaveData>(UGameplayStatics::CreateSaveGameObject(UWorldSaveData::StaticClass()));
 
-	SaveData->InventoryData = PlayerController->GetInventory();
-	SaveData->PokedexData = PlayerController->GetPokedexData();
+	SaveData->InventoryData = PlayerController->Inventory;
+	SaveData->PokedexData = PlayerController->Pokedex;
 	SaveData->MoneyData = PlayerController->GetMoney();
 	SaveData->GameMapData.PlayerLocation = PlayerOwner->GetActorLocation();
 	SaveData->GameMapData.PlayerRotation = PlayerOwner->GetActorRotation();
-	SaveData->PartyData = PlayerController->GetPokemonParty();
-	SaveData->StorageData = PlayerController->GetPokemonStorage();
+	SaveData->PartyData = PlayerController->PokemonParty;
+	SaveData->StorageData = PlayerController->PokemonStorage;
 	
 	if (ActorsToDestroy.Num() > 0) {
 		SaveData->GameMapData.ActorsToDestroy = ActorsToDestroy;
@@ -107,8 +104,8 @@ void AOverworldGameMode::SelectMove(int InId)
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
 	SelectedMoveID = InId;
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Using ether on " + PlayerController->GetPokemonByID(SelectedPokemonID).SpeciesData.Name.ToString() +
-		" to restore " + PlayerController->GetPokemonByID(SelectedPokemonID).Moves[SelectedMoveID].Name.ToString()));
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Using ether on " + PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString() +
+		" to restore " + PlayerController->PokemonParty[SelectedPokemonID].Moves[SelectedMoveID].Name.ToString()));
 	
 	UseItem();
 }
@@ -123,7 +120,7 @@ void AOverworldGameMode::SelectPokemon(int InId)
 	}
 
 	SelectedPokemonID = InId;
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Using item on " + PlayerController->GetPokemonByID(SelectedPokemonID).SpeciesData.Name.ToString()));
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Using item on " + PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString()));
 
 	if (bHasSelectedItem) {
 		UseItem();
@@ -138,7 +135,7 @@ void AOverworldGameMode::SelectItem(int InId)
 		return;
 	}
 
-	FItemBaseStruct Item = PlayerController->GetItemByID(InId);
+	FItemBaseStruct Item = PlayerController->Inventory[InId];
 
 	if (!Item.bUsableOutsideBattle) {
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Can't use this item!"));
@@ -212,29 +209,11 @@ FString AOverworldGameMode::ETypeToString(ETypes Type)
 	}
 }
 
-void AOverworldGameMode::OnScreenMessage(FString MessageToDisplay)
-{
-	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
-
-	FTimerHandle ScreenMessageTimer;
-
-	OnScreenMessageDelegate.Broadcast(MessageToDisplay);
-	GetWorldTimerManager().SetTimer(ScreenMessageTimer, Hud, &AOverworldHUD::ClearOnScreenMessage, 1, false);
-}
-
-void AOverworldGameMode::EndOnScreenMessage()
-{
-	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
-	if (Hud != nullptr) {
-		Hud->ClearOnScreenMessage();
-	}
-}
-
 void AOverworldGameMode::FillBagWidget()
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
-	TArray<FItemBaseStruct> Inventory = PlayerController->GetInventory();
+	TArray<FItemBaseStruct> Inventory = PlayerController->Inventory;
 
 	TArray<FItemBaseStruct> UniqueItems;
 	TArray<int> ItemCount;
@@ -277,7 +256,7 @@ void AOverworldGameMode::InitShop(TArray<FName> ItemsToSell)
 	ShopSlots.Empty();
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
-	TArray<FItemBaseStruct> Inventory = PlayerController->GetInventory();
+	TArray<FItemBaseStruct> Inventory = PlayerController->Inventory;
 
 	TArray<FItemBaseStruct> ItemsInShop;
 
@@ -317,7 +296,7 @@ void AOverworldGameMode::InitShop(TArray<FName> ItemsToSell)
 void AOverworldGameMode::RefreshShop()
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	TArray<FItemBaseStruct> Inventory = PlayerController->GetInventory();
+	TArray<FItemBaseStruct> Inventory = PlayerController->Inventory;
 
 	for (UItemShopSlotWidget* Slot : ShopSlots) {
 
@@ -378,7 +357,7 @@ void AOverworldGameMode::ShowPokemonInMenu()
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	
-	TArray<FPokemonStruct> Party = PlayerController->GetPokemonParty();
+	TArray<FPokemonStruct> Party = PlayerController->PokemonParty;
 
 	for (int i = 0; i < Party.Num(); i++) {
 		AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
@@ -445,13 +424,13 @@ void AOverworldGameMode::TogglePause()
 
 void AOverworldGameMode::UseItem()
 {
-	/*APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 
-	FString ItemMessage = "You used a " + PlayerController->GetItemByID(SelectedItemID).Name.ToString() + ", ";
+	FString ItemMessage = "You used a " + PlayerController->Inventory[SelectedItemID].Name.ToString() + ", ";
 
-	if (PlayerController->GetItemByID(SelectedItemID).ItemStructType == "Potion") {
-		if (PlayerController->GetPokemonByID(SelectedPokemonID).bIsFainted == true || PlayerController->GetPokemonByID(SelectedPokemonID).bIsFullHp() == true) {
+	if (PlayerController->Inventory[SelectedItemID].ItemStructType == "Potion") {
+		if (PlayerController->PokemonParty[SelectedPokemonID].bIsFainted == true || PlayerController->PokemonParty[SelectedPokemonID].bIsFullHp() == true) {
 			ItemMessage += "but it failed!";
 		}
 
@@ -465,7 +444,7 @@ void AOverworldGameMode::UseItem()
 		}
 	}
 
-	else if (PlayerController->GetItemByID(SelectedItemID).ItemStructType == "Revive") {
+	else if (PlayerController->Inventory[SelectedItemID].ItemStructType == "Revive") {
 		if (PlayerController->PokemonParty[SelectedPokemonID].bIsFainted == false) {
 			ItemMessage += "but it failed!";
 		}
@@ -481,7 +460,7 @@ void AOverworldGameMode::UseItem()
 		}
 	}
 
-	else if (PlayerController->GetItemByID(SelectedItemID).ItemStructType == "Ether") {
+	else if (PlayerController->Inventory[SelectedItemID].ItemStructType == "Ether") {
 		if (PlayerController->PokemonParty[SelectedPokemonID].Moves[SelectedMoveID].bHasMaxPP() == true) {
 			ItemMessage += "but it failed!";
 		}
@@ -496,15 +475,26 @@ void AOverworldGameMode::UseItem()
 		}
 	}
 
-	else if (PlayerController->GetItemByID(SelectedItemID).ItemStructType == "Candy") {
+	else if (PlayerController->Inventory[SelectedItemID].ItemStructType == "Candy") {
+		if (PlayerController->PokemonParty[SelectedPokemonID].Level == 100) {
+			ItemMessage += "but it failed!";
+		}
 
+		else {
+			FExpCandyBaseStruct* Candy = CandyDT->FindRow<FExpCandyBaseStruct>(PlayerController->Inventory[SelectedItemID].ItemID, "");
+			
+			if (PlayerController->PokemonParty[SelectedPokemonID].GainExp(Candy->ExpRecieved) == true) {
+				TArray<UDataTable*> MoveTables;
+				PlayerController->PokemonParty[SelectedPokemonID].CheckForNewMoves(MoveDT);
+			}
+		}
 	}
 
 	Hud->ShowBag();
-	OnScreenMessage(ItemMessage);
+	Hud->OnScreenMessage(ItemMessage);
 
 	bHasSelectedItem = false;
-	bHasSelectedEther = false;*/
+	bHasSelectedEther = false;
 }
 
 TArray<class UDataTable*> AOverworldGameMode::GetItemDT() const

@@ -65,13 +65,14 @@ struct FPokemonStruct
 	}
 
 	void CalculateStats() {
+		int OldMaxHP = MaxHP;
 		MaxHP = ((Level / 100 + 1) * SpeciesData.HP + Level);
 		
 		if (bIsFainted == true) {
 			CurrHP = 1;
 			bIsFainted = false;
 		}
-		else CurrHP = MaxHP;
+		else CurrHP += MaxHP - OldMaxHP;
 
 		Attack = (((Level / 50.0 + 1) * SpeciesData.Attack) / 1.5);
 		Defence = (((Level / 50.0 + 1) * SpeciesData.Defence) / 1.5);

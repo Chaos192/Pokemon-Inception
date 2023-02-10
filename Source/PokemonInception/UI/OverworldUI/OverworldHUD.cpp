@@ -33,8 +33,6 @@ void AOverworldHUD::BeginPlay()
 	TrainerCardWidget = CreateWidget<UTrainerCardWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TrainerCardWidgetClass);
 	ShopWidget = CreateWidget<UShopWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ShopWidgetClass);
 
-	GameMode->MessageUpdate.AddDynamic(TextBoxWidget, &UTextBoxWidget::ReturnMessage);
-	GameMode->OnScreenMessageDelegate.AddDynamic(OnScreenMessageWidget, &UTextBoxWidget::ReturnMessage);
 	GameMode->ShopMessageDelegate.AddDynamic(ShopWidget, &UShopWidget::ShowText);
 	GameMode->ItemSlotDelegate.AddDynamic(BagWidget, &UBagWidget::AddToWrapBox);
 	GameMode->ItemShopSlotDelegate.AddDynamic(ShopWidget, &UShopWidget::DisplayInShop);
@@ -65,6 +63,13 @@ void AOverworldHUD::BeginPlay()
 void AOverworldHUD::ShowMenu()
 {
 	Clear();
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
+
+	GameMode->bHasSelectedEther = false;
+	GameMode->bHasSelectedItem = false;
 
 	if (PlayerOwner && MenuWidget) {
 		MenuWidget->AddToViewport();
@@ -146,7 +151,7 @@ void AOverworldHUD::ShowPokemonSummary(int PokemonID)
 
 	if (PlayerOwner && PokemonSummaryWidget) {
 		APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-		FPokemonStruct Pokemon = PlayerController->GetPokemonParty()[PokemonID];
+		FPokemonStruct Pokemon = PlayerController->PokemonParty[PokemonID];
 
 		FString PokemonType;
 		if (Pokemon.SpeciesData.Type2 == ETypes::None) {
@@ -197,7 +202,7 @@ void AOverworldHUD::ShowItemInfo(int ItemID)
 {
 	if (PlayerOwner && BagWidget) {
 		APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(PlayerOwner);
-		TArray<FItemBaseStruct> Inventory = PlayerController->GetInventory();
+		TArray<FItemBaseStruct> Inventory = PlayerController->Inventory;
 
 		ItemInfoWidget->SetDescription(Inventory[ItemID].Description);
 		ItemInfoWidget->SetID(ItemID);
@@ -241,7 +246,7 @@ void AOverworldHUD::ShowMoveSelectionPopup(int PokemonId)
 		MoveSelectionPopupWidget->ClearWrapBox();
 		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(PlayerOwner);
 
-		FPokemonStruct Pokemon = Controller->GetPokemonByID(PokemonId);
+		FPokemonStruct Pokemon = Controller->PokemonParty[PokemonId];
 		for (int i = 0; i < Pokemon.CurrentMoves.Num(); i++) {
 			UMoveButtonWidget* MoveButton = CreateWidget<UMoveButtonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveButtonWidgetClass);
 
@@ -288,19 +293,22 @@ void AOverworldHUD::ShowShop(TArray<FName> ItemsToSell)
 
 void AOverworldHUD::OnScreenMessage(FString Message)
 {
-	Clear();
-	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GameMode == nullptr) {
-		return;
-	}
+	ClearOnScreenMessage();
 
 	if (PlayerOwner && OnScreenMessageWidget) {
+		FTimerHandle ClearTimer;
+
+		OnScreenMessageWidget->ReturnMessage(Message);
 		OnScreenMessageWidget->AddToViewport();
-		PlayerOwner->SetInputMode(FInputModeGameOnly());
-		GameMode->OnScreenMessage(Message);
+
+		GetWorldTimerManager().SetTimer(ClearTimer, this, &AOverworldHUD::ClearOnScreenMessage, 1, false);
 	}
 }
 
+void AOverworldHUD::ClearOnScreenMessage()
+{
+	OnScreenMessageWidget->RemoveFromViewport();
+}
 
 void AOverworldHUD::ShowText(FString Message)
 {
@@ -331,11 +339,6 @@ void AOverworldHUD::TogglePause(bool IsPaused)
 void AOverworldHUD::Clear()
 {
 	UWidgetLayoutLibrary::RemoveAllWidgets(this);
-}
-
-void AOverworldHUD::ClearOnScreenMessage()
-{
-	OnScreenMessageWidget->RemoveFromViewport();
 }
 
 void AOverworldHUD::ClearShop()

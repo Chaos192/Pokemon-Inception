@@ -126,6 +126,7 @@ protected:
 public:
 	void Clear();
 
+	UFUNCTION()
 	void ClearOnScreenMessage();
 
 	UFUNCTION()

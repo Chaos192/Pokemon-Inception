@@ -31,19 +31,7 @@ public:
 	void ObtainPokemon(FPokemonStruct Pokemon);
 
 	UFUNCTION()
-	void LoadInventory(TArray<FItemBaseStruct> InventoryData);
-
-	UFUNCTION()
-	void LoadPokemonParty(TArray<FPokemonStruct> PartyData);
-
-	UFUNCTION()
-	void LoadPokemonStorage(TArray<FPokemonStruct> StorageData);
-
-	UFUNCTION()
 	void RegisterToPokedex(FPokemonBaseStruct Species);
-
-	UFUNCTION()
-	void LoadPokedexData(TArray<FPokemonBaseStruct> PokedexData);
 
 	UFUNCTION()
 	bool bIsRegisteredInPokedex(FName ID);
@@ -57,21 +45,6 @@ public:
 
 	void LoseMoney(int LostMoney);
 
-	FItemBaseStruct GetItemByID(int InId);
-
-	FPokemonStruct GetPokemonByID(int InId);
-
-	TArray<FItemBaseStruct> GetInventory() const;
-
-	TArray<FPokemonStruct> GetPokemonParty() const;
-
-	TArray<FPokemonStruct> GetPokemonStorage() const;
-
-	TArray<FPokemonBaseStruct> GetPokedexData() const;
-
-	FPauseSignature PauseDelegate;
-
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<FItemBaseStruct> Inventory;
 
@@ -84,6 +57,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<FPokemonStruct> PokemonStorage;
 
+	FPauseSignature PauseDelegate;
+
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int money;
 
