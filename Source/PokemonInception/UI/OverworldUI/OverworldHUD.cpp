@@ -25,6 +25,7 @@ void AOverworldHUD::BeginPlay()
 	PokedexWidget = CreateWidget<UPokedexWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokedexWidgetClass);
 	PokedexInfoWidget = CreateWidget<UPokedexInfoWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokedexInfoWidgetClass);
 	PokemonWidget = CreateWidget<UPokemonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonWidgetClass);
+	SwapPositionWidget = CreateWidget<UPopupSelectionWidget>(UGameplayStatics::GetGameInstance(GetWorld()), SwapPositionWidgetClass);
 	PokemonSummaryWidget = CreateWidget<UPokemonSummaryWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonSummaryWidgetClass);
 	BagWidget = CreateWidget<UBagWidget>(UGameplayStatics::GetGameInstance(GetWorld()), BagWidgetClass);
 	ItemInfoWidget = CreateWidget<UItemInfoWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ItemInfoWidgetClass);
@@ -53,6 +54,9 @@ void AOverworldHUD::BeginPlay()
 
 	ItemInfoWidget->UseClicked.AddDynamic(GameMode, &AOverworldGameMode::SelectItem);
 
+	SwapPositionWidget->ActionClicked.AddDynamic(GameMode, &AOverworldGameMode::SelectPokemon);
+	SwapPositionWidget->CancelClicked.AddDynamic(this, &AOverworldHUD::ClearPopup);
+
 	UseItemWidget->ActionClicked.AddDynamic(GameMode, &AOverworldGameMode::SelectPokemon);
 	UseItemWidget->CancelClicked.AddDynamic(this, &AOverworldHUD::ClearPopup);
 
@@ -70,6 +74,7 @@ void AOverworldHUD::ShowMenu()
 
 	GameMode->bHasSelectedEther = false;
 	GameMode->bHasSelectedItem = false;
+	GameMode->bIsSwappingPosition = false;
 
 	if (PlayerOwner && MenuWidget) {
 		MenuWidget->AddToViewport();
@@ -128,7 +133,6 @@ void AOverworldHUD::ShowPokemon()
 	}
 
 	if (PlayerOwner && PokemonWidget) {
-		PokemonWidget->ClearWrapBox();
 		PokemonWidget->ClearSummaryBox();
 		GameMode->ShowPokemonInMenu();
 		PokemonWidget->AddToViewport();
@@ -137,9 +141,29 @@ void AOverworldHUD::ShowPokemon()
 	}
 }
 
+void AOverworldHUD::ShowSwapPositionPopup(int PokemonId)
+{
+	if (SwapPositionWidget->IsInViewport() == true) {
+		return;
+	}
+
+	if (PlayerOwner && SwapPositionWidget) {
+		float MouseX;
+		float MouseY;
+
+		PlayerOwner->GetMousePosition(MouseX, MouseY);
+
+		SwapPositionWidget->SetId(PokemonId);
+		SwapPositionWidget->AddToViewport();
+		SwapPositionWidget->SetPositionInViewport(FVector2D(MouseX, MouseY), false);
+		PlayerOwner->bShowMouseCursor = true;
+		PlayerOwner->SetInputMode(FInputModeUIOnly());
+	}
+}
+
 void AOverworldHUD::ShowPokemonSummary(int PokemonID)
 {
-	if (UseItemWidget->IsInViewport() == true || MoveSelectionPopupWidget->IsInViewport() == true) {
+	if (UseItemWidget->IsInViewport() == true || MoveSelectionPopupWidget->IsInViewport() == true || SwapPositionWidget->IsInViewport() == true) {
 		return;
 	}
 
@@ -310,6 +334,11 @@ void AOverworldHUD::ClearOnScreenMessage()
 	OnScreenMessageWidget->RemoveFromViewport();
 }
 
+void AOverworldHUD::ClearPokemonSlots()
+{
+	PokemonWidget->ClearWrapBox();
+}
+
 void AOverworldHUD::ShowText(FString Message)
 {
 	Clear();
@@ -353,6 +382,7 @@ void AOverworldHUD::ClearShop()
 void AOverworldHUD::ClearPopup()
 {
 	UseItemWidget->RemoveFromViewport();
+	SwapPositionWidget->RemoveFromViewport();
 }
 
 void AOverworldHUD::ClearMovePopup()

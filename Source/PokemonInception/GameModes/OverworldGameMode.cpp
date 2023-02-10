@@ -120,10 +120,16 @@ void AOverworldGameMode::SelectPokemon(int InId)
 	}
 
 	SelectedPokemonID = InId;
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Using item on " + PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString()));
 
 	if (bHasSelectedItem) {
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Using item on " + PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString()));
 		UseItem();
+	}
+	else {
+		bIsSwappingPosition = true;
+		ShowPokemonInMenu();
+		Hud->ClearPopup();
+		Hud->OnScreenMessage("Select a pokemon to swap positions");
 	}
 }
 
@@ -356,13 +362,15 @@ void AOverworldGameMode::SellItem(FItemBaseStruct Item)
 void AOverworldGameMode::ShowPokemonInMenu()
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+
+	Hud->ClearPokemonSlots();
+
 	TArray<FPokemonStruct> Party = PlayerController->PokemonParty;
 
 	for (int i = 0; i < Party.Num(); i++) {
-		AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+		
 		UPokemonSlotWidget* PokemonSlotWidget = CreateWidget<UPokemonSlotWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetPokemonSlotWidgetClass());
-
 		PokemonSlotWidget->SetPokemonName(Party[i].SpeciesData.Name);
 		PokemonSlotWidget->SetPokemonLevel(Party[i].Level);
 		PokemonSlotWidget->SetPokemonImage(Party[i].SpeciesData.Image);
@@ -375,9 +383,18 @@ void AOverworldGameMode::ShowPokemonInMenu()
 		if (bHasSelectedItem) {
 			PokemonSlotWidget->PokemonClick.AddDynamic(Hud, &AOverworldHUD::ShowUseItemPopup);
 		}
+
 		else if (bHasSelectedEther) {
 			PokemonSlotWidget->PokemonClick.AddDynamic(Hud, &AOverworldHUD::ShowMoveSelectionPopup);
 			PokemonSlotWidget->PokemonClick.AddDynamic(this, &AOverworldGameMode::SelectPokemon);
+		}
+
+		else if (bIsSwappingPosition) {
+			PokemonSlotWidget->PokemonClick.AddDynamic(this, &AOverworldGameMode::SwapPositionWith);
+		}
+
+		else {
+			PokemonSlotWidget->PokemonClick.AddDynamic(Hud, &AOverworldHUD::ShowSwapPositionPopup);
 		}
 
 		PokemonSlotDelegate.Broadcast(PokemonSlotWidget);
@@ -486,15 +503,35 @@ void AOverworldGameMode::UseItem()
 			if (PlayerController->PokemonParty[SelectedPokemonID].GainExp(Candy->ExpRecieved) == true) {
 				TArray<UDataTable*> MoveTables;
 				PlayerController->PokemonParty[SelectedPokemonID].CheckForNewMoves(MoveDT);
+
+				PlayerController->Inventory.RemoveAt(SelectedItemID);
+				ItemMessage += PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString() +
+					" gained some Exp!";
 			}
 		}
 	}
+	bHasSelectedItem = false;
+	bHasSelectedEther = false;
 
 	Hud->ShowBag();
 	Hud->OnScreenMessage(ItemMessage);
+	//FTimerHandle BagTimer;
+	//GetWorldTimerManager().SetTimer(BagTimer, Hud, &AOverworldHUD::ShowBag, 1, false);
+}
 
-	bHasSelectedItem = false;
-	bHasSelectedEther = false;
+void AOverworldGameMode::SwapPositionWith(int NewPositionId)
+{
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+
+	PlayerController->PokemonParty.Swap(SelectedPokemonID, NewPositionId);
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Swapping " + PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString()
+	+ " and " + PlayerController->PokemonParty[NewPositionId].SpeciesData.Name.ToString()));
+
+	bIsSwappingPosition = false;
+
+	Hud->ClearOnScreenMessage();
+	ShowPokemonInMenu();
 }
 
 TArray<class UDataTable*> AOverworldGameMode::GetItemDT() const

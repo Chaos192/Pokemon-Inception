@@ -44,6 +44,9 @@ protected:
 	TSubclassOf<UPokemonWidget> PokemonWidgetClass;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPopupSelectionWidget> SwapPositionWidgetClass;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UBagWidget> BagWidgetClass;
 
 	UPROPERTY(EditAnywhere)
@@ -101,6 +104,9 @@ protected:
 	class UPokemonWidget* PokemonWidget;
 
 	UPROPERTY()
+	class UPopupSelectionWidget* SwapPositionWidget;
+
+	UPROPERTY()
 	class UPokemonSummaryWidget* PokemonSummaryWidget;
 
 	UPROPERTY()
@@ -128,6 +134,9 @@ public:
 
 	UFUNCTION()
 	void ClearOnScreenMessage();
+
+	UFUNCTION()
+	void ClearPokemonSlots();
 
 	UFUNCTION()
 	void ClearShop();
@@ -161,6 +170,9 @@ public:
 
 	UFUNCTION()
 	void ShowPokemon();
+
+	UFUNCTION()
+	void ShowSwapPositionPopup(int PokemonId);
 
 	UFUNCTION()
 	void ShowPokemonSummary(int PokemonID);

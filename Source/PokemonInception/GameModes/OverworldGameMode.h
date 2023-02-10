@@ -29,6 +29,9 @@ private:
 	UFUNCTION()
 	void UseItem();
 
+	UFUNCTION()
+	void SwapPositionWith(int NewPositionId);
+
 	int SelectedItemID;
 	int SelectedPokemonID;
 	int SelectedMoveID;
@@ -75,6 +78,7 @@ protected:
 public:
 	bool bHasSelectedItem;
 	bool bHasSelectedEther;
+	bool bIsSwappingPosition;
 
 	UFUNCTION()
 	FString ETypeToString(ETypes Type);
