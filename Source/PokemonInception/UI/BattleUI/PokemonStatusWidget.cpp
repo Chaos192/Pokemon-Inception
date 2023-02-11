@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "PokemonStatusWidget.h"
 #include "BattleHUD.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
-#include "PokemonStatusWidget.h"
 
 void UPokemonStatusWidget::SetPokemonName(FText Name)
 {

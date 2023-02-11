@@ -15,8 +15,13 @@ class POKEMONINCEPTION_API AWildPokemonSpawner : public AActor
 public:	
 	AWildPokemonSpawner();
 
+	virtual void Tick(float DeltaTime) override;
+
 	UFUNCTION()
 	void Generate();
+
+	UFUNCTION()
+	void OnSpawnedPokemonDestroyed();
 
 	UDataTable* GetPokemonTable();
 
@@ -38,9 +43,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<TSubclassOf<AWildPokemon>> PokemonToSpawn;
 
-	FTimerHandle SpawnHandle;
-
 	FRotator Rotation;
 	FActorSpawnParameters SpawnInfo;
+
+	bool bIsSpawnedPokemonInWorld;
 	
 };

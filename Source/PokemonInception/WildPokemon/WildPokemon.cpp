@@ -3,7 +3,9 @@
 
 #include "WildPokemon.h"
 #include "../Player/PokemonInceptionCharacter.h"
+#include "../Player/PlayerCharacterController.h"
 #include "../GameModes/OverworldGameMode.h"
+#include "WildPokemonSpawner.h"
 #include "Components/CapsuleComponent.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -14,16 +16,30 @@ AWildPokemon::AWildPokemon()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	/*Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-	SetRootComponent(Root);
-
-	OverworldPokemon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Pokemon Actor"));
-	OverworldPokemon->SetChildActorClass(OverworldPokemonClass);
-	OverworldPokemon->SetupAttachment(Root);*/
-
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AWildPokemon::OnBeginOverlap);
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	//NotificationDelegate.AddDynamic(SpawnerRef, &AWildPokemonSpawner::OnSpawnedPokemonDestroyed);
+}
+
+void AWildPokemon::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (PlayerController == nullptr) {
+		return;
+	}
+
+	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(PlayerController->GetPawn());
+	if (Player == nullptr) {
+		return;
+	}
+
+	if (FVector::Dist(GetActorLocation(), Player->GetActorLocation()) > 100) {
+		//NotificationDelegate.Broadcast();
+		Destroy();
+	}
 }
 
 void AWildPokemon::InitPokemon(UDataTable* PokemonDatatable, int Level, TArray<UDataTable*> MoveTables)
@@ -32,7 +48,6 @@ void AWildPokemon::InitPokemon(UDataTable* PokemonDatatable, int Level, TArray<U
 	Pokemon.Init(Level, *PokemonSpecies);
 	Pokemon.InitMoves(MoveTables);
 }
-
 
 void AWildPokemon::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -43,9 +58,11 @@ void AWildPokemon::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 
 	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(OtherActor);
 	if (IsValid(Player)) {
+		//NotificationDelegate.Broadcast();
 		GameMode->SaveGame();
 		GameMode->SaveOpponent(Pokemon);
 		UGameplayStatics::OpenLevel(GetWorld(), FName("BattleMap"));
+		Destroy();
 	}
 }
 

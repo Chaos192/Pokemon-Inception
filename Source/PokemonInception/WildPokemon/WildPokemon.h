@@ -9,6 +9,10 @@
 #include "../Pokemon/StaticOverworldPokemon.h"
 #include "WildPokemon.generated.h"
 
+
+UDELEGATE()
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSpawnerNotification);
+
 UCLASS()
 class POKEMONINCEPTION_API AWildPokemon : public ACharacter
 {
@@ -17,21 +21,18 @@ class POKEMONINCEPTION_API AWildPokemon : public ACharacter
 public:
 	AWildPokemon();
 
+	virtual void Tick(float DeltaTime) override;
+
 	UFUNCTION()
 	void InitPokemon(UDataTable* PokemonDatatable, int Level, TArray<UDataTable*> MoveTables);
+
+	class AWildPokemonSpawner* SpawnerRef = nullptr;
+
+	FSpawnerNotification NotificationDelegate;
 
 private:
 	UPROPERTY(EditDefaultsOnly)
 	FName PokemonID;
-
-	/*UPROPERTY(EditAnywhere)
-	class USceneComponent* Root = nullptr;
-
-	UPROPERTY(EditAnywhere)
-	class UChildActorComponent* OverworldPokemon = nullptr;
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class AStaticOverworldPokemon> OverworldPokemonClass;*/
 
 	UPROPERTY()
 	FPokemonStruct Pokemon;
