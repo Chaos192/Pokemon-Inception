@@ -5,7 +5,6 @@
 #include "../Player/PokemonInceptionCharacter.h"
 #include "../Player/PlayerCharacterController.h"
 #include "../GameModes/OverworldGameMode.h"
-#include "WildPokemonSpawner.h"
 #include "Components/CapsuleComponent.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -19,8 +18,6 @@ AWildPokemon::AWildPokemon()
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AWildPokemon::OnBeginOverlap);
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-
-	//NotificationDelegate.AddDynamic(SpawnerRef, &AWildPokemonSpawner::OnSpawnedPokemonDestroyed);
 }
 
 void AWildPokemon::Tick(float DeltaTime)
@@ -36,8 +33,7 @@ void AWildPokemon::Tick(float DeltaTime)
 		return;
 	}
 
-	if (FVector::Dist(GetActorLocation(), Player->GetActorLocation()) > 100) {
-		//NotificationDelegate.Broadcast();
+	if (FVector::Dist(GetActorLocation(), Player->GetActorLocation()) > 3000) {
 		Destroy();
 	}
 }
@@ -58,7 +54,6 @@ void AWildPokemon::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 
 	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(OtherActor);
 	if (IsValid(Player)) {
-		//NotificationDelegate.Broadcast();
 		GameMode->SaveGame();
 		GameMode->SaveOpponent(Pokemon);
 		UGameplayStatics::OpenLevel(GetWorld(), FName("BattleMap"));

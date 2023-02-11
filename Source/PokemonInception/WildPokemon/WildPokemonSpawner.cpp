@@ -26,9 +26,13 @@ void AWildPokemonSpawner::Tick(float DeltaTime)
 		return;
 	}
 
-
-	if (!bIsSpawnedPokemonInWorld && FVector::Dist(GetActorLocation(), Player->GetActorLocation()) < 50) {
+	//GEngine->AddOnScreenDebugMessage(2, 1, FColor::Red, FString::SanitizeFloat(FVector::Dist(GetActorLocation(), Player->GetActorLocation())));
+	if (!IsValid(SpawnedPokemon) && FVector::Dist(GetActorLocation(), Player->GetActorLocation()) < 1500) {
 		Generate();
+		//GEngine->AddOnScreenDebugMessage(1, 1, FColor::Green, TEXT("Can spawn Pokemon"));
+	}
+	else {
+		//GEngine->AddOnScreenDebugMessage(1, 1, FColor::Red, TEXT("Can't spawn Pokemon"));
 	}
 }
 
@@ -49,21 +53,8 @@ void AWildPokemonSpawner::Generate()
 
 	Rotation.Yaw = (FMath::RandRange(0, 360));
 
-	AWildPokemon* SpawnedPokemon = nullptr;
+	//AWildPokemon* SpawnedPokemon = nullptr;
 	SpawnedPokemon = GetWorld()->SpawnActor<AWildPokemon>(PokemonToSpawn[index], GetActorLocation(), Rotation, SpawnInfo);
-	SpawnedPokemon->InitPokemon(PokemonDatatable, SpawnLevel, GameMode->GetMoveDT());
-	SpawnedPokemon->SpawnerRef = this;
-
-	bIsSpawnedPokemonInWorld = true;
-}
-
-void AWildPokemonSpawner::OnSpawnedPokemonDestroyed()
-{
-	bIsSpawnedPokemonInWorld = false;
-}
-
-UDataTable* AWildPokemonSpawner::GetPokemonTable()
-{
-	return PokemonDatatable;
+	SpawnedPokemon->InitPokemon(GameMode->PokemonDT, SpawnLevel, GameMode->GetMoveDT());
 }
 

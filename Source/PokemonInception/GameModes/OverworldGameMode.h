@@ -52,9 +52,6 @@ protected:
 	void SellItem(FItemBaseStruct Item);
 
 	UPROPERTY(EditDefaultsOnly)
-	class UDataTable* PokemonDT;
-
-	UPROPERTY(EditDefaultsOnly)
 	class UDataTable* BallsDT;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -79,6 +76,9 @@ public:
 	bool bHasSelectedItem;
 	bool bHasSelectedEther;
 	bool bIsSwappingPosition;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UDataTable* PokemonDT;
 
 	UFUNCTION()
 	FString ETypeToString(ETypes Type);

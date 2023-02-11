@@ -10,9 +10,6 @@
 #include "WildPokemon.generated.h"
 
 
-UDELEGATE()
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSpawnerNotification);
-
 UCLASS()
 class POKEMONINCEPTION_API AWildPokemon : public ACharacter
 {
@@ -25,10 +22,6 @@ public:
 
 	UFUNCTION()
 	void InitPokemon(UDataTable* PokemonDatatable, int Level, TArray<UDataTable*> MoveTables);
-
-	class AWildPokemonSpawner* SpawnerRef = nullptr;
-
-	FSpawnerNotification NotificationDelegate;
 
 private:
 	UPROPERTY(EditDefaultsOnly)

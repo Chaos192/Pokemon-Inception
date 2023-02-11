@@ -17,19 +17,12 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION()
 	void Generate();
-
-	UFUNCTION()
-	void OnSpawnedPokemonDestroyed();
-
-	UDataTable* GetPokemonTable();
 
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere)
-	float SpawnTime = 10;
+	AWildPokemon* SpawnedPokemon = nullptr;
 
 	UPROPERTY(EditAnywhere)
 	int MinLevel = 1;
@@ -37,15 +30,10 @@ protected:
 	UPROPERTY(EditAnywhere)
 	int MaxLevel = 1;
 
-	UPROPERTY(EditDefaultsOnly)
-	class UDataTable* PokemonDatatable;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<TSubclassOf<AWildPokemon>> PokemonToSpawn;
 
 	FRotator Rotation;
 	FActorSpawnParameters SpawnInfo;
-
-	bool bIsSpawnedPokemonInWorld;
 	
 };
