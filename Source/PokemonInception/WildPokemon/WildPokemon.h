@@ -23,12 +23,12 @@ public:
 	UFUNCTION()
 	void InitPokemon(UDataTable* PokemonDatatable, int Level, TArray<UDataTable*> MoveTables);
 
+	UPROPERTY()
+	FPokemonStruct Pokemon;
+
 private:
 	UPROPERTY(EditDefaultsOnly)
 	FName PokemonID;
-
-	UPROPERTY()
-	FPokemonStruct Pokemon;
 
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

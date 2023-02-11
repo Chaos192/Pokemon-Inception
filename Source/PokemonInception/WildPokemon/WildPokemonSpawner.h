@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "WildPokemon.h"
+#include "../SaveGame/WildPokemonSaveData.h"
 #include "WildPokemonSpawner.generated.h"
 
 UCLASS()
@@ -19,11 +20,11 @@ public:
 
 	void Generate();
 
-protected:
-	virtual void BeginPlay() override;
+	void ManualGenerate(FWildPokemonData SaveData);
 
 	AWildPokemon* SpawnedPokemon = nullptr;
 
+protected:
 	UPROPERTY(EditAnywhere)
 	int MinLevel = 1;
 
@@ -32,8 +33,4 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<TSubclassOf<AWildPokemon>> PokemonToSpawn;
-
-	FRotator Rotation;
-	FActorSpawnParameters SpawnInfo;
-	
 };

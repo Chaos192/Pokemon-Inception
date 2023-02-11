@@ -36,11 +36,6 @@ void AWildPokemonSpawner::Tick(float DeltaTime)
 	}
 }
 
-void AWildPokemonSpawner::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
 void AWildPokemonSpawner::Generate()
 {
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
@@ -51,10 +46,25 @@ void AWildPokemonSpawner::Generate()
 	int index = (FMath::RandHelper(PokemonToSpawn.Num()));
 	int SpawnLevel = (FMath::RandRange(MinLevel, MaxLevel));
 
+	FRotator Rotation;
 	Rotation.Yaw = (FMath::RandRange(0, 360));
 
-	//AWildPokemon* SpawnedPokemon = nullptr;
-	SpawnedPokemon = GetWorld()->SpawnActor<AWildPokemon>(PokemonToSpawn[index], GetActorLocation(), Rotation, SpawnInfo);
+	SpawnedPokemon = GetWorld()->SpawnActor<AWildPokemon>(PokemonToSpawn[index], GetActorLocation(), Rotation);
 	SpawnedPokemon->InitPokemon(GameMode->PokemonDT, SpawnLevel, GameMode->GetMoveDT());
+}
+
+void AWildPokemonSpawner::ManualGenerate(FWildPokemonData SaveData)
+{
+	if (IsValid(SpawnedPokemon)) {
+		SpawnedPokemon->Destroy();
+	}
+
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
+	if (GameMode == nullptr) {
+		return;
+	}
+
+	SpawnedPokemon = GetWorld()->SpawnActor<AWildPokemon>(SaveData.PokemonClass, SaveData.PokemonLocation, SaveData.PokemonRotation);
+	SpawnedPokemon->Pokemon = SaveData.PokemonStruct;
 }
 

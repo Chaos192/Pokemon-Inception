@@ -9,7 +9,6 @@
 #include "../UI/OverworldUI/ItemShopSlotWidget.h"
 #include "../UI/OverworldUI/ItemInfoWidget.h"
 #include "../UI/WidgetDelegates.h"
-#include "../SaveGame/WorldSaveData.h"
 #include "OverworldGameMode.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEndTextSignature);
@@ -52,6 +51,9 @@ protected:
 	void SellItem(FItemBaseStruct Item);
 
 	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class AWildPokemonSpawner> SpawnerClass;
+
+	UPROPERTY(EditDefaultsOnly)
 	class UDataTable* BallsDT;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -88,6 +90,12 @@ public:
 
 	UFUNCTION()
 	void SaveOpponent(FPokemonStruct Opponent);
+
+	UFUNCTION()
+	void SaveWildPokemon();
+
+	UFUNCTION()
+	void LoadWildPokemon();
 
 	UFUNCTION()
 	void SaveAndExit();

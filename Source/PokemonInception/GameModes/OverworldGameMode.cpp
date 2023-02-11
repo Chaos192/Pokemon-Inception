@@ -1,17 +1,21 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "OverworldGameMode.h"
-#include "../Player/PokemonInceptionCharacter.h"
-#include "../UI/OverworldUI/OverworldHUD.h"
 #include "GameFramework/Controller.h"
+#include "GameFramework/WorldSettings.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Kismet/GameplayStatics.h"
-#include "GameFramework/WorldSettings.h"
+#include "../Player/PokemonInceptionCharacter.h"
 #include "../Player/PlayerCharacterController.h"
+#include "../UI/OverworldUI/OverworldHUD.h"
 #include "../Items/ExpCandyBaseStruct.h"
 #include "../Items/EtherBaseStruct.h"
 #include "../Items/PotionBaseStruct.h"
 #include "../Items/ReviveBaseStruct.h"
+#include "../SaveGame/WorldSaveData.h"
+#include "../SaveGame/WildPokemonSaveData.h"
+#include "../WildPokemon/WildPokemonSpawner.h"
+#include "../WildPokemon/WildPokemon.h"
 
 
 void AOverworldGameMode::BeginPlay()
@@ -60,6 +64,8 @@ void AOverworldGameMode::BeginPlay()
 		}
 	}
 	
+	LoadWildPokemon();
+
 	PlayerController->PauseDelegate.AddDynamic(this, &AOverworldGameMode::TogglePause);
 
 	OnGamePaused.AddDynamic(Cast<AOverworldHUD>(PlayerController->GetHUD()), &AOverworldHUD::TogglePause);
@@ -92,11 +98,84 @@ void AOverworldGameMode::SaveGame()
 	}
 
 	UGameplayStatics::SaveGameToSlot(SaveData, "SaveSlot", 0);
+
+	SaveWildPokemon();
 }
 
 void AOverworldGameMode::MarkActorAsDestroyed(AActor* Actor)
 {
 	ActorsToDestroy.Add(Actor);
+}
+
+void AOverworldGameMode::SaveOpponent(FPokemonStruct Opponent)
+{
+	UWorldSaveData* SaveData = Cast<UWorldSaveData>(UGameplayStatics::CreateSaveGameObject(UWorldSaveData::StaticClass()));
+
+	if (UGameplayStatics::DoesSaveGameExist("SaveSlot", 0)) {
+		SaveData = Cast<UWorldSaveData>(UGameplayStatics::LoadGameFromSlot("SaveSlot", 0));
+
+		SaveData->OpponentData.Add(Opponent);
+	}
+
+	UGameplayStatics::SaveGameToSlot(SaveData, "SaveSlot", 0);
+}
+
+void AOverworldGameMode::SaveWildPokemon()
+{
+	UWildPokemonSaveData* SaveData = Cast<UWildPokemonSaveData>(UGameplayStatics::CreateSaveGameObject(UWildPokemonSaveData::StaticClass()));
+
+	SaveData->PokemonSpawners.Empty();
+
+	TArray<AActor*> Spawners;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), SpawnerClass, Spawners);
+	
+	for (AActor* Spawner : Spawners) {
+		AWildPokemonSpawner* PokemonSpawner = Cast<AWildPokemonSpawner>(Spawner);
+		
+		if (IsValid(PokemonSpawner->SpawnedPokemon)) {
+			FWildPokemonData PokemonData;
+
+			PokemonData.Pokemon = PokemonSpawner->SpawnedPokemon;
+			PokemonData.PokemonStruct = PokemonSpawner->SpawnedPokemon->Pokemon;
+			PokemonData.PokemonClass = PokemonSpawner->SpawnedPokemon->GetClass();
+			PokemonData.PokemonLocation = PokemonSpawner->SpawnedPokemon->GetActorLocation();
+			PokemonData.PokemonRotation = PokemonSpawner->SpawnedPokemon->GetActorRotation();
+
+			SaveData->PokemonSpawners.Add(PokemonSpawner, PokemonData);
+		}
+	}
+
+	UGameplayStatics::SaveGameToSlot(SaveData, "PokemonSaveData", 0);
+	
+}
+
+void AOverworldGameMode::LoadWildPokemon()
+{
+	UWildPokemonSaveData* SaveData = Cast<UWildPokemonSaveData>(UGameplayStatics::CreateSaveGameObject(UWildPokemonSaveData::StaticClass()));
+
+	if (UGameplayStatics::DoesSaveGameExist("PokemonSaveSlot", 0)) {
+		SaveData = Cast<UWildPokemonSaveData>(UGameplayStatics::LoadGameFromSlot("PokemonSaveSlot", 0));
+
+		TArray<AActor*> Spawners;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), SpawnerClass, Spawners);
+
+		for (auto& Spawner : SaveData->PokemonSpawners) {
+			//FWildPokemonData PokemonData = Spawner.Value;
+
+			Spawner.Key->ManualGenerate(Spawner.Value);
+		}
+	}
+}
+
+void AOverworldGameMode::SaveAndExit()
+{
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (PlayerController == nullptr) {
+		return;
+	}
+
+	SaveGame();
+	PlayerController->ConsoleCommand("quit");
 }
 
 void AOverworldGameMode::SelectMove(int InId)
@@ -106,7 +185,7 @@ void AOverworldGameMode::SelectMove(int InId)
 	SelectedMoveID = InId;
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Using ether on " + PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString() +
 		" to restore " + PlayerController->PokemonParty[SelectedPokemonID].Moves[SelectedMoveID].Name.ToString()));
-	
+
 	UseItem();
 }
 
@@ -159,30 +238,6 @@ void AOverworldGameMode::SelectItem(int InId)
 
 	SelectedItemID = InId;
 	Hud->ShowPokemon();
-}
-
-void AOverworldGameMode::SaveOpponent(FPokemonStruct Opponent)
-{
-	UWorldSaveData* SaveData = Cast<UWorldSaveData>(UGameplayStatics::CreateSaveGameObject(UWorldSaveData::StaticClass()));
-
-	if (UGameplayStatics::DoesSaveGameExist("SaveSlot", 0)) {
-		SaveData = Cast<UWorldSaveData>(UGameplayStatics::LoadGameFromSlot("SaveSlot", 0));
-
-		SaveData->OpponentData.Add(Opponent);
-	}
-
-	UGameplayStatics::SaveGameToSlot(SaveData, "SaveSlot", 0);
-}
-
-void AOverworldGameMode::SaveAndExit()
-{
-	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	if (PlayerController == nullptr) {
-		return;
-	}
-
-	SaveGame();
-	PlayerController->ConsoleCommand("quit");
 }
 
 FString AOverworldGameMode::ETypeToString(ETypes Type)
