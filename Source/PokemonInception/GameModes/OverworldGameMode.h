@@ -92,7 +92,7 @@ public:
 	void SaveOpponent(FPokemonStruct Opponent);
 
 	UFUNCTION()
-	void SaveWildPokemon();
+	void SaveWildPokemon(AWildPokemon* PokemonToIgnore);
 
 	UFUNCTION()
 	void LoadWildPokemon();

@@ -98,8 +98,6 @@ void AOverworldGameMode::SaveGame()
 	}
 
 	UGameplayStatics::SaveGameToSlot(SaveData, "SaveSlot", 0);
-
-	SaveWildPokemon();
 }
 
 void AOverworldGameMode::MarkActorAsDestroyed(AActor* Actor)
@@ -120,7 +118,7 @@ void AOverworldGameMode::SaveOpponent(FPokemonStruct Opponent)
 	UGameplayStatics::SaveGameToSlot(SaveData, "SaveSlot", 0);
 }
 
-void AOverworldGameMode::SaveWildPokemon()
+void AOverworldGameMode::SaveWildPokemon(AWildPokemon* PokemonToIgnore)
 {
 	UWildPokemonSaveData* SaveData = Cast<UWildPokemonSaveData>(UGameplayStatics::CreateSaveGameObject(UWildPokemonSaveData::StaticClass()));
 
@@ -132,7 +130,7 @@ void AOverworldGameMode::SaveWildPokemon()
 	for (AActor* Spawner : Spawners) {
 		AWildPokemonSpawner* PokemonSpawner = Cast<AWildPokemonSpawner>(Spawner);
 		
-		if (IsValid(PokemonSpawner->SpawnedPokemon)) {
+		if (IsValid(PokemonSpawner->SpawnedPokemon) && PokemonSpawner->SpawnedPokemon != PokemonToIgnore) {
 			FWildPokemonData PokemonData;
 
 			PokemonData.Pokemon = PokemonSpawner->SpawnedPokemon;
@@ -142,10 +140,13 @@ void AOverworldGameMode::SaveWildPokemon()
 			PokemonData.PokemonRotation = PokemonSpawner->SpawnedPokemon->GetActorRotation();
 
 			SaveData->PokemonSpawners.Add(PokemonSpawner, PokemonData);
+			GEngine->AddOnScreenDebugMessage(1, 3, FColor::Green, "Saving wild " + PokemonSpawner->SpawnedPokemon->Pokemon.SpeciesData.Name.ToString());
 		}
 	}
 
-	UGameplayStatics::SaveGameToSlot(SaveData, "PokemonSaveData", 0);
+	if (UGameplayStatics::SaveGameToSlot(SaveData, "PokemonSaveData", 0)) {
+		GEngine->AddOnScreenDebugMessage(2, 3, FColor::Green, "Save successful!");
+	}
 	
 }
 
@@ -153,17 +154,18 @@ void AOverworldGameMode::LoadWildPokemon()
 {
 	UWildPokemonSaveData* SaveData = Cast<UWildPokemonSaveData>(UGameplayStatics::CreateSaveGameObject(UWildPokemonSaveData::StaticClass()));
 
-	if (UGameplayStatics::DoesSaveGameExist("PokemonSaveSlot", 0)) {
-		SaveData = Cast<UWildPokemonSaveData>(UGameplayStatics::LoadGameFromSlot("PokemonSaveSlot", 0));
-
-		TArray<AActor*> Spawners;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), SpawnerClass, Spawners);
+	if (UGameplayStatics::DoesSaveGameExist("PokemonSaveData", 0)) {
+		SaveData = Cast<UWildPokemonSaveData>(UGameplayStatics::LoadGameFromSlot("PokemonSaveData", 0));
 
 		for (auto& Spawner : SaveData->PokemonSpawners) {
 			//FWildPokemonData PokemonData = Spawner.Value;
 
 			Spawner.Key->ManualGenerate(Spawner.Value);
+			GEngine->AddOnScreenDebugMessage(1, 3, FColor::Green, "Loading wild " + Spawner.Value.PokemonStruct.SpeciesData.Name.ToString());
 		}
+	}
+	else {
+		GEngine->AddOnScreenDebugMessage(1, 3, FColor::Red, "No wild pokemon save data exists!");
 	}
 }
 
@@ -175,6 +177,7 @@ void AOverworldGameMode::SaveAndExit()
 	}
 
 	SaveGame();
+	SaveWildPokemon(nullptr);
 	PlayerController->ConsoleCommand("quit");
 }
 

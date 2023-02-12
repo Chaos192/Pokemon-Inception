@@ -16,6 +16,16 @@ AWildPokemonSpawner::AWildPokemonSpawner()
 void AWildPokemonSpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	Generate();
+}
+
+void AWildPokemonSpawner::Generate()
+{
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
+	if (GameMode == nullptr) {
+		return;
+	}
+
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (PlayerController == nullptr) {
 		return;
@@ -26,20 +36,11 @@ void AWildPokemonSpawner::Tick(float DeltaTime)
 		return;
 	}
 
-	//GEngine->AddOnScreenDebugMessage(2, 1, FColor::Red, FString::SanitizeFloat(FVector::Dist(GetActorLocation(), Player->GetActorLocation())));
-	if (!IsValid(SpawnedPokemon) && FVector::Dist(GetActorLocation(), Player->GetActorLocation()) < 1500) {
-		Generate();
-		//GEngine->AddOnScreenDebugMessage(1, 1, FColor::Green, TEXT("Can spawn Pokemon"));
+	if (IsValid(SpawnedPokemon)) {
+		return;
 	}
-	else {
-		//GEngine->AddOnScreenDebugMessage(1, 1, FColor::Red, TEXT("Can't spawn Pokemon"));
-	}
-}
 
-void AWildPokemonSpawner::Generate()
-{
-	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
-	if (GameMode == nullptr) {
+	if (FVector::Dist(GetActorLocation(), Player->GetActorLocation()) > 1500 || FVector::Dist(GetActorLocation(), Player->GetActorLocation()) < 750) {
 		return;
 	}
 

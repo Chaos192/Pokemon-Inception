@@ -56,8 +56,8 @@ void AWildPokemon::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 	if (IsValid(Player)) {
 		GameMode->SaveGame();
 		GameMode->SaveOpponent(Pokemon);
+		GameMode->SaveWildPokemon(this);
 		UGameplayStatics::OpenLevel(GetWorld(), FName("BattleMap"));
-		Destroy();
 	}
 }
 
