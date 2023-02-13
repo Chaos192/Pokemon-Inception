@@ -17,7 +17,7 @@ class POKEMONINCEPTION_API UPokemonIconWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-public:
+private:
 	UFUNCTION()
 	void OnPokemonClicked();
 
@@ -42,7 +42,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UProgressBar* HPBar;
 
-private:
+public:
 	virtual void NativeOnInitialized() override;
 
 	UFUNCTION()

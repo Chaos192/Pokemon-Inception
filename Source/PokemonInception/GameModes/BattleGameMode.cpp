@@ -37,6 +37,7 @@ void ABattleGameMode::BeginPlay()
 		PlayerController->Pokedex = SaveData->PokedexData;
 		PlayerController->Money = SaveData->MoneyData;
 		PlayerController->PokemonParty = SaveData->PartyData;
+		PlayerController->PokemonStorage = SaveData->StorageData;
 		OpponentTeam = SaveData->OpponentData;
 
 		SavedGameMapData = SaveData->GameMapData;

@@ -140,7 +140,6 @@ void AOverworldGameMode::SaveWildPokemon(AWildPokemon* PokemonToIgnore)
 			PokemonData.PokemonRotation = PokemonSpawner->SpawnedPokemon->GetActorRotation();
 
 			SaveData->PokemonSpawners.Add(PokemonSpawner, PokemonData);
-			GEngine->AddOnScreenDebugMessage(1, 3, FColor::Green, "Saving wild " + PokemonSpawner->SpawnedPokemon->Pokemon.SpeciesData.Name.ToString());
 		}
 	}
 
@@ -158,10 +157,7 @@ void AOverworldGameMode::LoadWildPokemon()
 		SaveData = Cast<UWildPokemonSaveData>(UGameplayStatics::LoadGameFromSlot("PokemonSaveData", 0));
 
 		for (auto& Spawner : SaveData->PokemonSpawners) {
-			//FWildPokemonData PokemonData = Spawner.Value;
-
 			Spawner.Key->ManualGenerate(Spawner.Value);
-			GEngine->AddOnScreenDebugMessage(1, 3, FColor::Green, "Loading wild " + Spawner.Value.PokemonStruct.SpeciesData.Name.ToString());
 		}
 	}
 	else {
@@ -485,10 +481,48 @@ void AOverworldGameMode::FillPokedex()
 
 void AOverworldGameMode::ShowPokemonPartyInStorage()
 {
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+
+	Hud->ClearPokemonIcons();
+
+	TArray<FPokemonStruct> Party = PlayerController->PokemonParty;
+
+	for (int i = 0; i < Party.Num(); i++) {
+
+		UPokemonIconWidget* PokemonIconWidget = CreateWidget<UPokemonIconWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetPokemonIconWidgetClass());
+		PokemonIconWidget->SetPokemonName(Party[i].SpeciesData.Name);
+		PokemonIconWidget->SetPokemonLevel(Party[i].Level);
+		PokemonIconWidget->SetPokemonImage(Party[i].SpeciesData.Image);
+		PokemonIconWidget->SetPokemonHP(Party[i].CurrHP, Party[i].MaxHP);
+		PokemonIconWidget->SetPokemon(i);
+
+		//PokemonSlotWidget->PokemonClick.AddDynamic(Hud, &AOverworldHUD::ShowPokemonSummary);
+
+		PartyPokemonIconDelegate.Broadcast(PokemonIconWidget);
+	}
 }
 
 void AOverworldGameMode::ShowPokemonInStorage()
 {
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+
+	TArray<FPokemonStruct> Storage = PlayerController->PokemonStorage;
+
+	for (int i = 0; i < Storage.Num(); i++) {
+
+		UPokemonIconWidget* PokemonIconWidget = CreateWidget<UPokemonIconWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetPokemonIconWidgetClass());
+		PokemonIconWidget->SetPokemonName(Storage[i].SpeciesData.Name);
+		PokemonIconWidget->SetPokemonLevel(Storage[i].Level);
+		PokemonIconWidget->SetPokemonImage(Storage[i].SpeciesData.Image);
+		PokemonIconWidget->SetPokemonHP(Storage[i].CurrHP, Storage[i].MaxHP);
+		PokemonIconWidget->SetPokemon(i);
+
+		//PokemonSlotWidget->PokemonClick.AddDynamic(Hud, &AOverworldHUD::ShowPokemonSummary);
+
+		StoragePokemonIconDelegate.Broadcast(PokemonIconWidget);
+	}
 }
 
 FPokemonBaseStruct AOverworldGameMode::GetPokemonSpeciesData(FName PokemonID)

@@ -148,6 +148,9 @@ public:
 
 	FPokedexSlotSignature PokedexSlotDelegate;
 	FPokemonSlotSignature PokemonSlotDelegate;
+
+	FPokemonIconSignature PartyPokemonIconDelegate;
+	FPokemonIconSignature StoragePokemonIconDelegate;
 };
 
 

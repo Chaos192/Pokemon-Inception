@@ -40,6 +40,8 @@ void AOverworldHUD::BeginPlay()
 	GameMode->ItemShopSlotDelegate.AddDynamic(ShopWidget, &UShopWidget::DisplayInShop);
 	GameMode->PokemonSlotDelegate.AddDynamic(PokemonWidget, &UPokemonWidget::AddToWrapBox);
 	GameMode->PokedexSlotDelegate.AddDynamic(PokedexWidget, &UPokedexWidget::AddPokedexSlotToBox);
+	GameMode->PartyPokemonIconDelegate.AddDynamic(PokemonStorageWidget, &UPokemonStorageWidget::AddToPartyBox);
+	GameMode->StoragePokemonIconDelegate.AddDynamic(PokemonStorageWidget, &UPokemonStorageWidget::AddToStorageBox);
 
 	MenuWidget->PokedexClicked.AddDynamic(this, &AOverworldHUD::ShowPokedex);
 	MenuWidget->PokemonClicked.AddDynamic(this, &AOverworldHUD::ShowPokemon);
@@ -327,6 +329,8 @@ void AOverworldHUD::ShowPokemonStorage()
 	}
 
 	if (PlayerOwner && PokemonStorageWidget) {
+		GameMode->ShowPokemonPartyInStorage();
+		GameMode->ShowPokemonInStorage();
 		PokemonStorageWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
