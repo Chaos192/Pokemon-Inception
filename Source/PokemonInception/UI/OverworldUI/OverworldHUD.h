@@ -14,6 +14,7 @@
 #include "ShopWidget.h"
 #include "ItemSlotWidget.h"
 #include "ItemShopSlotWidget.h"
+#include "PokemonStorageWidget.h"
 #include "../BattleUI/PokemonSlotWidget.h"
 #include "../BattleUI/MoveSelectionPopupWidget.h"
 #include "../BattleUI/PopupSelectionWidget.h"
@@ -85,6 +86,12 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UMoveButtonWidget> MoveButtonWidgetClass;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPokemonStorageWidget> PokemonStorageWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPokemonIconWidget> PokemonIconWidgetClass;
+
 	UPROPERTY()
 	class UMenuWidget* MenuWidget;
 
@@ -127,6 +134,9 @@ protected:
 	UPROPERTY()
 	class UShopWidget* ShopWidget;
 
+	UPROPERTY()
+	class UPokemonStorageWidget* PokemonStorageWidget;
+
 	virtual void BeginPlay()override;
 	
 public:
@@ -139,7 +149,10 @@ public:
 	void ClearPokemonSlots();
 
 	UFUNCTION()
-	void ClearShop();
+	void ClearPokemonIcons();
+
+	UFUNCTION()
+	void ClearAndUnpause();
 
 	UFUNCTION()
 	void ClearPopup();
@@ -158,6 +171,8 @@ public:
 	TSubclassOf<UPokemonSlotWidget> GetPokemonSlotWidgetClass();
 
 	TSubclassOf<UMoveButtonWidget> GetMoveButtonWidgetClass();
+
+	TSubclassOf<UPokemonIconWidget> GetPokemonIconWidgetClass();
 
 	UFUNCTION()
 	void ShowMenu();
@@ -194,6 +209,9 @@ public:
 
 	UFUNCTION()
 	void ShowShop(TArray<FName> ItemsToSell);
+
+	UFUNCTION()
+	void ShowPokemonStorage();
 
 	UFUNCTION()
 	void OnScreenMessage(FString Message);

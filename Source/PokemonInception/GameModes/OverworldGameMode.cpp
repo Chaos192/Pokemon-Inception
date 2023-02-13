@@ -483,6 +483,14 @@ void AOverworldGameMode::FillPokedex()
 	}
 }
 
+void AOverworldGameMode::ShowPokemonPartyInStorage()
+{
+}
+
+void AOverworldGameMode::ShowPokemonInStorage()
+{
+}
+
 FPokemonBaseStruct AOverworldGameMode::GetPokemonSpeciesData(FName PokemonID)
 {
 	FPokemonBaseStruct* SpeciesData = PokemonDT->FindRow<FPokemonBaseStruct>(PokemonID, "");

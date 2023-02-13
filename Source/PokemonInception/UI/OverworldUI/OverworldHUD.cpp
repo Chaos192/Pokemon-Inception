@@ -33,6 +33,7 @@ void AOverworldHUD::BeginPlay()
 	MoveSelectionPopupWidget = CreateWidget<UMoveSelectionPopupWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveSelectionPopupWidgetClass);
 	TrainerCardWidget = CreateWidget<UTrainerCardWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TrainerCardWidgetClass);
 	ShopWidget = CreateWidget<UShopWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ShopWidgetClass);
+	PokemonStorageWidget = CreateWidget<UPokemonStorageWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonStorageWidgetClass);
 
 	GameMode->ShopMessageDelegate.AddDynamic(ShopWidget, &UShopWidget::ShowText);
 	GameMode->ItemSlotDelegate.AddDynamic(BagWidget, &UBagWidget::AddToWrapBox);
@@ -50,7 +51,8 @@ void AOverworldHUD::BeginPlay()
 	PokemonWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ShowMenu);
 	BagWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ShowMenu);
 	TrainerCardWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ShowMenu);
-	ShopWidget->ExitClicked.AddDynamic(this, &AOverworldHUD::ClearShop);
+	ShopWidget->ExitClicked.AddDynamic(this, &AOverworldHUD::ClearAndUnpause);
+	PokemonStorageWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ClearAndUnpause);
 
 	ItemInfoWidget->UseClicked.AddDynamic(GameMode, &AOverworldGameMode::SelectItem);
 
@@ -301,6 +303,7 @@ void AOverworldHUD::ShowTrainerCard()
 void AOverworldHUD::ShowShop(TArray<FName> ItemsToSell)
 {
 	Clear();
+	ShopWidget->ClearShop();
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (GameMode == nullptr) {
 		return;
@@ -309,6 +312,22 @@ void AOverworldHUD::ShowShop(TArray<FName> ItemsToSell)
 	if (PlayerOwner && ShopWidget) {
 		GameMode->InitShop(ItemsToSell);
 		ShopWidget->AddToViewport();
+		PlayerOwner->bShowMouseCursor = true;
+		PlayerOwner->SetInputMode(FInputModeUIOnly());
+		PlayerOwner->SetPause(true);
+	}
+}
+
+void AOverworldHUD::ShowPokemonStorage()
+{
+	Clear();
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
+
+	if (PlayerOwner && PokemonStorageWidget) {
+		PokemonStorageWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
 		PlayerOwner->SetPause(true);
@@ -337,6 +356,12 @@ void AOverworldHUD::ClearOnScreenMessage()
 void AOverworldHUD::ClearPokemonSlots()
 {
 	PokemonWidget->ClearWrapBox();
+}
+
+void AOverworldHUD::ClearPokemonIcons()
+{
+	PokemonStorageWidget->ClearPartyBox();
+	PokemonStorageWidget->ClearStorageBox();
 }
 
 void AOverworldHUD::ShowText(FString Message)
@@ -370,10 +395,9 @@ void AOverworldHUD::Clear()
 	UWidgetLayoutLibrary::RemoveAllWidgets(this);
 }
 
-void AOverworldHUD::ClearShop()
+void AOverworldHUD::ClearAndUnpause()
 {
 	Clear();
-	ShopWidget->ClearShop();
 	PlayerOwner->SetInputMode(FInputModeGameOnly());
 	PlayerOwner->bShowMouseCursor = false;
 	PlayerOwner->SetPause(false);
@@ -418,4 +442,9 @@ TSubclassOf<UPokemonSlotWidget> AOverworldHUD::GetPokemonSlotWidgetClass()
 TSubclassOf<UMoveButtonWidget> AOverworldHUD::GetMoveButtonWidgetClass()
 {
 	return MoveButtonWidgetClass;
+}
+
+TSubclassOf<UPokemonIconWidget> AOverworldHUD::GetPokemonIconWidgetClass()
+{
+	return PokemonIconWidgetClass;
 }

@@ -7,6 +7,7 @@
 #include "Components/Button.h"
 #include "Components/WrapBox.h"
 #include "../ButtonClick.h"
+#include "PokemonIconWidget.h"
 #include "PokemonStorageWidget.generated.h"
 
 
@@ -31,15 +32,16 @@ protected:
 
 public:
 	virtual void NativeOnInitialized() override;
-	/*UFUNCTION()
-	void AddToWrapBox(UPokemonSlotWidget* PokemonWidget);
+	
+	UFUNCTION()
+	void AddToPartyBox(UPokemonIconWidget* PokemonIcon);
 
 	UFUNCTION()
-	void AddToInfoWrapBox(UPokemonSummaryWidget* PokemonSummaryWidget);
+	void AddToStorageBox(UPokemonIconWidget* PokemonIcon);
 
-	void ClearWrapBox();
+	void ClearPartyBox();
 
-	void ClearSummaryBox();*/
+	void ClearStorageBox();
 
 	FButtonClicked BackClicked;
 };
