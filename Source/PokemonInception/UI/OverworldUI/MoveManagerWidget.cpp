@@ -3,3 +3,33 @@
 
 #include "MoveManagerWidget.h"
 
+void UMoveManagerWidget::OnBackClicked()
+{
+	BackClicked.Broadcast();
+}
+
+void UMoveManagerWidget::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+	Back->OnClicked.AddDynamic(this, &UMoveManagerWidget::OnBackClicked);
+}
+
+void UMoveManagerWidget::AddToCurrentMoves(UMoveButtonWidget* MoveButton)
+{
+	CurrentMovesBox->AddChildToWrapBox(MoveButton);
+}
+
+void UMoveManagerWidget::AddToAvailableMoves(UMoveButtonWidget* MoveButton)
+{
+	AvailableMovesBox->AddChild(MoveButton);
+}
+
+void UMoveManagerWidget::Clear()
+{
+	if (CurrentMovesBox->HasAnyChildren()) {
+		CurrentMovesBox->ClearChildren();
+	}
+	if (AvailableMovesBox->HasAnyChildren()) {
+		AvailableMovesBox->ClearChildren();
+	}
+}

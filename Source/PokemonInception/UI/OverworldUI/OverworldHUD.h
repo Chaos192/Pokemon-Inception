@@ -15,6 +15,7 @@
 #include "ItemSlotWidget.h"
 #include "ItemShopSlotWidget.h"
 #include "PokemonStorageWidget.h"
+#include "MoveManagerWidget.h"
 #include "../BattleUI/PokemonSlotWidget.h"
 #include "../BattleUI/MoveSelectionPopupWidget.h"
 #include "../BattleUI/PopupSelectionWidget.h"
@@ -90,6 +91,9 @@ protected:
 	TSubclassOf<UPokemonStorageWidget> PokemonStorageWidgetClass;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<UMoveManagerWidget> MoveManagerWidgetClass;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UPokemonIconWidget> PokemonIconWidgetClass;
 
 	UPROPERTY()
@@ -136,6 +140,9 @@ protected:
 
 	UPROPERTY()
 	class UPokemonStorageWidget* PokemonStorageWidget;
+
+	UPROPERTY()
+	class UMoveManagerWidget* MoveManagerWidget;
 
 	virtual void BeginPlay()override;
 	
@@ -212,6 +219,9 @@ public:
 
 	UFUNCTION()
 	void ShowPokemonStorage();
+
+	UFUNCTION()
+	void ShowMoveManager(int PokemonID);
 
 	UFUNCTION()
 	void OnScreenMessage(FString Message);

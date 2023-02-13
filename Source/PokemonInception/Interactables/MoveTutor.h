@@ -11,5 +11,16 @@ UCLASS()
 class POKEMONINCEPTION_API AMoveTutor : public AInteractable
 {
 	GENERATED_BODY()
-	
+
+public:
+	AMoveTutor();
+
+	UFUNCTION()
+	virtual void Interact(APlayerController* Controller) override;
+
+	UPROPERTY(EditAnywhere)
+	class USkeletalMeshComponent* SkeletalMesh = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	class UCapsuleComponent* Capsule = nullptr;
 };

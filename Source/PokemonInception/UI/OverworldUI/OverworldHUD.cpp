@@ -34,6 +34,7 @@ void AOverworldHUD::BeginPlay()
 	TrainerCardWidget = CreateWidget<UTrainerCardWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TrainerCardWidgetClass);
 	ShopWidget = CreateWidget<UShopWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ShopWidgetClass);
 	PokemonStorageWidget = CreateWidget<UPokemonStorageWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonStorageWidgetClass);
+	MoveManagerWidget = CreateWidget<UMoveManagerWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveManagerWidgetClass);
 
 	GameMode->ShopMessageDelegate.AddDynamic(ShopWidget, &UShopWidget::ShowText);
 	GameMode->ItemSlotDelegate.AddDynamic(BagWidget, &UBagWidget::AddToWrapBox);
@@ -55,6 +56,7 @@ void AOverworldHUD::BeginPlay()
 	TrainerCardWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ShowMenu);
 	ShopWidget->ExitClicked.AddDynamic(this, &AOverworldHUD::ClearAndUnpause);
 	PokemonStorageWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ClearAndUnpause);
+	MoveManagerWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ClearAndUnpause);
 
 	ItemInfoWidget->UseClicked.AddDynamic(GameMode, &AOverworldGameMode::SelectItem);
 
@@ -332,6 +334,38 @@ void AOverworldHUD::ShowPokemonStorage()
 		GameMode->ShowPokemonPartyInStorage();
 		GameMode->ShowPokemonInStorage();
 		PokemonStorageWidget->AddToViewport();
+		PlayerOwner->bShowMouseCursor = true;
+		PlayerOwner->SetInputMode(FInputModeUIOnly());
+		PlayerOwner->SetPause(true);
+	}
+}
+
+void AOverworldHUD::ShowMoveManager(int PokemonID)
+{
+	MoveManagerWidget->Clear();
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
+
+	if (PlayerOwner && MoveManagerWidget) {
+		APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+		FPokemonStruct Pokemon = PlayerController->PokemonParty[PokemonID];
+
+		for (int i = 0; i < Pokemon.Moves.Num(); i++) {
+			UMoveButtonWidget* MoveButton = CreateWidget<UMoveButtonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveButtonWidgetClass);
+
+			MoveButton->InitButton(Pokemon.Moves[i].Name, Pokemon.Moves[i].CurrPowerPoints, Pokemon.Moves[i].PowerPoints, Pokemon.Moves[i].MoveType);
+
+			if (Pokemon.CurrentMoves.Contains(i)) {
+				MoveManagerWidget->AddToCurrentMoves(MoveButton);
+			}
+			else {
+				MoveManagerWidget->AddToAvailableMoves(MoveButton);
+			}
+		}
+
+		MoveManagerWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
 		PlayerOwner->SetPause(true);
