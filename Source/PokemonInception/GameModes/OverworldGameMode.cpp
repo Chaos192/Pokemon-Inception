@@ -601,8 +601,7 @@ void AOverworldGameMode::UseItem()
 			FExpCandyBaseStruct* Candy = CandyDT->FindRow<FExpCandyBaseStruct>(PlayerController->Inventory[SelectedItemID].ItemID, "");
 			
 			if (PlayerController->PokemonParty[SelectedPokemonID].GainExp(Candy->ExpRecieved) == true) {
-				TArray<UDataTable*> MoveTables;
-				PlayerController->PokemonParty[SelectedPokemonID].CheckForNewMoves(MoveDT);
+				PlayerController->PokemonParty[SelectedPokemonID].CheckForNewMoves(GetMoveDT());
 
 				PlayerController->Inventory.RemoveAt(SelectedItemID);
 				ItemMessage += PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString() +
@@ -615,8 +614,6 @@ void AOverworldGameMode::UseItem()
 
 	Hud->ShowBag();
 	Hud->OnScreenMessage(ItemMessage);
-	//FTimerHandle BagTimer;
-	//GetWorldTimerManager().SetTimer(BagTimer, Hud, &AOverworldHUD::ShowBag, 1, false);
 }
 
 void AOverworldGameMode::SwapPositionWith(int NewPositionId)
@@ -650,5 +647,10 @@ TArray<class UDataTable*> AOverworldGameMode::GetItemDT() const
 
 TArray<class UDataTable*> AOverworldGameMode::GetMoveDT() const
 {
+	TArray<class UDataTable*> MoveDT;
+
+	MoveDT.Add(AttackMovesDT);
+	MoveDT.Add(StatusMovesDT);
+
 	return MoveDT;
 }

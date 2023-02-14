@@ -91,10 +91,13 @@ protected:
 	TSubclassOf<UPokemonStorageWidget> PokemonStorageWidgetClass;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UMoveManagerWidget> MoveManagerWidgetClass;
+	TSubclassOf<UPokemonIconWidget> PokemonIconWidgetClass;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UPokemonIconWidget> PokemonIconWidgetClass;
+	TSubclassOf<UMoveManagerWidget> MoveManagerWidgetClass;
+	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UMoveInfoWidget> MoveInfoWidgetClass;
 
 	UPROPERTY()
 	class UMenuWidget* MenuWidget;
@@ -143,6 +146,9 @@ protected:
 
 	UPROPERTY()
 	class UMoveManagerWidget* MoveManagerWidget;
+
+	UPROPERTY()
+	class UMoveInfoWidget* MoveInfoWidget;
 
 	virtual void BeginPlay()override;
 	
@@ -222,6 +228,9 @@ public:
 
 	UFUNCTION()
 	void ShowMoveManager(int PokemonID);
+
+	UFUNCTION()
+	void ShowMoveInfo(int MoveID);
 
 	UFUNCTION()
 	void OnScreenMessage(FString Message);

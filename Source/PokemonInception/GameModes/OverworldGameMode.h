@@ -31,10 +31,6 @@ private:
 	UFUNCTION()
 	void SwapPositionWith(int NewPositionId);
 
-	int SelectedItemID;
-	int SelectedPokemonID;
-	int SelectedMoveID;
-
 	bool bIsPaused = false;
 
 	TArray<AActor*> ActorsToDestroy;
@@ -71,16 +67,23 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	class UDataTable* CandyDT;
 
-	UPROPERTY(EditDefaultsOnly)
-	TArray<class UDataTable*> MoveDT;
-
 public:
+	int SelectedItemID;
+	int SelectedPokemonID;
+	int SelectedMoveID;
+
 	bool bHasSelectedItem;
 	bool bHasSelectedEther;
 	bool bIsSwappingPosition;
 
 	UPROPERTY(EditDefaultsOnly)
 	class UDataTable* PokemonDT;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UDataTable* AttackMovesDT;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UDataTable* StatusMovesDT;
 
 	UFUNCTION()
 	FString ETypeToString(ETypes Type);

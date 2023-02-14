@@ -11,6 +11,7 @@
 #include "Engine/Engine.h"
 #include "../../Player/PokemonInceptionCharacter.h"
 #include "../../Player/PlayerCharacterController.h"
+#include "../../Pokemon/AttackMoveStruct.h"
 
 
 void AOverworldHUD::BeginPlay()
@@ -35,6 +36,7 @@ void AOverworldHUD::BeginPlay()
 	ShopWidget = CreateWidget<UShopWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ShopWidgetClass);
 	PokemonStorageWidget = CreateWidget<UPokemonStorageWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonStorageWidgetClass);
 	MoveManagerWidget = CreateWidget<UMoveManagerWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveManagerWidgetClass);
+	MoveInfoWidget = CreateWidget<UMoveInfoWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveInfoWidgetClass);
 
 	GameMode->ShopMessageDelegate.AddDynamic(ShopWidget, &UShopWidget::ShowText);
 	GameMode->ItemSlotDelegate.AddDynamic(BagWidget, &UBagWidget::AddToWrapBox);
@@ -352,10 +354,14 @@ void AOverworldHUD::ShowMoveManager(int PokemonID)
 		APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 		FPokemonStruct Pokemon = PlayerController->PokemonParty[PokemonID];
 
+		GameMode->SelectedPokemonID = PokemonID;
+
 		for (int i = 0; i < Pokemon.Moves.Num(); i++) {
 			UMoveButtonWidget* MoveButton = CreateWidget<UMoveButtonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveButtonWidgetClass);
 
 			MoveButton->InitButton(Pokemon.Moves[i].Name, Pokemon.Moves[i].CurrPowerPoints, Pokemon.Moves[i].PowerPoints, Pokemon.Moves[i].MoveType);
+			MoveButton->SetMove(i);
+			MoveButton->ButtonClicked.AddDynamic(this, &AOverworldHUD::ShowMoveInfo);
 
 			if (Pokemon.CurrentMoves.Contains(i)) {
 				MoveManagerWidget->AddToCurrentMoves(MoveButton);
@@ -369,6 +375,34 @@ void AOverworldHUD::ShowMoveManager(int PokemonID)
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
 		PlayerOwner->SetPause(true);
+	}
+}
+
+void AOverworldHUD::ShowMoveInfo(int MoveID)
+{
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GameMode == nullptr) {
+		return;
+	}
+
+	if (PlayerOwner && MoveInfoWidget) {
+		APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+		FPokemonStruct Pokemon = PlayerController->PokemonParty[GameMode->SelectedPokemonID];
+		FMoveBaseStruct Move = Pokemon.Moves[MoveID];
+
+		MoveInfoWidget->SetMoveName(Move.Name);
+		MoveInfoWidget->SetMoveType(FText::FromString(GameMode->ETypeToString(Move.MoveType)));
+		MoveInfoWidget->SetMoveDescription(Move.Description);
+
+		if (Move.MoveStructType == "Attack") {
+			FAttackMoveStruct* Attack = GameMode->AttackMovesDT->FindRow<FAttackMoveStruct>(Move.MoveID, "");
+			MoveInfoWidget->SetMovePower(FText::FromString(FString::FromInt(Attack->BaseDamage)));
+		}
+		else {
+			MoveInfoWidget->SetMovePower(FText::FromString("-"));
+		}
+
+		MoveManagerWidget->ShowMoveInfo(MoveInfoWidget);
 	}
 }
 

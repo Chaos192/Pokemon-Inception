@@ -9,6 +9,7 @@
 #include "Components/ScrollBox.h"
 #include "../ButtonClick.h"
 #include "../BattleUI/MoveButtonWidget.h"
+#include "MoveInfoWidget.h"
 #include "MoveManagerWidget.generated.h"
 
 
@@ -38,10 +39,13 @@ public:
 	virtual void NativeOnInitialized() override;
 
 	UFUNCTION()
-	void AddToCurrentMoves(UMoveButtonWidget* MoveButton);
+	void AddToCurrentMoves(UMoveButtonWidget* MoveInfo);
 
 	UFUNCTION()
 	void AddToAvailableMoves(UMoveButtonWidget* MoveButton);
+
+	UFUNCTION()
+	void ShowMoveInfo(UMoveInfoWidget* MoveButton);
 
 	void Clear();
 

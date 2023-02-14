@@ -24,6 +24,14 @@ void UMoveManagerWidget::AddToAvailableMoves(UMoveButtonWidget* MoveButton)
 	AvailableMovesBox->AddChild(MoveButton);
 }
 
+void UMoveManagerWidget::ShowMoveInfo(UMoveInfoWidget* MoveInfo)
+{
+	if (MoveDescriptionBox->HasAnyChildren()) {
+		MoveDescriptionBox->ClearChildren();
+	}
+	MoveDescriptionBox->AddChildToWrapBox(MoveInfo);
+}
+
 void UMoveManagerWidget::Clear()
 {
 	if (CurrentMovesBox->HasAnyChildren()) {
@@ -31,5 +39,8 @@ void UMoveManagerWidget::Clear()
 	}
 	if (AvailableMovesBox->HasAnyChildren()) {
 		AvailableMovesBox->ClearChildren();
+	}
+	if (MoveDescriptionBox->HasAnyChildren()) {
+		MoveDescriptionBox->ClearChildren();
 	}
 }
