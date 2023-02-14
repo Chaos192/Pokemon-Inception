@@ -18,8 +18,13 @@ class POKEMONINCEPTION_API APlayerCharacterController : public APlayerController
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION()
 	bool bIsPartyDefeated();
+
+	bool bCanRemoveFromParty(int PokemonID);
+
+	bool bIsPartyFull();
+
+	bool bCanObtainMorePokemon();
 
 	UFUNCTION()
 	void ObtainItem(FItemBaseStruct Item);

@@ -335,7 +335,6 @@ void AOverworldHUD::ShowPokemonStorage()
 	}
 
 	if (PlayerOwner && PokemonStorageWidget) {
-		GameMode->ShowPokemonPartyInStorage();
 		GameMode->ShowPokemonInStorage();
 		PokemonStorageWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;
@@ -346,7 +345,7 @@ void AOverworldHUD::ShowPokemonStorage()
 
 void AOverworldHUD::ShowWithdrawPopup(int PokemonID)
 {
-	if (StorageOperationPopupWidget->IsInViewport() == true) {
+	if (StorageOperationPopupWidget->IsInViewport()) {
 		return;
 	}
 
@@ -363,7 +362,8 @@ void AOverworldHUD::ShowWithdrawPopup(int PokemonID)
 
 		StorageOperationPopupWidget->SetId(PokemonID);
 		StorageOperationPopupWidget->SetOperationText(FText::FromString("Withdraw"));
-		StorageOperationPopupWidget->OperationClicked.AddDynamic(Controller, &APlayerCharacterController::MovePokemonToStorage);
+
+		StorageOperationPopupWidget->OperationClicked.AddDynamic(Controller, &APlayerCharacterController::MovePokemonToParty);
 		StorageOperationPopupWidget->ActionClicked.AddDynamic(Controller, &APlayerCharacterController::ReleasePokemonFromStorage);
 
 		StorageOperationPopupWidget->AddToViewport();
@@ -375,7 +375,7 @@ void AOverworldHUD::ShowWithdrawPopup(int PokemonID)
 
 void AOverworldHUD::ShowDepositPopup(int PokemonID)
 {
-	if (StorageOperationPopupWidget->IsInViewport() == true) {
+	if (StorageOperationPopupWidget->IsInViewport()) {
 		return;
 	}
 
@@ -391,8 +391,9 @@ void AOverworldHUD::ShowDepositPopup(int PokemonID)
 		Controller->GetMousePosition(MouseX, MouseY);
 
 		StorageOperationPopupWidget->SetId(PokemonID);
-		StorageOperationPopupWidget->SetOperationText(FText::FromString("Withdraw"));
-		StorageOperationPopupWidget->OperationClicked.AddDynamic(Controller, &APlayerCharacterController::MovePokemonToParty);
+		StorageOperationPopupWidget->SetOperationText(FText::FromString("Deposit"));
+
+		StorageOperationPopupWidget->OperationClicked.AddDynamic(Controller, &APlayerCharacterController::MovePokemonToStorage);
 		StorageOperationPopupWidget->ActionClicked.AddDynamic(Controller, &APlayerCharacterController::ReleasePokemonFromParty);
 
 		StorageOperationPopupWidget->AddToViewport();
@@ -550,11 +551,6 @@ void AOverworldHUD::ClearMovePopup()
 bool AOverworldHUD::BIsMovePopupInViewport()
 {
 	return MoveSelectionPopupWidget->IsInViewport();
-}
-
-bool AOverworldHUD::BIsStorageOperationPopupInViewport()
-{
-	return StorageOperationPopupWidget->IsInViewport();
 }
 
 TSubclassOf<UItemSlotWidget> AOverworldHUD::GetItemSlotWidgetClass()

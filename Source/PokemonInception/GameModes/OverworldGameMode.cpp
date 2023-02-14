@@ -479,7 +479,7 @@ void AOverworldGameMode::FillPokedex()
 	}
 }
 
-void AOverworldGameMode::ShowPokemonPartyInStorage()
+void AOverworldGameMode::ShowPokemonInStorage()
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
@@ -487,6 +487,7 @@ void AOverworldGameMode::ShowPokemonPartyInStorage()
 	Hud->ClearPokemonIcons();
 
 	TArray<FPokemonStruct> Party = PlayerController->PokemonParty;
+	TArray<FPokemonStruct> Storage = PlayerController->PokemonStorage;
 
 	for (int i = 0; i < Party.Num(); i++) {
 
@@ -497,20 +498,10 @@ void AOverworldGameMode::ShowPokemonPartyInStorage()
 		PokemonIconWidget->SetPokemonHP(Party[i].CurrHP, Party[i].MaxHP);
 		PokemonIconWidget->SetPokemon(i);
 
-		if (!Hud->BIsStorageOperationPopupInViewport()) {
-			PokemonIconWidget->PokemonClick.AddDynamic(Hud, &AOverworldHUD::ShowDepositPopup);
-		}
+		PokemonIconWidget->PokemonClick.AddDynamic(Hud, &AOverworldHUD::ShowDepositPopup);
 
 		PartyPokemonIconDelegate.Broadcast(PokemonIconWidget);
 	}
-}
-
-void AOverworldGameMode::ShowPokemonInStorage()
-{
-	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
-
-	TArray<FPokemonStruct> Storage = PlayerController->PokemonStorage;
 
 	for (int i = 0; i < Storage.Num(); i++) {
 
@@ -521,9 +512,7 @@ void AOverworldGameMode::ShowPokemonInStorage()
 		PokemonIconWidget->SetPokemonHP(Storage[i].CurrHP, Storage[i].MaxHP);
 		PokemonIconWidget->SetPokemon(i);
 
-		if (!Hud->BIsStorageOperationPopupInViewport()) {
-			PokemonIconWidget->PokemonClick.AddDynamic(Hud, &AOverworldHUD::ShowWithdrawPopup);
-		}
+		PokemonIconWidget->PokemonClick.AddDynamic(Hud, &AOverworldHUD::ShowWithdrawPopup);
 
 		StoragePokemonIconDelegate.Broadcast(PokemonIconWidget);
 	}

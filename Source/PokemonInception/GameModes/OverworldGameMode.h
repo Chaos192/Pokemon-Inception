@@ -131,9 +131,6 @@ public:
 	void FillPokedex();
 
 	UFUNCTION()
-	void ShowPokemonPartyInStorage();
-
-	UFUNCTION()
 	void ShowPokemonInStorage();
 
 	FPokemonBaseStruct GetPokemonSpeciesData(FName PokemonID);

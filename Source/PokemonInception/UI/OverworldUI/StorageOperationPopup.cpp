@@ -12,8 +12,6 @@ void UStorageOperationPopup::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 	Operation->OnClicked.AddDynamic(this, &UStorageOperationPopup::OnOperationClicked);
-	Action->OnClicked.AddDynamic(this, &UStorageOperationPopup::OnActionClicked);
-	Cancel->OnClicked.AddDynamic(this, &UStorageOperationPopup::OnCancelClicked);
 }
 
 void UStorageOperationPopup::SetOperationText(FText Text)

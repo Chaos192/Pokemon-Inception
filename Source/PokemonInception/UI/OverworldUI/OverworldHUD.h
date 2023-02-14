@@ -182,8 +182,6 @@ public:
 
 	bool BIsMovePopupInViewport();
 
-	bool BIsStorageOperationPopupInViewport();
-
 	TSubclassOf<UItemSlotWidget> GetItemSlotWidgetClass();
 
 	TSubclassOf<UItemShopSlotWidget> GetItemShopSlotWidgetClass();

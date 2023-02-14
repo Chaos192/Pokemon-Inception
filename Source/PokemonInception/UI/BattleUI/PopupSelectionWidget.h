@@ -14,9 +14,6 @@ class POKEMONINCEPTION_API UPopupSelectionWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-private:
-	
-
 protected:
 	int Id;
 

@@ -59,6 +59,39 @@ void APlayerCharacterController::TogglePause()
 	PauseDelegate.Broadcast();
 }
 
+bool APlayerCharacterController::bCanRemoveFromParty(int PokemonID)
+{
+	if (PokemonParty.Num() == 1) {
+		return false;
+	}
+
+	for (int i = 0; i < PokemonParty.Num(); i++) {
+		if (PokemonParty[i].bIsFainted == false && i != PokemonID) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool APlayerCharacterController::bIsPartyFull()
+{
+	if (PokemonParty.Num() == 6) {
+		return true;
+	}
+
+	return false;
+}
+
+bool APlayerCharacterController::bCanObtainMorePokemon()
+{
+	if (PokemonParty.Num() + PokemonStorage.Num() == 100) {
+		return false;
+	}
+	
+	return true;
+}
+
 void APlayerCharacterController::ObtainItem(FItemBaseStruct Item)
 {
 	Inventory.Add(Item);
@@ -83,22 +116,78 @@ void APlayerCharacterController::ObtainPokemon(FPokemonStruct Pokemon)
 
 void APlayerCharacterController::MovePokemonToParty(int PokemonID)
 {
-	return;
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(GetHUD());
+	if (!IsValid(Hud)) {
+		return;
+	}
+
+	if (bIsPartyFull()) {
+		Hud->ClearPopup();
+		Hud->OnScreenMessage("Can't add more pokemon to your party!");
+		return;
+	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "Adding " + PokemonStorage[PokemonID].SpeciesData.Name.ToString() + " to the party!");
+
+	PokemonParty.Add(PokemonStorage[PokemonID]);
+	PokemonStorage.RemoveAt(PokemonID);
+
+	Hud->ShowPokemonStorage();
 }
 
 void APlayerCharacterController::MovePokemonToStorage(int PokemonID)
 {
-	return;
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(GetHUD());
+	if (!IsValid(Hud)) {
+		return;
+	}
+
+	if (!bCanRemoveFromParty(PokemonID)) {
+		Hud->ClearPopup();
+		Hud->OnScreenMessage("You need at least one healthy pokemon!");
+		return;
+	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "Adding " + PokemonParty[PokemonID].SpeciesData.Name.ToString() + " to the storage!");
+
+	PokemonStorage.Add(PokemonParty[PokemonID]);
+	PokemonParty.RemoveAt(PokemonID);
+
+	Hud->ShowPokemonStorage();
 }
 
 void APlayerCharacterController::ReleasePokemonFromParty(int PokemonID)
 {
-	return;
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(GetHUD());
+	if (!IsValid(Hud)) {
+		return;
+	}
+
+	if (!bCanRemoveFromParty(PokemonID)) {
+		Hud->ClearPopup();
+		Hud->OnScreenMessage("You need at least one healthy pokemon!");
+		return;
+	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "Releasing " + PokemonParty[PokemonID].SpeciesData.Name.ToString() + ", who was in the party!");
+
+	PokemonParty.RemoveAt(PokemonID);
+
+	Hud->ShowPokemonStorage();
 }
 
 void APlayerCharacterController::ReleasePokemonFromStorage(int PokemonID)
 {
-	return;
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(GetHUD());
+	if (!IsValid(Hud)) {
+		return;
+	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "Releasing " + PokemonStorage[PokemonID].SpeciesData.Name.ToString() + ", who was in the storage!");
+
+	PokemonStorage.RemoveAt(PokemonID);
+
+	Hud->ShowPokemonStorage();
 }
 
 void APlayerCharacterController::RegisterToPokedex(FPokemonBaseStruct Species)
