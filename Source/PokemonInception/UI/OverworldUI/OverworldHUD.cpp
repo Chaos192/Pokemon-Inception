@@ -35,6 +35,7 @@ void AOverworldHUD::BeginPlay()
 	TrainerCardWidget = CreateWidget<UTrainerCardWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TrainerCardWidgetClass);
 	ShopWidget = CreateWidget<UShopWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ShopWidgetClass);
 	PokemonStorageWidget = CreateWidget<UPokemonStorageWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonStorageWidgetClass);
+	StorageOperationPopupWidget = CreateWidget<UStorageOperationPopup>(UGameplayStatics::GetGameInstance(GetWorld()), StorageOperationPopupClass);
 	MoveManagerWidget = CreateWidget<UMoveManagerWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveManagerWidgetClass);
 	MoveInfoWidget = CreateWidget<UMoveInfoWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveInfoWidgetClass);
 
@@ -70,6 +71,7 @@ void AOverworldHUD::BeginPlay()
 
 	MoveSelectionPopupWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ClearMovePopup);
 
+	StorageOperationPopupWidget->CancelClicked.AddDynamic(this, &AOverworldHUD::ClearPopup);
 }
 
 void AOverworldHUD::ShowMenu()
@@ -342,6 +344,64 @@ void AOverworldHUD::ShowPokemonStorage()
 	}
 }
 
+void AOverworldHUD::ShowWithdrawPopup(int PokemonID)
+{
+	if (StorageOperationPopupWidget->IsInViewport() == true) {
+		return;
+	}
+
+	if (PlayerOwner && StorageOperationPopupWidget) {
+		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(PlayerOwner);
+
+		StorageOperationPopupWidget->OperationClicked.RemoveAll(Controller);
+		StorageOperationPopupWidget->ActionClicked.RemoveAll(Controller);
+
+		float MouseX;
+		float MouseY;
+
+		Controller->GetMousePosition(MouseX, MouseY);
+
+		StorageOperationPopupWidget->SetId(PokemonID);
+		StorageOperationPopupWidget->SetOperationText(FText::FromString("Withdraw"));
+		StorageOperationPopupWidget->OperationClicked.AddDynamic(Controller, &APlayerCharacterController::MovePokemonToStorage);
+		StorageOperationPopupWidget->ActionClicked.AddDynamic(Controller, &APlayerCharacterController::ReleasePokemonFromStorage);
+
+		StorageOperationPopupWidget->AddToViewport();
+		StorageOperationPopupWidget->SetPositionInViewport(FVector2D(MouseX, MouseY), false);
+		Controller->bShowMouseCursor = true;
+		Controller->SetInputMode(FInputModeUIOnly());
+	}
+}
+
+void AOverworldHUD::ShowDepositPopup(int PokemonID)
+{
+	if (StorageOperationPopupWidget->IsInViewport() == true) {
+		return;
+	}
+
+	if (PlayerOwner && StorageOperationPopupWidget) {
+		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(PlayerOwner);
+
+		StorageOperationPopupWidget->OperationClicked.RemoveAll(Controller);
+		StorageOperationPopupWidget->ActionClicked.RemoveAll(Controller);
+
+		float MouseX;
+		float MouseY;
+
+		Controller->GetMousePosition(MouseX, MouseY);
+
+		StorageOperationPopupWidget->SetId(PokemonID);
+		StorageOperationPopupWidget->SetOperationText(FText::FromString("Withdraw"));
+		StorageOperationPopupWidget->OperationClicked.AddDynamic(Controller, &APlayerCharacterController::MovePokemonToParty);
+		StorageOperationPopupWidget->ActionClicked.AddDynamic(Controller, &APlayerCharacterController::ReleasePokemonFromParty);
+
+		StorageOperationPopupWidget->AddToViewport();
+		StorageOperationPopupWidget->SetPositionInViewport(FVector2D(MouseX, MouseY), false);
+		Controller->bShowMouseCursor = true;
+		Controller->SetInputMode(FInputModeUIOnly());
+	}
+}
+
 void AOverworldHUD::ShowMoveManager(int PokemonID)
 {
 	MoveManagerWidget->Clear();
@@ -479,6 +539,7 @@ void AOverworldHUD::ClearPopup()
 {
 	UseItemWidget->RemoveFromViewport();
 	SwapPositionWidget->RemoveFromViewport();
+	StorageOperationPopupWidget->RemoveFromViewport();
 }
 
 void AOverworldHUD::ClearMovePopup()
@@ -489,6 +550,11 @@ void AOverworldHUD::ClearMovePopup()
 bool AOverworldHUD::BIsMovePopupInViewport()
 {
 	return MoveSelectionPopupWidget->IsInViewport();
+}
+
+bool AOverworldHUD::BIsStorageOperationPopupInViewport()
+{
+	return StorageOperationPopupWidget->IsInViewport();
 }
 
 TSubclassOf<UItemSlotWidget> AOverworldHUD::GetItemSlotWidgetClass()

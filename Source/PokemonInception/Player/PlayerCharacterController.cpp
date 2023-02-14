@@ -81,6 +81,26 @@ void APlayerCharacterController::ObtainPokemon(FPokemonStruct Pokemon)
 	else PokemonParty.Add(Pokemon);
 }
 
+void APlayerCharacterController::MovePokemonToParty(int PokemonID)
+{
+	return;
+}
+
+void APlayerCharacterController::MovePokemonToStorage(int PokemonID)
+{
+	return;
+}
+
+void APlayerCharacterController::ReleasePokemonFromParty(int PokemonID)
+{
+	return;
+}
+
+void APlayerCharacterController::ReleasePokemonFromStorage(int PokemonID)
+{
+	return;
+}
+
 void APlayerCharacterController::RegisterToPokedex(FPokemonBaseStruct Species)
 {
 	Pokedex.Add(Species);

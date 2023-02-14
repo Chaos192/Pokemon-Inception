@@ -15,6 +15,9 @@ class POKEMONINCEPTION_API UPopupSelectionWidget : public UUserWidget
 	GENERATED_BODY()
 	
 private:
+	
+
+protected:
 	int Id;
 
 	UFUNCTION()
@@ -23,7 +26,6 @@ private:
 	UFUNCTION()
 	void OnCancelClicked();
 
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* Action;
 

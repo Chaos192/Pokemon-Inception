@@ -31,6 +31,18 @@ public:
 	void ObtainPokemon(FPokemonStruct Pokemon);
 
 	UFUNCTION()
+	void MovePokemonToParty(int PokemonID);
+
+	UFUNCTION()
+	void MovePokemonToStorage(int PokemonID);
+
+	UFUNCTION()
+	void ReleasePokemonFromParty(int PokemonID);
+
+	UFUNCTION()
+	void ReleasePokemonFromStorage(int PokemonID);
+
+	UFUNCTION()
 	void RegisterToPokedex(FPokemonBaseStruct Species);
 
 	UFUNCTION()

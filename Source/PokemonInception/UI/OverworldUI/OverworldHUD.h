@@ -16,6 +16,7 @@
 #include "ItemShopSlotWidget.h"
 #include "PokemonStorageWidget.h"
 #include "MoveManagerWidget.h"
+#include "StorageOperationPopup.h"
 #include "../BattleUI/PokemonSlotWidget.h"
 #include "../BattleUI/MoveSelectionPopupWidget.h"
 #include "../BattleUI/PopupSelectionWidget.h"
@@ -94,6 +95,9 @@ protected:
 	TSubclassOf<UPokemonIconWidget> PokemonIconWidgetClass;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<UStorageOperationPopup> StorageOperationPopupClass;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UMoveManagerWidget> MoveManagerWidgetClass;
 	
 	UPROPERTY(EditAnywhere)
@@ -145,6 +149,9 @@ protected:
 	class UPokemonStorageWidget* PokemonStorageWidget;
 
 	UPROPERTY()
+	class UStorageOperationPopup* StorageOperationPopupWidget;
+
+	UPROPERTY()
 	class UMoveManagerWidget* MoveManagerWidget;
 
 	UPROPERTY()
@@ -174,6 +181,8 @@ public:
 	void ClearMovePopup();
 
 	bool BIsMovePopupInViewport();
+
+	bool BIsStorageOperationPopupInViewport();
 
 	TSubclassOf<UItemSlotWidget> GetItemSlotWidgetClass();
 
@@ -225,6 +234,12 @@ public:
 
 	UFUNCTION()
 	void ShowPokemonStorage();
+
+	UFUNCTION()
+	void ShowWithdrawPopup(int PokemonID);
+
+	UFUNCTION()
+	void ShowDepositPopup(int PokemonID);
 
 	UFUNCTION()
 	void ShowMoveManager(int PokemonID);

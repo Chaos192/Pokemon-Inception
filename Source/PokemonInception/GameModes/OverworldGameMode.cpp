@@ -497,7 +497,9 @@ void AOverworldGameMode::ShowPokemonPartyInStorage()
 		PokemonIconWidget->SetPokemonHP(Party[i].CurrHP, Party[i].MaxHP);
 		PokemonIconWidget->SetPokemon(i);
 
-		//PokemonSlotWidget->PokemonClick.AddDynamic(Hud, &AOverworldHUD::ShowPokemonSummary);
+		if (!Hud->BIsStorageOperationPopupInViewport()) {
+			PokemonIconWidget->PokemonClick.AddDynamic(Hud, &AOverworldHUD::ShowDepositPopup);
+		}
 
 		PartyPokemonIconDelegate.Broadcast(PokemonIconWidget);
 	}
@@ -519,7 +521,9 @@ void AOverworldGameMode::ShowPokemonInStorage()
 		PokemonIconWidget->SetPokemonHP(Storage[i].CurrHP, Storage[i].MaxHP);
 		PokemonIconWidget->SetPokemon(i);
 
-		//PokemonSlotWidget->PokemonClick.AddDynamic(Hud, &AOverworldHUD::ShowPokemonSummary);
+		if (!Hud->BIsStorageOperationPopupInViewport()) {
+			PokemonIconWidget->PokemonClick.AddDynamic(Hud, &AOverworldHUD::ShowWithdrawPopup);
+		}
 
 		StoragePokemonIconDelegate.Broadcast(PokemonIconWidget);
 	}
