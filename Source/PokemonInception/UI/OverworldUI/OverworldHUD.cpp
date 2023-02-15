@@ -422,6 +422,10 @@ void AOverworldHUD::ShowMoveManager(int PokemonID)
 		GameMode->SelectedPokemonID = PokemonID;
 
 		for (int i = 0; i < Pokemon.Moves.Num(); i++) {
+			if (Pokemon.Moves[i].bIsLocked == true) {
+				continue;
+			}
+
 			UMoveButtonWidget* MoveButton = CreateWidget<UMoveButtonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveButtonWidgetClass);
 
 			MoveButton->InitButton(Pokemon.Moves[i].Name, Pokemon.Moves[i].CurrPowerPoints, Pokemon.Moves[i].PowerPoints, Pokemon.Moves[i].MoveType);

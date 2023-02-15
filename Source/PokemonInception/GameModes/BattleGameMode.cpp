@@ -504,10 +504,7 @@ void ABattleGameMode::OpponentFaints()
 	int Exp = OpponentTeam[OpponentPokemonId].Level * OpponentTeam[OpponentPokemonId].SpeciesData.BaseExp / 7;
 
 	if (PlayerController->PokemonParty[PlayerPokemonId].GainExp(Exp) == true) {
-		TArray<UDataTable*> MoveTables;
-		MoveTables.Add(AttackMovesDT);
-		MoveTables.Add(StatusMovesDT);
-		PlayerController->PokemonParty[PlayerPokemonId].CheckForNewMoves(MoveTables);
+		PlayerController->PokemonParty[PlayerPokemonId].CheckForNewMoves();
 	}
 
 	Hud->ShowText("The opponent " + OpponentTeam[OpponentPokemonId].SpeciesData.Name.ToString() + " was defeated, " +

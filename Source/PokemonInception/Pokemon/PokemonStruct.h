@@ -89,67 +89,60 @@ struct FPokemonStruct
 	}
 
 	void InitMoves(TArray<UDataTable*> MoveTables) {
+		int LastLearnedMoveID = -1;
 		for (auto& Move : SpeciesData.MovePool) {
-			if (Move.Key <= Level) {
-				FMoveBaseStruct* AddedMove = nullptr;
-
-				for (UDataTable* DataTable : MoveTables) {
-					AddedMove = DataTable->FindRow<FMoveBaseStruct>(Move.Value, "");
-					
-					if (AddedMove) {
-						Moves.Add(*AddedMove);
-					}
-				}
-			}
-		}
-
-		InitCurrentMoves();
-	}
-
-	void InitCurrentMoves() {
-		for (int i = Moves.Num() - 4; i < Moves.Num(); i++) {
-			if (i < 0) continue;
-
-			CurrentMoves.Add(i);
-		}
-	}
-
-	bool CheckForNewMoves(TArray<UDataTable*> MoveTables) {
-		bool bHasLearnedMove = false;
-
-		for (auto& Move : SpeciesData.MovePool) {
-			if (Move.Key > Level) {
-				return false;
-			}
-
 			FMoveBaseStruct* AddedMove = nullptr;
 
 			for (UDataTable* DataTable : MoveTables) {
 				AddedMove = DataTable->FindRow<FMoveBaseStruct>(Move.Value, "");
 
-				if (!AddedMove) {
-					continue;
-				}
-
-				bool bHasAlreadyLearned = false;
-
-				for (FMoveBaseStruct KnownMove : Moves) {
-					if (KnownMove.MoveID == AddedMove->MoveID) {
-						bHasAlreadyLearned = true;
+				if (AddedMove) {
+					GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("added a new move"));
+					AddedMove->CurrPowerPoints = AddedMove->PowerPoints;
+					if (Move.Key <= Level) {
+						AddedMove->bIsLocked = false;
 					}
-				}
 
-				if(bHasAlreadyLearned == false){
 					Moves.Add(*AddedMove);
-
-					if (CurrentMoves.Num() < 4) {
-						CurrentMoves.Add(CurrentMoves.Num());
-					}
-
-					bHasLearnedMove = true;	
-				}			
-			}	
+					LastLearnedMoveID++;
+				}
+			}
 		}
+
+		InitCurrentMoves(LastLearnedMoveID);
+	}
+
+	void InitCurrentMoves(int LastLearnedMoveID) {
+		for (int i = LastLearnedMoveID - 4; i <= LastLearnedMoveID; i++) {
+			if (i < 0) {
+				continue;
+			}
+
+			if (Moves[i].bIsLocked == false) {
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("added a new current move"));
+				CurrentMoves.Add(i);
+			}
+		}
+	}
+
+	bool CheckForNewMoves() {
+		bool bHasLearnedMove = false;
+
+		int i = 0;
+		for (auto& Move : SpeciesData.MovePool) {
+			if (Move.Key <= Level && Moves[i].bIsLocked == true) {
+				Moves[i].bIsLocked = false;
+
+				if (CurrentMoves.Num() < 4) {
+					CurrentMoves.Add(i);
+				}
+
+				bHasLearnedMove = true;
+			}
+
+			i++;
+		}
+
 		return bHasLearnedMove;
 	}
 

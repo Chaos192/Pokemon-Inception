@@ -594,12 +594,11 @@ void AOverworldGameMode::UseItem()
 			FExpCandyBaseStruct* Candy = CandyDT->FindRow<FExpCandyBaseStruct>(PlayerController->Inventory[SelectedItemID].ItemID, "");
 			
 			if (PlayerController->PokemonParty[SelectedPokemonID].GainExp(Candy->ExpRecieved) == true) {
-				PlayerController->PokemonParty[SelectedPokemonID].CheckForNewMoves(GetMoveDT());
-
-				PlayerController->Inventory.RemoveAt(SelectedItemID);
-				ItemMessage += PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString() +
-					" gained some Exp!";
+				PlayerController->PokemonParty[SelectedPokemonID].CheckForNewMoves();
 			}
+
+			PlayerController->Inventory.RemoveAt(SelectedItemID);
+			ItemMessage += PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString() + " gained some Exp!";
 		}
 	}
 	bHasSelectedItem = false;
