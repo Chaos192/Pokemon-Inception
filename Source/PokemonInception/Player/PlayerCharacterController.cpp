@@ -123,6 +123,7 @@ void APlayerCharacterController::MovePokemonToParty(int PokemonID)
 
 	if (bIsPartyFull()) {
 		Hud->ClearPopup();
+		Hud->ClearOnScreenMessage();
 		Hud->OnScreenMessage("Can't add more pokemon to your party!");
 		return;
 	}
@@ -144,6 +145,7 @@ void APlayerCharacterController::MovePokemonToStorage(int PokemonID)
 
 	if (!bCanRemoveFromParty(PokemonID)) {
 		Hud->ClearPopup();
+		Hud->ClearOnScreenMessage();
 		Hud->OnScreenMessage("You need at least one healthy pokemon!");
 		return;
 	}
@@ -165,6 +167,7 @@ void APlayerCharacterController::ReleasePokemonFromParty(int PokemonID)
 
 	if (!bCanRemoveFromParty(PokemonID)) {
 		Hud->ClearPopup();
+		Hud->ClearOnScreenMessage();
 		Hud->OnScreenMessage("You need at least one healthy pokemon!");
 		return;
 	}
@@ -199,6 +202,7 @@ void APlayerCharacterController::LearnMove(int MoveID)
 
 	if (PokemonParty[0].CurrentMoves.Num() == 4) {
 		Hud->ClearPopup();
+		Hud->ClearOnScreenMessage();
 		Hud->OnScreenMessage("Your pokemon can't learn more moves!");
 		return;
 	}
@@ -216,6 +220,7 @@ void APlayerCharacterController::ForgetMove(int MoveID)
 
 	if (PokemonParty[0].CurrentMoves.Num() == 1) {
 		Hud->ClearPopup();
+		Hud->ClearOnScreenMessage();
 		Hud->OnScreenMessage("Your pokemon must know at least one move!");
 		return;
 	}
@@ -248,21 +253,6 @@ void APlayerCharacterController::FullRestoreAllPokemon()
 	for (int i = 0; i < PokemonStorage.Num(); i++) {
 		PokemonStorage[i].FullRestore();
 	}
-}
-
-int APlayerCharacterController::GetMoney() const
-{
-	return money;
-}
-
-void APlayerCharacterController::RecieveMoney(int AddedMoney)
-{
-	money += AddedMoney;
-}
-
-void APlayerCharacterController::LoseMoney(int LostMoney)
-{
-	money -= LostMoney;
 }
 
 void APlayerCharacterController::SetupInputComponent()

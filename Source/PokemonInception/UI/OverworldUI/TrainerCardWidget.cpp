@@ -6,11 +6,25 @@
 void UTrainerCardWidget::OnBackClicked()
 {
 	BackClicked.Broadcast();
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Native On Initialize"));
 }
 
 void UTrainerCardWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 	Back->OnClicked.AddDynamic(this, &UTrainerCardWidget::OnBackClicked);
+}
+
+void UTrainerCardWidget::SetRegisteredSpecies(int Num)
+{
+	SpeciesRegistered->SetText(FText::FromString(FString::FromInt(Num)));
+}
+
+void UTrainerCardWidget::SetPokemonCaught(int Num)
+{
+	PokemonCaught->SetText(FText::FromString(FString::FromInt(Num)));
+}
+
+void UTrainerCardWidget::SetMoneyObtained(int Num)
+{
+	MoneyObtained->SetText(FText::FromString(FString::FromInt(Num)));
 }

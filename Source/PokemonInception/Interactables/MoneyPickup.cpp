@@ -33,7 +33,7 @@ void AMoneyPickup::Interact(APlayerController* Controller)
 	}
 	
 	Hud->OnScreenMessage("You got " + FString::FromInt(money) + "$!");
-	PlayerController->RecieveMoney(money);
+	PlayerController->Money += money;
 	GameMode->MarkActorAsDestroyed(this);
 	Destroy();
 }

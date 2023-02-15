@@ -19,6 +19,9 @@ public:
 	bool bIsPartyDefeated();
 
 	UFUNCTION()
+	bool bCanObtainMorePokemon();
+
+	UFUNCTION()
 	int GetLeadPokemon();
 
 	UFUNCTION()

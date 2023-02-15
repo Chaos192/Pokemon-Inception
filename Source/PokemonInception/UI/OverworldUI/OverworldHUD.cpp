@@ -305,6 +305,12 @@ void AOverworldHUD::ShowTrainerCard()
 	Clear();
 
 	if (PlayerOwner && TrainerCardWidget) {
+		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(PlayerOwner);
+
+		TrainerCardWidget->SetRegisteredSpecies(Controller->Pokedex.Num());
+		TrainerCardWidget->SetPokemonCaught(Controller->PokemonParty.Num() + Controller->PokemonStorage.Num());
+		TrainerCardWidget->SetMoneyObtained(Controller->Money);
+
 		TrainerCardWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
@@ -539,7 +545,9 @@ void AOverworldHUD::ShowForgetPopup(int MoveID)
 
 void AOverworldHUD::OnScreenMessage(FString Message)
 {
-	ClearOnScreenMessage();
+	if (OnScreenMessageWidget->IsInViewport()) {
+		ClearOnScreenMessage();
+	}
 
 	if (PlayerOwner && OnScreenMessageWidget) {
 		FTimerHandle ClearTimer;

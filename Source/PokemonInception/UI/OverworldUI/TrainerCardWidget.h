@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
 #include "../ButtonClick.h"
 #include "TrainerCardWidget.generated.h"
 
@@ -22,9 +23,23 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* Back;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UTextBlock* SpeciesRegistered;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UTextBlock* PokemonCaught;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UTextBlock* MoneyObtained;
+
 public:
 	virtual void NativeOnInitialized() override;
 
-	FButtonClicked BackClicked;
+	void SetRegisteredSpecies(int Num);
 
+	void SetPokemonCaught(int Num);
+
+	void SetMoneyObtained(int Num);
+
+	FButtonClicked BackClicked;
 };

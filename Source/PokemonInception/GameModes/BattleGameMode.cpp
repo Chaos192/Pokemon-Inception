@@ -743,14 +743,25 @@ void ABattleGameMode::SelectItem(int InId)
 	}
 
 	if (PlayerController->Inventory[InId].ItemStructType == "Ball") {
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Ball"));
-		SelectedItemID = InId;
-		BattleTurn(EAction::UsePokeball);
+		if (!PlayerController->bCanObtainMorePokemon()) {
+			FTimerHandle ShowTurnStartTimer;
+
+			Hud->ShowText("You can't catch more pokemon!");
+			GetWorldTimerManager().SetTimer(ShowTurnStartTimer, Hud, &ABattleHUD::ShowBattleStartWidget, 1.5, false);
+		}
+
+		else {
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Ball"));
+			SelectedItemID = InId;
+			BattleTurn(EAction::UsePokeball);
+		}
 	}
+
 	else {
 		if(PlayerController->Inventory[InId].ItemStructType == "Ether") {
 			bHasSelectedEther = true;
 		}
+
 		else {
 			bHasSelectedItem = true;
 		}

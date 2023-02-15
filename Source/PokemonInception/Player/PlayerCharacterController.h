@@ -62,11 +62,8 @@ public:
 	UFUNCTION()
 	void FullRestoreAllPokemon();
 
-	int GetMoney() const;
-
-	void RecieveMoney(int AddedMoney);
-
-	void LoseMoney(int LostMoney);
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	int Money;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<FItemBaseStruct> Inventory;
@@ -83,10 +80,6 @@ public:
 	FPauseSignature PauseDelegate;
 
 protected:
-	//to be made public
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	int money;
-
 	void Interact();
 
 	void TogglePause();

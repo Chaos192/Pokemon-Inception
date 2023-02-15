@@ -30,6 +30,11 @@ void APokemonPickup::Interact(APlayerController* Controller)
 		return;
 	}
 
+	if (PlayerController->bCanObtainMorePokemon() == false) {
+		Hud->OnScreenMessage("You can't obtain more pokemon!");
+		return;
+	}
+
 	FPokemonBaseStruct* PokemonSpecies = PokemonDatatable->FindRow<FPokemonBaseStruct>(PokemonID, "");
 	FPokemonStruct AddedPokemon;
 	AddedPokemon.Init(PokemonLevel, *PokemonSpecies);

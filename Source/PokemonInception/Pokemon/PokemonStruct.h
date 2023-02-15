@@ -97,7 +97,6 @@ struct FPokemonStruct
 				AddedMove = DataTable->FindRow<FMoveBaseStruct>(Move.Value, "");
 
 				if (AddedMove) {
-					GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("added a new move"));
 					AddedMove->CurrPowerPoints = AddedMove->PowerPoints;
 					if (Move.Key <= Level) {
 						AddedMove->bIsLocked = false;
@@ -119,7 +118,6 @@ struct FPokemonStruct
 			}
 
 			if (Moves[i].bIsLocked == false) {
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("added a new current move"));
 				CurrentMoves.Add(i);
 			}
 		}

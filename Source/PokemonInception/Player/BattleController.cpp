@@ -13,6 +13,15 @@ bool ABattleController::bIsPartyDefeated()
 	return true;
 }
 
+bool ABattleController::bCanObtainMorePokemon()
+{
+	if (PokemonParty.Num() + PokemonStorage.Num() == 100) {
+		return false;
+	}
+
+	return true;
+}
+
 int ABattleController::GetLeadPokemon()
 {
 	for (int i = 0; i < PokemonParty.Num(); i++) {

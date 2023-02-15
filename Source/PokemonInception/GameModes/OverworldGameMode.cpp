@@ -38,7 +38,7 @@ void AOverworldGameMode::BeginPlay()
 		SaveData = Cast<UWorldSaveData>(UGameplayStatics::LoadGameFromSlot("SaveSlot", 0));
 
 		PlayerController->Inventory = SaveData->InventoryData;
-		PlayerController->RecieveMoney(SaveData->MoneyData);
+		PlayerController->Money = SaveData->MoneyData;
 		PlayerController->PokemonParty = SaveData->PartyData;
 		PlayerController->PokemonStorage = SaveData->StorageData;
 		PlayerController->Pokedex = SaveData->PokedexData;
@@ -87,7 +87,7 @@ void AOverworldGameMode::SaveGame()
 
 	SaveData->InventoryData = PlayerController->Inventory;
 	SaveData->PokedexData = PlayerController->Pokedex;
-	SaveData->MoneyData = PlayerController->GetMoney();
+	SaveData->MoneyData = PlayerController->Money;
 	SaveData->GameMapData.PlayerLocation = PlayerOwner->GetActorLocation();
 	SaveData->GameMapData.PlayerRotation = PlayerOwner->GetActorRotation();
 	SaveData->PartyData = PlayerController->PokemonParty;
@@ -143,10 +143,7 @@ void AOverworldGameMode::SaveWildPokemon(AWildPokemon* PokemonToIgnore)
 		}
 	}
 
-	if (UGameplayStatics::SaveGameToSlot(SaveData, "PokemonSaveData", 0)) {
-		GEngine->AddOnScreenDebugMessage(2, 3, FColor::Green, "Save successful!");
-	}
-	
+	UGameplayStatics::SaveGameToSlot(SaveData, "PokemonSaveData", 0);
 }
 
 void AOverworldGameMode::LoadWildPokemon()
@@ -159,9 +156,6 @@ void AOverworldGameMode::LoadWildPokemon()
 		for (auto& Spawner : SaveData->PokemonSpawners) {
 			Spawner.Key->ManualGenerate(Spawner.Value);
 		}
-	}
-	else {
-		GEngine->AddOnScreenDebugMessage(1, 3, FColor::Red, "No wild pokemon save data exists!");
 	}
 }
 
@@ -383,7 +377,7 @@ void AOverworldGameMode::RefreshShop()
 		}
 
 
-		if (PlayerController->GetMoney() >= Item.Value)
+		if (PlayerController->Money >= Item.Value)
 		{
 			Slot->SetBuyState(true);
 		}
@@ -392,14 +386,14 @@ void AOverworldGameMode::RefreshShop()
 		}
 	}
 
-	ShopMessageDelegate.Broadcast("You currently have " + FString::FromInt(PlayerController->GetMoney()) + "$");
+	ShopMessageDelegate.Broadcast("You currently have " + FString::FromInt(PlayerController->Money) + "$");
 }
 
 void AOverworldGameMode::BuyItem(FItemBaseStruct Item)
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	PlayerController->ObtainItem(Item);
-	PlayerController->LoseMoney(Item.Value);
+	PlayerController->Money -= Item.Value;
 
 	RefreshShop();
 }
@@ -408,7 +402,7 @@ void AOverworldGameMode::SellItem(FItemBaseStruct Item)
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	PlayerController->LoseItem(Item);
-	PlayerController->RecieveMoney(Item.Value);
+	PlayerController->Money += Item.Value;
 
 	RefreshShop();
 }
