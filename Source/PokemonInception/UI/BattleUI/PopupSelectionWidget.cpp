@@ -24,3 +24,8 @@ void UPopupSelectionWidget::NativeOnInitialized()
 	Action->OnClicked.AddDynamic(this, &UPopupSelectionWidget::OnActionClicked);
 	Cancel->OnClicked.AddDynamic(this, &UPopupSelectionWidget::OnCancelClicked);
 }
+
+void UPopupSelectionWidget::SetActionText(FText Text)
+{
+	ActionText->SetText(Text);
+}

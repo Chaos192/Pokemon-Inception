@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
 #include "../ButtonClick.h"
 #include "PopupSelectionWidget.generated.h"
 
@@ -29,8 +30,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* Cancel;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UTextBlock* ActionText;
+
 public:
 	virtual void NativeOnInitialized() override;
+
+	void SetActionText(FText Text);
 
 	FElementIDSignature ActionClicked;
 	FButtonClicked CancelClicked;

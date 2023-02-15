@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "../BattleUI/PopupSelectionWidget.h"
-#include "Components/TextBlock.h"
 #include "StorageOperationPopup.generated.h"
 
 

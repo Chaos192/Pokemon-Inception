@@ -190,6 +190,40 @@ void APlayerCharacterController::ReleasePokemonFromStorage(int PokemonID)
 	Hud->ShowPokemonStorage();
 }
 
+void APlayerCharacterController::LearnMove(int MoveID)
+{
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(GetHUD());
+	if (!IsValid(Hud)) {
+		return;
+	}
+
+	if (PokemonParty[0].CurrentMoves.Num() == 4) {
+		Hud->ClearPopup();
+		Hud->OnScreenMessage("Your pokemon can't learn more moves!");
+		return;
+	}
+
+	PokemonParty[0].CurrentMoves.Add(MoveID);
+	Hud->ShowMoveManager(0);
+}
+
+void APlayerCharacterController::ForgetMove(int MoveID)
+{
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(GetHUD());
+	if (!IsValid(Hud)) {
+		return;
+	}
+
+	if (PokemonParty[0].CurrentMoves.Num() == 1) {
+		Hud->ClearPopup();
+		Hud->OnScreenMessage("Your pokemon must know at least one move!");
+		return;
+	}
+
+	PokemonParty[0].CurrentMoves.RemoveSingle(MoveID);
+	Hud->ShowMoveManager(0);
+}
+
 void APlayerCharacterController::RegisterToPokedex(FPokemonBaseStruct Species)
 {
 	Pokedex.Add(Species);

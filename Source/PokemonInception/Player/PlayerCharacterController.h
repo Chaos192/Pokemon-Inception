@@ -48,6 +48,12 @@ public:
 	void ReleasePokemonFromStorage(int PokemonID);
 
 	UFUNCTION()
+	void LearnMove(int MoveID);
+
+	UFUNCTION()
+	void ForgetMove(int MoveID);
+
+	UFUNCTION()
 	void RegisterToPokedex(FPokemonBaseStruct Species);
 
 	UFUNCTION()
@@ -77,6 +83,7 @@ public:
 	FPauseSignature PauseDelegate;
 
 protected:
+	//to be made public
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int money;
 

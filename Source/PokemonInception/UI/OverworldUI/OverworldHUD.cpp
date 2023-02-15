@@ -38,6 +38,7 @@ void AOverworldHUD::BeginPlay()
 	StorageOperationPopupWidget = CreateWidget<UStorageOperationPopup>(UGameplayStatics::GetGameInstance(GetWorld()), StorageOperationPopupClass);
 	MoveManagerWidget = CreateWidget<UMoveManagerWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveManagerWidgetClass);
 	MoveInfoWidget = CreateWidget<UMoveInfoWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveInfoWidgetClass);
+	MoveManagerOperationWidget = CreateWidget<UPopupSelectionWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveManagerOperationWidgetClass);
 
 	GameMode->ShopMessageDelegate.AddDynamic(ShopWidget, &UShopWidget::ShowText);
 	GameMode->ItemSlotDelegate.AddDynamic(BagWidget, &UBagWidget::AddToWrapBox);
@@ -72,6 +73,8 @@ void AOverworldHUD::BeginPlay()
 	MoveSelectionPopupWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ClearMovePopup);
 
 	StorageOperationPopupWidget->CancelClicked.AddDynamic(this, &AOverworldHUD::ClearPopup);
+
+	MoveManagerOperationWidget->CancelClicked.AddDynamic(this, &AOverworldHUD::ClearPopup);
 }
 
 void AOverworldHUD::ShowMenu()
@@ -405,6 +408,7 @@ void AOverworldHUD::ShowDepositPopup(int PokemonID)
 
 void AOverworldHUD::ShowMoveManager(int PokemonID)
 {
+	Clear();
 	MoveManagerWidget->Clear();
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (GameMode == nullptr) {
@@ -426,9 +430,11 @@ void AOverworldHUD::ShowMoveManager(int PokemonID)
 
 			if (Pokemon.CurrentMoves.Contains(i)) {
 				MoveManagerWidget->AddToCurrentMoves(MoveButton);
+				MoveButton->ButtonClicked.AddDynamic(this, &AOverworldHUD::ShowForgetPopup);
 			}
 			else {
 				MoveManagerWidget->AddToAvailableMoves(MoveButton);
+				MoveButton->ButtonClicked.AddDynamic(this, &AOverworldHUD::ShowLearnPopup);
 			}
 		}
 
@@ -441,6 +447,10 @@ void AOverworldHUD::ShowMoveManager(int PokemonID)
 
 void AOverworldHUD::ShowMoveInfo(int MoveID)
 {
+	if (MoveManagerOperationWidget->IsInViewport()) {
+		return;
+	}
+
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (GameMode == nullptr) {
 		return;
@@ -464,6 +474,62 @@ void AOverworldHUD::ShowMoveInfo(int MoveID)
 		}
 
 		MoveManagerWidget->ShowMoveInfo(MoveInfoWidget);
+	}
+}
+
+void AOverworldHUD::ShowLearnPopup(int MoveID)
+{
+	if (MoveManagerOperationWidget->IsInViewport()) {
+		return;
+	}
+
+	if (PlayerOwner && MoveManagerOperationWidget) {
+		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(PlayerOwner);
+
+		MoveManagerOperationWidget->ActionClicked.RemoveAll(Controller);
+
+		float MouseX;
+		float MouseY;
+
+		Controller->GetMousePosition(MouseX, MouseY);
+
+		MoveManagerOperationWidget->SetId(MoveID);
+		MoveManagerOperationWidget->SetActionText(FText::FromString("Learn"));
+
+		MoveManagerOperationWidget->ActionClicked.AddDynamic(Controller, &APlayerCharacterController::LearnMove);
+
+		MoveManagerOperationWidget->AddToViewport();
+		MoveManagerOperationWidget->SetPositionInViewport(FVector2D(MouseX, MouseY), false);
+		Controller->bShowMouseCursor = true;
+		Controller->SetInputMode(FInputModeUIOnly());
+	}
+}
+
+void AOverworldHUD::ShowForgetPopup(int MoveID)
+{
+	if (MoveManagerOperationWidget->IsInViewport()) {
+		return;
+	}
+
+	if (PlayerOwner && MoveManagerOperationWidget) {
+		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(PlayerOwner);
+
+		MoveManagerOperationWidget->ActionClicked.RemoveAll(Controller);
+
+		float MouseX;
+		float MouseY;
+
+		Controller->GetMousePosition(MouseX, MouseY);
+
+		MoveManagerOperationWidget->SetId(MoveID);
+		MoveManagerOperationWidget->SetActionText(FText::FromString("Forget"));
+
+		MoveManagerOperationWidget->ActionClicked.AddDynamic(Controller, &APlayerCharacterController::ForgetMove);
+
+		MoveManagerOperationWidget->AddToViewport();
+		MoveManagerOperationWidget->SetPositionInViewport(FVector2D(MouseX, MouseY), false);
+		Controller->bShowMouseCursor = true;
+		Controller->SetInputMode(FInputModeUIOnly());
 	}
 }
 
@@ -541,6 +607,7 @@ void AOverworldHUD::ClearPopup()
 	UseItemWidget->RemoveFromViewport();
 	SwapPositionWidget->RemoveFromViewport();
 	StorageOperationPopupWidget->RemoveFromViewport();
+	MoveManagerOperationWidget->RemoveFromViewport();
 }
 
 void AOverworldHUD::ClearMovePopup()

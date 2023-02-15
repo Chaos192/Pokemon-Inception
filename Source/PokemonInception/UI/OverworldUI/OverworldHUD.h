@@ -103,6 +103,9 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UMoveInfoWidget> MoveInfoWidgetClass;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPopupSelectionWidget> MoveManagerOperationWidgetClass;
+
 	UPROPERTY()
 	class UMenuWidget* MenuWidget;
 
@@ -156,6 +159,9 @@ protected:
 
 	UPROPERTY()
 	class UMoveInfoWidget* MoveInfoWidget;
+
+	UPROPERTY()
+	class UPopupSelectionWidget* MoveManagerOperationWidget;
 
 	virtual void BeginPlay()override;
 	
@@ -244,6 +250,12 @@ public:
 
 	UFUNCTION()
 	void ShowMoveInfo(int MoveID);
+
+	UFUNCTION()
+	void ShowLearnPopup(int MoveID);
+
+	UFUNCTION()
+	void ShowForgetPopup(int MoveID);
 
 	UFUNCTION()
 	void OnScreenMessage(FString Message);
