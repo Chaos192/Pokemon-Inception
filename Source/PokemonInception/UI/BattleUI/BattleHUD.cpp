@@ -373,6 +373,7 @@ void ABattleHUD::ShowBattleStartWidget()
 
 	GameMode->bHasSelectedEther = false;
 	GameMode->bHasSelectedItem = false;
+	GameMode->ResetCamera();
 
 	if (PlayerOwner && BattleStartWidget) {
 		BattleStartWidget->AddToViewport();

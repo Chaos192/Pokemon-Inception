@@ -12,4 +12,7 @@ class POKEMONINCEPTION_API ABattleCamera : public ACameraActor
 {
 	GENERATED_BODY()
 	
+public:
+	UPROPERTY(EditAnywhere)
+	FString Tag;
 };

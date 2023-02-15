@@ -43,10 +43,27 @@ void ABattleGameMode::BeginPlay()
 		SavedGameMapData = SaveData->GameMapData;
 	}
 
-	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), Camera, FoundActors);
-	PlayerController->SetViewTargetWithBlend(FoundActors[0], 0, EViewTargetBlendFunction::VTBlend_Linear);
+	TArray<AActor*> CamerasInLevel;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), Camera, CamerasInLevel);
 
+	for (AActor* Actor : CamerasInLevel) {
+		ABattleCamera* CameraActor = Cast<ABattleCamera>(Actor);
+
+		if (CameraActor->Tag == "Scene") {
+			SceneCamera = CameraActor;
+			continue;
+		}
+		if (CameraActor->Tag == "Player") {
+			PlayerCamera = CameraActor;
+			continue;
+		}
+		if (CameraActor->Tag == "Oponent") {
+			OponentCamera = CameraActor;
+			continue;
+		}
+	}
+
+	ResetCamera();
 	BattleStart();
 }
 
@@ -69,12 +86,14 @@ void ABattleGameMode::PlacePlayerPokemon(int PokemonId)
 
 	PlayerPokemonActor = GetWorld()->SpawnActor<AStaticOverworldPokemon>(PlayerController->PokemonParty[PokemonId].SpeciesData.PokemonActor, Position, Rotation, SpawnInfo);
 
+	PlayerController->SetViewTargetWithBlend(PlayerCamera, 0, EViewTargetBlendFunction::VTBlend_Linear);
 	Hud->ShowText("You sent out " + PlayerController->PokemonParty[PokemonId].SpeciesData.Name.ToString() + "!");
 }
 
 void ABattleGameMode::PlaceOpponentPokemon(int PokemonId)
 {
 	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
 	FRotator Rotation;
 	Rotation.Yaw = 180;
@@ -92,6 +111,7 @@ void ABattleGameMode::PlaceOpponentPokemon(int PokemonId)
 		OpponentMessage = "Trainer sent out " + OpponentTeam[PokemonId].SpeciesData.Name.ToString() + "!";
 	}
 
+	PlayerController->SetViewTargetWithBlend(OponentCamera, 0, EViewTargetBlendFunction::VTBlend_Linear);
 	Hud->ShowText(OpponentMessage);
 }
 
@@ -134,11 +154,13 @@ void ABattleGameMode::UseMove(int MoveId, FString AttackerContextString)
 	if (AttackerContextString == "Player") {
 		Attacker = PlayerController->PokemonParty[PlayerPokemonId];
 		Opponent = OpponentTeam[OpponentPokemonId];
+		PlayerController->SetViewTargetWithBlend(OponentCamera, 0, EViewTargetBlendFunction::VTBlend_Linear);
 	}
 
 	else if (AttackerContextString == "Opponent") {
 		Attacker = OpponentTeam[OpponentPokemonId];
 		Opponent = PlayerController->PokemonParty[PlayerPokemonId];
+		PlayerController->SetViewTargetWithBlend(PlayerCamera, 0, EViewTargetBlendFunction::VTBlend_Linear);
 	}
 
 	if (MoveId == -1) {
@@ -442,6 +464,7 @@ void ABattleGameMode::UseBall()
 
 	ThrownBallActor = GetWorld()->SpawnActor<ABallActor>(Ball->BallActor, Position, Rotation, SpawnInfo);
 
+	PlayerController->SetViewTargetWithBlend(OponentCamera, 0, EViewTargetBlendFunction::VTBlend_Linear);
 	FString BallMessage = "You threw a " + PlayerController->Inventory[SelectedItemID].Name.ToString() + "...";
 	Hud->ShowText(BallMessage);
 	CurrentAction++;
@@ -645,6 +668,8 @@ void ABattleGameMode::BattleEnd()
 
 	FTimerHandle ExitTimer;
 
+	ResetCamera();
+
 	if (bIsBattleVictory == true) {
 		int Money = 0;
 
@@ -680,6 +705,13 @@ void ABattleGameMode::BattleEnd()
 	}
 
 	GetWorldTimerManager().SetTimer(ExitTimer, this, &ABattleGameMode::ExitBattleMap, CurrentAction, false);
+}
+
+void ABattleGameMode::ResetCamera()
+{
+	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+	PlayerController->SetViewTargetWithBlend(SceneCamera, 0, EViewTargetBlendFunction::VTBlend_Linear);
 }
 
 FString ABattleGameMode::ETypeToString(ETypes Type)

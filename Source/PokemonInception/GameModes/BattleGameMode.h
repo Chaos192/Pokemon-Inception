@@ -109,6 +109,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ABattleCamera> Camera;
 
+	ABattleCamera* SceneCamera;
+	ABattleCamera* PlayerCamera;
+	ABattleCamera* OponentCamera;
+
 	UPROPERTY(EditDefaultsOnly)
 	class UDataTable* AttackMovesDT;
 
@@ -133,6 +137,9 @@ protected:
 public:
 	bool bHasSelectedItem;
 	bool bHasSelectedEther;
+
+	UFUNCTION()
+	void ResetCamera();
 
 	UFUNCTION()
 	FString ETypeToString(ETypes Type);
