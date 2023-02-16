@@ -1018,12 +1018,10 @@ void ABattleGameMode::ExitBattleMap()
 
 	UGameplayStatics::SaveGameToSlot(SaveData, "SaveSlot", 0);
 
-	ABattleHUD* Hud = Cast<ABattleHUD>(PlayerController->GetHUD());
+	PlayerController->SetInputMode(FInputModeGameOnly());
+	PlayerController->bShowMouseCursor = false;
 
 	UGameplayStatics::OpenLevel(GetWorld(), "TestingMap");
-
-	Hud->PlayerOwner->SetInputMode(FInputModeGameOnly());
-	Hud->PlayerOwner->bShowMouseCursor = false;
 }
 
 void ABattleGameMode::Run()

@@ -33,6 +33,7 @@ private:
 
 	bool bIsPaused = false;
 
+	UPROPERTY()
 	TArray<AActor*> ActorsToDestroy;
 
 	TArray<UItemShopSlotWidget*> ShopSlots;

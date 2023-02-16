@@ -51,15 +51,13 @@ void AOverworldGameMode::BeginPlay()
 			PlayerOwner->SetActorRotation(SaveData->GameMapData.PlayerRotation, ETeleportType::None);
 		}
 		
-		if (SaveData->GameMapData.ActorsToDestroy.Num() > 0) {
-			ActorsToDestroy = SaveData->GameMapData.ActorsToDestroy;
-		}
+		ActorsToDestroy = SaveData->GameMapData.ActorsToDestroy;
 
 		SaveData->OpponentData.Empty();
 
-		if (ActorsToDestroy.Num() > 0) {
-			for (AActor* Actor : ActorsToDestroy) {
-				//Actor->Destroy();
+		for (AActor* Actor : ActorsToDestroy) {
+			if (IsValid(Actor)) {
+				Actor->Destroy();
 			}
 		}
 	}
@@ -88,14 +86,12 @@ void AOverworldGameMode::SaveGame()
 	SaveData->InventoryData = PlayerController->Inventory;
 	SaveData->PokedexData = PlayerController->Pokedex;
 	SaveData->MoneyData = PlayerController->Money;
-	SaveData->GameMapData.PlayerLocation = PlayerOwner->GetActorLocation();
-	SaveData->GameMapData.PlayerRotation = PlayerOwner->GetActorRotation();
 	SaveData->PartyData = PlayerController->PokemonParty;
 	SaveData->StorageData = PlayerController->PokemonStorage;
-	
-	if (ActorsToDestroy.Num() > 0) {
-		SaveData->GameMapData.ActorsToDestroy = ActorsToDestroy;
-	}
+
+	SaveData->GameMapData.PlayerLocation = PlayerOwner->GetActorLocation();
+	SaveData->GameMapData.PlayerRotation = PlayerOwner->GetActorRotation();
+	SaveData->GameMapData.ActorsToDestroy = ActorsToDestroy;
 
 	UGameplayStatics::SaveGameToSlot(SaveData, "SaveSlot", 0);
 }
