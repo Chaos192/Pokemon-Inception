@@ -96,10 +96,10 @@ public:
 	void SaveOpponent(FPokemonStruct Opponent);
 
 	UFUNCTION()
-	void SaveWildPokemon(AWildPokemon* PokemonToIgnore);
+	void SaveLevelData(AWildPokemon* PokemonToIgnore);
 
 	UFUNCTION()
-	void LoadWildPokemon();
+	void LoadLevelData();
 
 	UFUNCTION()
 	void SaveAndExit();

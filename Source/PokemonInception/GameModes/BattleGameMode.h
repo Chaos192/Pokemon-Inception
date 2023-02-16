@@ -87,8 +87,6 @@ private:
 	UFUNCTION()
 	int SelectOpponentMove();
 
-	FGameMapData SavedGameMapData;
-
 protected:
 	virtual void BeginPlay() override;
 

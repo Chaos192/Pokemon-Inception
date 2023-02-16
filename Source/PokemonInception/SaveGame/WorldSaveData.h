@@ -9,30 +9,13 @@
 #include "../Pokemon/PokemonStruct.h"
 #include "WorldSaveData.generated.h"
 
-USTRUCT()
-struct FGameMapData
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditDefaultsOnly)
-	FVector PlayerLocation;
-
-	UPROPERTY(EditDefaultsOnly)
-	FRotator PlayerRotation;
-
-	UPROPERTY(EditDefaultsOnly)
-	TArray<AActor*> ActorsToDestroy;
-};
 
 UCLASS()
-class POKEMONINCEPTION_API UWorldSaveData : public USaveGame
+class POKEMONINCEPTION_API UPlayerSaveData : public USaveGame
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly)
-	FGameMapData GameMapData;
-
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FItemBaseStruct> InventoryData;
 

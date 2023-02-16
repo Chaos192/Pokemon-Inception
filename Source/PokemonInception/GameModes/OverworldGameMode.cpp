@@ -32,37 +32,21 @@ void AOverworldGameMode::BeginPlay()
 		return;
 	}
 
-	UWorldSaveData* SaveData = Cast<UWorldSaveData>(UGameplayStatics::CreateSaveGameObject(UWorldSaveData::StaticClass()));
+	UPlayerSaveData* SaveData = Cast<UPlayerSaveData>(UGameplayStatics::CreateSaveGameObject(UPlayerSaveData::StaticClass()));
 
-	if (UGameplayStatics::DoesSaveGameExist("SaveSlot", 0)) {
-		SaveData = Cast<UWorldSaveData>(UGameplayStatics::LoadGameFromSlot("SaveSlot", 0));
+	if (UGameplayStatics::DoesSaveGameExist("PlayerSaveSlot", 0)) {
+		SaveData = Cast<UPlayerSaveData>(UGameplayStatics::LoadGameFromSlot("PlayerSaveSlot", 0));
+
+		SaveData->OpponentData.Empty();
 
 		PlayerController->Inventory = SaveData->InventoryData;
 		PlayerController->Money = SaveData->MoneyData;
 		PlayerController->PokemonParty = SaveData->PartyData;
 		PlayerController->PokemonStorage = SaveData->StorageData;
 		PlayerController->Pokedex = SaveData->PokedexData;
-
-		if (PlayerController->bIsPartyDefeated() == true) {
-			PlayerController->FullRestoreAllPokemon();
-		}
-		else {
-			PlayerOwner->SetActorLocation(SaveData->GameMapData.PlayerLocation);
-			PlayerOwner->SetActorRotation(SaveData->GameMapData.PlayerRotation, ETeleportType::None);
-		}
-		
-		ActorsToDestroy = SaveData->GameMapData.ActorsToDestroy;
-
-		SaveData->OpponentData.Empty();
-
-		for (AActor* Actor : ActorsToDestroy) {
-			if (IsValid(Actor)) {
-				Actor->Destroy();
-			}
-		}
 	}
 	
-	LoadWildPokemon();
+	LoadLevelData();
 
 	PlayerController->PauseDelegate.AddDynamic(this, &AOverworldGameMode::TogglePause);
 
@@ -81,7 +65,7 @@ void AOverworldGameMode::SaveGame()
 		return;
 	}
 
-	UWorldSaveData* SaveData = Cast<UWorldSaveData>(UGameplayStatics::CreateSaveGameObject(UWorldSaveData::StaticClass()));
+	UPlayerSaveData* SaveData = Cast<UPlayerSaveData>(UGameplayStatics::CreateSaveGameObject(UPlayerSaveData::StaticClass()));
 
 	SaveData->InventoryData = PlayerController->Inventory;
 	SaveData->PokedexData = PlayerController->Pokedex;
@@ -89,11 +73,7 @@ void AOverworldGameMode::SaveGame()
 	SaveData->PartyData = PlayerController->PokemonParty;
 	SaveData->StorageData = PlayerController->PokemonStorage;
 
-	SaveData->GameMapData.PlayerLocation = PlayerOwner->GetActorLocation();
-	SaveData->GameMapData.PlayerRotation = PlayerOwner->GetActorRotation();
-	SaveData->GameMapData.ActorsToDestroy = ActorsToDestroy;
-
-	UGameplayStatics::SaveGameToSlot(SaveData, "SaveSlot", 0);
+	UGameplayStatics::SaveGameToSlot(SaveData, "PlayerSaveSlot", 0);
 }
 
 void AOverworldGameMode::MarkActorAsDestroyed(AActor* Actor)
@@ -103,22 +83,36 @@ void AOverworldGameMode::MarkActorAsDestroyed(AActor* Actor)
 
 void AOverworldGameMode::SaveOpponent(FPokemonStruct Opponent)
 {
-	UWorldSaveData* SaveData = Cast<UWorldSaveData>(UGameplayStatics::CreateSaveGameObject(UWorldSaveData::StaticClass()));
+	UPlayerSaveData* SaveData = Cast<UPlayerSaveData>(UGameplayStatics::CreateSaveGameObject(UPlayerSaveData::StaticClass()));
 
-	if (UGameplayStatics::DoesSaveGameExist("SaveSlot", 0)) {
-		SaveData = Cast<UWorldSaveData>(UGameplayStatics::LoadGameFromSlot("SaveSlot", 0));
+	if (UGameplayStatics::DoesSaveGameExist("PlayerSaveSlot", 0)) {
+		SaveData = Cast<UPlayerSaveData>(UGameplayStatics::LoadGameFromSlot("PlayerSaveSlot", 0));
 
 		SaveData->OpponentData.Add(Opponent);
 	}
 
-	UGameplayStatics::SaveGameToSlot(SaveData, "SaveSlot", 0);
+	UGameplayStatics::SaveGameToSlot(SaveData, "PlayerSaveSlot", 0);
 }
 
-void AOverworldGameMode::SaveWildPokemon(AWildPokemon* PokemonToIgnore)
+void AOverworldGameMode::SaveLevelData(AWildPokemon* PokemonToIgnore)
 {
-	UWildPokemonSaveData* SaveData = Cast<UWildPokemonSaveData>(UGameplayStatics::CreateSaveGameObject(UWildPokemonSaveData::StaticClass()));
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (PlayerController == nullptr) {
+		return;
+	}
+
+	APokemonInceptionCharacter* PlayerOwner = Cast<APokemonInceptionCharacter>(PlayerController->GetPawn());
+	if (PlayerOwner == nullptr) {
+		return;
+	}
+
+	ULevelSaveData* SaveData = Cast<ULevelSaveData>(UGameplayStatics::CreateSaveGameObject(ULevelSaveData::StaticClass()));
 
 	SaveData->PokemonSpawners.Empty();
+
+	SaveData->PlayerLocation = PlayerOwner->GetActorLocation();
+	SaveData->PlayerRotation = PlayerOwner->GetActorRotation();
+	SaveData->ActorsToDestroy = ActorsToDestroy;
 
 	TArray<AActor*> Spawners;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), SpawnerClass, Spawners);
@@ -139,15 +133,41 @@ void AOverworldGameMode::SaveWildPokemon(AWildPokemon* PokemonToIgnore)
 		}
 	}
 
-	UGameplayStatics::SaveGameToSlot(SaveData, "PokemonSaveData", 0);
+	UGameplayStatics::SaveGameToSlot(SaveData, "WorldSaveSlot", 0);
 }
 
-void AOverworldGameMode::LoadWildPokemon()
+void AOverworldGameMode::LoadLevelData()
 {
-	UWildPokemonSaveData* SaveData = Cast<UWildPokemonSaveData>(UGameplayStatics::CreateSaveGameObject(UWildPokemonSaveData::StaticClass()));
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (PlayerController == nullptr) {
+		return;
+	}
 
-	if (UGameplayStatics::DoesSaveGameExist("PokemonSaveData", 0)) {
-		SaveData = Cast<UWildPokemonSaveData>(UGameplayStatics::LoadGameFromSlot("PokemonSaveData", 0));
+	APokemonInceptionCharacter* PlayerOwner = Cast<APokemonInceptionCharacter>(PlayerController->GetPawn());
+	if (PlayerOwner == nullptr) {
+		return;
+	}
+
+	ULevelSaveData* SaveData = Cast<ULevelSaveData>(UGameplayStatics::CreateSaveGameObject(ULevelSaveData::StaticClass()));
+
+	if (UGameplayStatics::DoesSaveGameExist("WorldSaveSlot", 0)) {
+		SaveData = Cast<ULevelSaveData>(UGameplayStatics::LoadGameFromSlot("WorldSaveSlot", 0));
+
+		if (PlayerController->bIsPartyDefeated() == true) {
+			PlayerController->FullRestoreAllPokemon();
+		}
+		else {
+			PlayerOwner->SetActorLocation(SaveData->PlayerLocation);
+			PlayerOwner->SetActorRotation(SaveData->PlayerRotation, ETeleportType::None);
+		}
+
+		ActorsToDestroy = SaveData->ActorsToDestroy;
+
+		for (AActor* Actor : ActorsToDestroy) {
+			if (IsValid(Actor)) {
+				Actor->Destroy();
+			}
+		}
 
 		for (auto& Spawner : SaveData->PokemonSpawners) {
 			Spawner.Key->ManualGenerate(Spawner.Value);
@@ -163,7 +183,7 @@ void AOverworldGameMode::SaveAndExit()
 	}
 
 	SaveGame();
-	SaveWildPokemon(nullptr);
+	SaveLevelData(nullptr);
 	PlayerController->ConsoleCommand("quit");
 }
 

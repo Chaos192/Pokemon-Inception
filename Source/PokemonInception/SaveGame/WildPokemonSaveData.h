@@ -30,7 +30,7 @@ struct FWildPokemonData
 };
 
 UCLASS()
-class POKEMONINCEPTION_API UWildPokemonSaveData : public USaveGame
+class POKEMONINCEPTION_API ULevelSaveData : public USaveGame
 {
 	GENERATED_BODY()
 
@@ -38,4 +38,12 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TMap<class AWildPokemonSpawner*, FWildPokemonData> PokemonSpawners;
 	
+	UPROPERTY(EditDefaultsOnly)
+	FVector PlayerLocation;
+
+	UPROPERTY(EditDefaultsOnly)
+	FRotator PlayerRotation;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<AActor*> ActorsToDestroy;
 };

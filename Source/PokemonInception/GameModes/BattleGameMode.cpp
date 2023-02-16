@@ -28,10 +28,10 @@ void ABattleGameMode::BeginPlay()
 		return;
 	}
 
-	UWorldSaveData* SaveData = Cast<UWorldSaveData>(UGameplayStatics::CreateSaveGameObject(UWorldSaveData::StaticClass()));
+	UPlayerSaveData* SaveData = Cast<UPlayerSaveData>(UGameplayStatics::CreateSaveGameObject(UPlayerSaveData::StaticClass()));
 
-	if (UGameplayStatics::DoesSaveGameExist("SaveSlot", 0)) {
-		SaveData = Cast<UWorldSaveData>(UGameplayStatics::LoadGameFromSlot("SaveSlot", 0));
+	if (UGameplayStatics::DoesSaveGameExist("PlayerSaveSlot", 0)) {
+		SaveData = Cast<UPlayerSaveData>(UGameplayStatics::LoadGameFromSlot("PlayerSaveSlot", 0));
 
 		PlayerController->Inventory = SaveData->InventoryData;
 		PlayerController->Pokedex = SaveData->PokedexData;
@@ -39,8 +39,6 @@ void ABattleGameMode::BeginPlay()
 		PlayerController->PokemonParty = SaveData->PartyData;
 		PlayerController->PokemonStorage = SaveData->StorageData;
 		OpponentTeam = SaveData->OpponentData;
-
-		SavedGameMapData = SaveData->GameMapData;
 	}
 
 	TArray<AActor*> CamerasInLevel;
@@ -1006,7 +1004,7 @@ void ABattleGameMode::ExitBattleMap()
 		PlayerController->PokemonParty[i].ClearEffects();
 	}
 
-	UWorldSaveData* SaveData = Cast<UWorldSaveData>(UGameplayStatics::CreateSaveGameObject(UWorldSaveData::StaticClass()));
+	UPlayerSaveData* SaveData = Cast<UPlayerSaveData>(UGameplayStatics::CreateSaveGameObject(UPlayerSaveData::StaticClass()));
 
 	SaveData->InventoryData = PlayerController->Inventory;
 	SaveData->PokedexData = PlayerController->Pokedex;
@@ -1014,9 +1012,7 @@ void ABattleGameMode::ExitBattleMap()
 	SaveData->PartyData = PlayerController->PokemonParty;
 	SaveData->StorageData = PlayerController->PokemonStorage;
 
-	SaveData->GameMapData = SavedGameMapData;
-
-	UGameplayStatics::SaveGameToSlot(SaveData, "SaveSlot", 0);
+	UGameplayStatics::SaveGameToSlot(SaveData, "PlayerSaveSlot", 0);
 
 	PlayerController->SetInputMode(FInputModeGameOnly());
 	PlayerController->bShowMouseCursor = false;
