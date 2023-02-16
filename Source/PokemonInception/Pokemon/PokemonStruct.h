@@ -90,6 +90,7 @@ struct FPokemonStruct
 
 	void InitMoves(TArray<UDataTable*> MoveTables) {
 		int LastLearnedMoveID = -1;
+
 		for (auto& Move : SpeciesData.MovePool) {
 			FMoveBaseStruct* AddedMove = nullptr;
 
@@ -97,13 +98,13 @@ struct FPokemonStruct
 				AddedMove = DataTable->FindRow<FMoveBaseStruct>(Move.Value, "");
 
 				if (AddedMove) {
-					AddedMove->CurrPowerPoints = AddedMove->PowerPoints;
+					
 					if (Move.Key <= Level) {
 						AddedMove->bIsLocked = false;
+						LastLearnedMoveID++;
 					}
 
 					Moves.Add(*AddedMove);
-					LastLearnedMoveID++;
 				}
 			}
 		}
