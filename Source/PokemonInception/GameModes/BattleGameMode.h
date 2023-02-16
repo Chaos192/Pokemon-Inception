@@ -31,7 +31,8 @@ class POKEMONINCEPTION_API ABattleGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 private:
-	int CurrentAction = 0;
+	float CurrentAction = 0;
+
 	bool bHasBattleEnded = false;
 	bool bIsBattleVictory = false;
 	bool bDoesPlayerHaveToSwitch = false;
@@ -63,7 +64,7 @@ private:
 	void UseMove(int MoveId, FString AttackerContextString);
 
 	UFUNCTION()
-	void MoveOutcome(FString MoveMessage);
+	void MoveOutcome(FString MoveMessage, FString CameraContextString);
 
 	UFUNCTION()
 	void UseItem();
@@ -111,7 +112,7 @@ protected:
 
 	ABattleCamera* SceneCamera;
 	ABattleCamera* PlayerCamera;
-	ABattleCamera* OponentCamera;
+	ABattleCamera* OpponentCamera;
 
 	UPROPERTY(EditDefaultsOnly)
 	class UDataTable* AttackMovesDT;
@@ -140,6 +141,12 @@ public:
 
 	UFUNCTION()
 	void ResetCamera();
+
+	UFUNCTION()
+	void SwitchToPlayerCamera();
+
+	UFUNCTION()
+	void SwitchToOpponentCamera();
 
 	UFUNCTION()
 	FString ETypeToString(ETypes Type);
