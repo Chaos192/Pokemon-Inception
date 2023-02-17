@@ -177,14 +177,9 @@ void AOverworldGameMode::LoadLevelData()
 
 void AOverworldGameMode::SaveAndExit()
 {
-	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	if (PlayerController == nullptr) {
-		return;
-	}
-
 	SaveGame();
 	SaveLevelData(nullptr);
-	PlayerController->ConsoleCommand("quit");
+	UGameplayStatics::OpenLevel(GetWorld(), "TitleMap");
 }
 
 void AOverworldGameMode::SelectMove(int InId)
