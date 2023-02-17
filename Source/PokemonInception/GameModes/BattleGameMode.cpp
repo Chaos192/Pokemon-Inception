@@ -150,6 +150,8 @@ void ABattleGameMode::UseMove(int MoveId, FString AttackerContextString)
 	FPokemonStruct Attacker;
 	FPokemonStruct Opponent;
 
+	bool bIsStruggling = false;
+
 	if (AttackerContextString == "Player") {
 		Attacker = PlayerController->PokemonParty[PlayerPokemonId];
 		Opponent = OpponentTeam[OpponentPokemonId];
@@ -160,29 +162,24 @@ void ABattleGameMode::UseMove(int MoveId, FString AttackerContextString)
 		Opponent = PlayerController->PokemonParty[PlayerPokemonId];
 	}
 
+	FMoveBaseStruct* Move;
 	if (MoveId == -1) {
-		int Damage = (((100 + Attacker.Attack + 15 * Attacker.Level) * 50) / (Opponent.Defence + 50)) / 5;
-
-		if (AttackerContextString == "Player") {
-			OpponentTeam[OpponentPokemonId].RecieveDamage(Damage);
-			PlayerController->PokemonParty[PlayerPokemonId].RecieveDamage(Attacker.MaxHP/4);
-		}
-
-		else if (AttackerContextString == "Opponent") {
-			PlayerController->PokemonParty[PlayerPokemonId].RecieveDamage(Damage);
-			OpponentTeam[OpponentPokemonId].RecieveDamage(Attacker.MaxHP / 4);
-		}
-
-		MoveMessage = Attacker.SpeciesData.Name.ToString() + " used Struggle and dealt " + FString::FromInt(Damage) + " damage, but injured itself in the process!";
-		Hud->ShowText(MoveMessage);
-		Hud->ShowOpponentPokemonStatus();
-		Hud->ShowPlayerPokemonStatus();
-
-		return;
+		 Move = AttackMovesDT->FindRow<FAttackMoveStruct>(FName(*FString("Struggle")), "");
+	}
+	else {
+		Move = &Attacker.Moves[MoveId];
 	}
 
-	if (Attacker.Moves[MoveId].MoveStructType == "Attack") {
-		FAttackMoveStruct* AttackMove = AttackMovesDT->FindRow<FAttackMoveStruct>(Attacker.Moves[MoveId].MoveID, "");
+	if (Move->MoveStructType == "Attack") {
+		FAttackMoveStruct* AttackMove;
+		
+		if (MoveId != -1) {
+			AttackMove = AttackMovesDT->FindRow<FAttackMoveStruct>(Attacker.Moves[MoveId].MoveID, "");
+		}
+		else {
+			AttackMove = AttackMovesDT->FindRow<FAttackMoveStruct>(FName(*FString("Struggle")), "");
+			bIsStruggling = true;
+		}
 
 		//Base damage
 		int Damage = (((100 + Attacker.Attack + 15 * Attacker.Level) * AttackMove->BaseDamage) / (Opponent.Defence + 50)) / 5;
@@ -223,47 +220,68 @@ void ABattleGameMode::UseMove(int MoveId, FString AttackerContextString)
 		}
 
 		//Move effectiveness 
-		FTypeStruct* MovetTypeStruct = TypesDT->FindRow<FTypeStruct>(FName(ETypeToString(AttackMove->MoveType)), "");
-		
-		if (MovetTypeStruct->SuperEffectiveAgainst.Contains(Opponent.SpeciesData.Type1)) {
-			Damage *= 2;
-		}
-		else if (MovetTypeStruct->NotVeryEffectiveAgainst.Contains(Opponent.SpeciesData.Type1)) {
-			Damage *= 0.5;
-		}
-		else if (MovetTypeStruct->NoEffectAgainst.Contains(Opponent.SpeciesData.Type1)) {
-			Damage *= 0;
-		}
+		if (MoveId != -1) {
+			FTypeStruct* MovetTypeStruct = TypesDT->FindRow<FTypeStruct>(FName(ETypeToString(AttackMove->MoveType)), "");
 
-		if (Opponent.SpeciesData.Type2 != ETypes::None) {
-			if(MovetTypeStruct->SuperEffectiveAgainst.Contains(Opponent.SpeciesData.Type2)) {
+			if (MovetTypeStruct->SuperEffectiveAgainst.Contains(Opponent.SpeciesData.Type1)) {
 				Damage *= 2;
 			}
-			else if (MovetTypeStruct->NotVeryEffectiveAgainst.Contains(Opponent.SpeciesData.Type2)) {
+			else if (MovetTypeStruct->NotVeryEffectiveAgainst.Contains(Opponent.SpeciesData.Type1)) {
 				Damage *= 0.5;
 			}
-			else if (MovetTypeStruct->NoEffectAgainst.Contains(Opponent.SpeciesData.Type2)) {
+			else if (MovetTypeStruct->NoEffectAgainst.Contains(Opponent.SpeciesData.Type1)) {
 				Damage *= 0;
+			}
+
+			if (Opponent.SpeciesData.Type2 != ETypes::None) {
+				if (MovetTypeStruct->SuperEffectiveAgainst.Contains(Opponent.SpeciesData.Type2)) {
+					Damage *= 2;
+				}
+				else if (MovetTypeStruct->NotVeryEffectiveAgainst.Contains(Opponent.SpeciesData.Type2)) {
+					Damage *= 0.5;
+				}
+				else if (MovetTypeStruct->NoEffectAgainst.Contains(Opponent.SpeciesData.Type2)) {
+					Damage *= 0;
+				}
 			}
 		}
 
 		if (AttackerContextString == "Player") {
 			OpponentTeam[OpponentPokemonId].RecieveDamage(Damage);
-			PlayerController->PokemonParty[PlayerPokemonId].Moves[MoveId].CurrPowerPoints--;
+			
+			if (MoveId == -1) {
+				PlayerController->PokemonParty[PlayerPokemonId].RecieveDamage(PlayerController->PokemonParty[PlayerPokemonId].MaxHP/4);
+			}
+			else {
+				PlayerController->PokemonParty[PlayerPokemonId].Moves[MoveId].CurrPowerPoints--;
+			}
+
 			CameraContext = "Opponent";
 		}
 
 		else if (AttackerContextString == "Opponent") {
 			PlayerController->PokemonParty[PlayerPokemonId].RecieveDamage(Damage);
-			OpponentTeam[OpponentPokemonId].Moves[MoveId].CurrPowerPoints--;
+
+			if (MoveId == -1) {
+				OpponentTeam[OpponentPokemonId].RecieveDamage(OpponentTeam[OpponentPokemonId].MaxHP/4);
+			}
+			else {
+				OpponentTeam[OpponentPokemonId].Moves[MoveId].CurrPowerPoints--;
+			}
+			
 			CameraContext = "Player";
 		}
 
-		MoveMessage = Attacker.SpeciesData.Name.ToString() + " used " + AttackMove->Name.ToString() + " and dealt " + FString::FromInt(Damage) + " damage!";
+		if (bIsStruggling) {
+			MoveMessage = Attacker.SpeciesData.Name.ToString() + " used Struggle and dealt " + FString::FromInt(Damage) + " damage, but also hurt itself badly!";
+		}
+		else {
+			MoveMessage = Attacker.SpeciesData.Name.ToString() + " used " + AttackMove->Name.ToString() + " and dealt " + FString::FromInt(Damage) + " damage!";
+		}
 	}
 
 	
-	if (Attacker.Moves[MoveId].MoveStructType == "Status") {
+	if (Move->MoveStructType == "Status") {
 		FStatusMoveStruct* StatusMove = StatusMovesDT->FindRow<FStatusMoveStruct>(Attacker.Moves[MoveId].MoveID, "");
 
 		MoveMessage = Attacker.SpeciesData.Name.ToString() + " used " + StatusMove->Name.ToString() + ", but it failed!";
@@ -330,14 +348,14 @@ void ABattleGameMode::UseMove(int MoveId, FString AttackerContextString)
 				break;
 			}
 
-			//OpponentTeam[OpponentPokemonId].Moves[MoveId].CurrPowerPoints--;
+			OpponentTeam[OpponentPokemonId].Moves[MoveId].CurrPowerPoints--;
 		}
 	}
 
 	if (AttackerContextString == "Opponent") {
 		MoveMessage = "Opponent " + MoveMessage;
 	}
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Current Action: " + FString::FromInt(CurrentAction)));
+	
 	MoveOutcome(MoveMessage, CameraContext);
 }
 
@@ -708,7 +726,7 @@ void ABattleGameMode::BattleEnd()
 		int Money = 0;
 
 		for (FPokemonStruct Pokemon : OpponentTeam) {
-			Money += Pokemon.Level * 100;
+			Money += Pokemon.Level * 50;
 		}
 
 		if ((PlayerController->Money + Money) > 1000000) {

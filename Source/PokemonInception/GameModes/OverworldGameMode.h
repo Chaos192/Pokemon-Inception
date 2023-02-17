@@ -105,6 +105,9 @@ public:
 	void SaveAndExit();
 
 	UFUNCTION()
+	void InitiateBattle(bool bIsOpponentTrainer);
+
+	UFUNCTION()
 	void MarkActorAsDestroyed(AActor* Actor);
 
 	UFUNCTION()

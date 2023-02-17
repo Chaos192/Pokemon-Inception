@@ -182,6 +182,19 @@ void AOverworldGameMode::SaveAndExit()
 	UGameplayStatics::OpenLevel(GetWorld(), "TitleMap");
 }
 
+void AOverworldGameMode::InitiateBattle(bool bIsOpponentTrainer)
+{
+	UPlayerSaveData* SaveData = Cast<UPlayerSaveData>(UGameplayStatics::CreateSaveGameObject(UPlayerSaveData::StaticClass()));
+
+	if (UGameplayStatics::DoesSaveGameExist("PlayerSaveSlot", 0)) {
+		SaveData = Cast<UPlayerSaveData>(UGameplayStatics::LoadGameFromSlot("PlayerSaveSlot", 0));
+
+		SaveData->bIsOpponentTrainer = bIsOpponentTrainer;
+	}
+
+	UGameplayStatics::SaveGameToSlot(SaveData, "PlayerSaveSlot", 0);
+}
+
 void AOverworldGameMode::SelectMove(int InId)
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));

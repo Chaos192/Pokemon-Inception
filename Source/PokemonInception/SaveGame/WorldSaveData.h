@@ -29,6 +29,9 @@ public:
 	TArray<FPokemonStruct> OpponentData;
 
 	UPROPERTY(EditDefaultsOnly)
+	bool bIsOpponentTrainer;
+
+	UPROPERTY(EditDefaultsOnly)
 	TArray<FPokemonStruct> PartyData;
 
 	UPROPERTY(EditDefaultsOnly)
