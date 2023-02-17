@@ -5,9 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "Engine/DataTable.h"
-#include "../UI/OverworldUI/ShopWidget.h"
-#include "../UI/OverworldUI/ItemShopSlotWidget.h"
-#include "../UI/OverworldUI/ItemInfoWidget.h"
+#include "../UI/MenuUI/ShopWidget.h"
+#include "../UI/ItemUI/ItemShopSlotWidget.h"
+#include "../UI/ItemUI/ItemInfoWidget.h"
 #include "../UI/WidgetDelegates.h"
 #include "OverworldGameMode.generated.h"
 

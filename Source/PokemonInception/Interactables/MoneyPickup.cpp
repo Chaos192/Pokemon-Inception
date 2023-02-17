@@ -5,7 +5,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "../Player/PlayerCharacterController.h"
 #include "../GameModes/OverworldGameMode.h"
-#include "../UI/OverworldUI/OverworldHUD.h"
+#include "../UI/HUD/OverworldHUD.h"
 
 AMoneyPickup::AMoneyPickup()
 {

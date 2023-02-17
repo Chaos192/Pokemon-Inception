@@ -8,7 +8,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include "../Player/PokemonInceptionCharacter.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
-#include "BB_Keys.h"
+#include "BlackBoard/BB_Keys.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
 #include "GameFramework/Character.h"
 #include "Perception/AIPerceptionComponent.h"

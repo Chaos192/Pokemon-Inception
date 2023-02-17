@@ -7,7 +7,7 @@
 #include "../GameModes/OverworldGameMode.h"
 #include "PokemonInceptionCharacter.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "../UI/OverworldUI/OverworldHUD.h"
+#include "../UI/HUD/OverworldHUD.h"
 
 void APlayerCharacterController::Interact()
 {

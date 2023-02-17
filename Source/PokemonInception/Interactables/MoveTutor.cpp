@@ -5,7 +5,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "../GameModes/OverworldGameMode.h"
-#include "../UI/OverworldUI/OverworldHUD.h"
+#include "../UI/HUD/OverworldHUD.h"
 
 AMoveTutor::AMoveTutor()
 {

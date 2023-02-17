@@ -11,7 +11,7 @@
 #include "Perception/AISense_Sight.h"
 #include "../Interactables/Interactable.h"
 #include "PlayerCharacterController.h"
-#include "../UI/OverworldUI/OverworldHUD.h"
+#include "../UI/HUD/OverworldHUD.h"
 
 //////////////////////////////////////////////////////////////////////////
 // APokemonInceptionCharacter

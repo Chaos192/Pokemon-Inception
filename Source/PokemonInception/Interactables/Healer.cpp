@@ -6,7 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "../Player/PlayerCharacterController.h"
 #include "../GameModes/OverworldGameMode.h"
-#include "../UI/OverworldUI/OverworldHUD.h"
+#include "../UI/HUD/OverworldHUD.h"
 
 AHealer::AHealer()
 {

@@ -4,7 +4,7 @@
 #include "Interactable.h"
 #include "../Player/PokemonInceptionCharacter.h"
 #include "Kismet/GameplayStatics.h"
-#include "../UI/OverworldUI/OverworldHUD.h"
+#include "../UI/HUD/OverworldHUD.h"
 
 
 AInteractable::AInteractable()

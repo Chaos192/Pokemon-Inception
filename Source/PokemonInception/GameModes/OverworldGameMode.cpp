@@ -7,7 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "../Player/PokemonInceptionCharacter.h"
 #include "../Player/PlayerCharacterController.h"
-#include "../UI/OverworldUI/OverworldHUD.h"
+#include "../UI/HUD/OverworldHUD.h"
 #include "../Items/ExpCandyBaseStruct.h"
 #include "../Items/EtherBaseStruct.h"
 #include "../Items/PotionBaseStruct.h"
