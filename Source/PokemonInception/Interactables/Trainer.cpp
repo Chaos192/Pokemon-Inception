@@ -6,7 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "../Player/PlayerCharacterController.h"
 #include "../GameModes/OverworldGameMode.h"
-#include "../UI/HUD/OverworldHUD.h"
+
 
 ATrainer::ATrainer()
 {
@@ -18,13 +18,23 @@ ATrainer::ATrainer()
 
 void ATrainer::Interact(APlayerController* Controller)
 {
-	AOverworldHUD* Hud = Cast<AOverworldHUD>(Controller->GetHUD());
-	if (Hud == nullptr) {
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
+	if (GameMode == nullptr) {
 		return;
 	}
 
-	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Controller);
+	TArray<FPokemonStruct> TrainerTeam;
 
-	PlayerController->FullRestoreAllPokemon();
-	Hud->OnScreenMessage("Your Pokemon were fully healed!");
+	for (int i = 0; i < PokemonIDs.Num(); i++) {
+		FPokemonBaseStruct* PokemonSpecies = GameMode->PokemonDT->FindRow<FPokemonBaseStruct>(PokemonIDs[i], "");
+		FPokemonStruct AddedPokemon;
+		AddedPokemon.Init(PokemonLevels[i], *PokemonSpecies);
+		AddedPokemon.InitMoves(GameMode->GetMoveDT());
+
+		TrainerTeam.Add(AddedPokemon);
+	}
+
+	GameMode->SaveGame();
+	GameMode->SaveLevelData(nullptr);
+	GameMode->SaveOpponent(TrainerTeam, true);
 }

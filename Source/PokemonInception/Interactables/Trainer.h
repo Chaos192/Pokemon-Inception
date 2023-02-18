@@ -12,10 +12,6 @@ UCLASS()
 class POKEMONINCEPTION_API ATrainer : public AInteractable
 {
 	GENERATED_BODY()
-
-protected:
-	UPROPERTY()
-	TArray<FPokemonStruct> PokemonTeam;
 	
 public:
 	ATrainer();
@@ -34,4 +30,5 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TArray<int> PokemonLevels;
+
 };

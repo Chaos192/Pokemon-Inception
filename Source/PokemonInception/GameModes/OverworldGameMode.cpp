@@ -81,17 +81,20 @@ void AOverworldGameMode::MarkActorAsDestroyed(AActor* Actor)
 	ActorsToDestroy.Add(Actor);
 }
 
-void AOverworldGameMode::SaveOpponent(FPokemonStruct Opponent)
+void AOverworldGameMode::SaveOpponent(TArray<FPokemonStruct> OpponentTeam, bool bIsOpponentTrainer)
 {
 	UPlayerSaveData* SaveData = Cast<UPlayerSaveData>(UGameplayStatics::CreateSaveGameObject(UPlayerSaveData::StaticClass()));
 
 	if (UGameplayStatics::DoesSaveGameExist("PlayerSaveSlot", 0)) {
 		SaveData = Cast<UPlayerSaveData>(UGameplayStatics::LoadGameFromSlot("PlayerSaveSlot", 0));
 
-		SaveData->OpponentData.Add(Opponent);
+		SaveData->OpponentData = OpponentTeam;
+		SaveData->bIsOpponentTrainer = bIsOpponentTrainer;
 	}
 
 	UGameplayStatics::SaveGameToSlot(SaveData, "PlayerSaveSlot", 0);
+
+	UGameplayStatics::OpenLevel(GetWorld(), FName("BattleMap"));
 }
 
 void AOverworldGameMode::SaveLevelData(AWildPokemon* PokemonToIgnore)
@@ -180,19 +183,6 @@ void AOverworldGameMode::SaveAndExit()
 	SaveGame();
 	SaveLevelData(nullptr);
 	UGameplayStatics::OpenLevel(GetWorld(), "TitleMap");
-}
-
-void AOverworldGameMode::InitiateBattle(bool bIsOpponentTrainer)
-{
-	UPlayerSaveData* SaveData = Cast<UPlayerSaveData>(UGameplayStatics::CreateSaveGameObject(UPlayerSaveData::StaticClass()));
-
-	if (UGameplayStatics::DoesSaveGameExist("PlayerSaveSlot", 0)) {
-		SaveData = Cast<UPlayerSaveData>(UGameplayStatics::LoadGameFromSlot("PlayerSaveSlot", 0));
-
-		SaveData->bIsOpponentTrainer = bIsOpponentTrainer;
-	}
-
-	UGameplayStatics::SaveGameToSlot(SaveData, "PlayerSaveSlot", 0);
 }
 
 void AOverworldGameMode::SelectMove(int InId)

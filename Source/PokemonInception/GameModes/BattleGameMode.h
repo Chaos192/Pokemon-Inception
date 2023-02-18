@@ -12,6 +12,7 @@
 #include "../UI/ItemUI/ItemInfoWidget.h"
 #include "../UI/WidgetDelegates.h"
 #include "../Items/BallActor.h"
+#include "../Interactables/Trainer.h"
 #include "BattleGameMode.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageSignature, FString, String);
@@ -32,6 +33,12 @@ class POKEMONINCEPTION_API ABattleGameMode : public AGameModeBase
 
 private:
 	float CurrentAction = 0;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ATrainer> TrainerClass;
+	ATrainer* TrainerActor = nullptr;
+
+	bool bIsOpponentTrainer;
 
 	bool bHasBattleEnded = false;
 	bool bIsBattleVictory = false;

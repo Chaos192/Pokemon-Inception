@@ -39,6 +39,7 @@ void ABattleGameMode::BeginPlay()
 		PlayerController->PokemonParty = SaveData->PartyData;
 		PlayerController->PokemonStorage = SaveData->StorageData;
 		OpponentTeam = SaveData->OpponentData;
+		bIsOpponentTrainer = SaveData->bIsOpponentTrainer;
 	}
 
 	TArray<AActor*> CamerasInLevel;
@@ -61,6 +62,14 @@ void ABattleGameMode::BeginPlay()
 		}
 	}
 
+	if (bIsOpponentTrainer) {
+		FRotator Rotation;
+		Rotation.Yaw = 180;
+		FVector Position = FVector(-350, 770, 115);
+
+		TrainerActor = GetWorld()->SpawnActor<ATrainer>(TrainerClass, Position, Rotation);
+	}
+
 	ResetCamera();
 	BattleStart();
 }
@@ -79,10 +88,9 @@ void ABattleGameMode::PlacePlayerPokemon(int PokemonId)
 	}
 
 	FRotator Rotation;
-	FActorSpawnParameters SpawnInfo;
 	FVector Position = FVector(-350, -270, 115);
 
-	PlayerPokemonActor = GetWorld()->SpawnActor<AStaticOverworldPokemon>(PlayerController->PokemonParty[PokemonId].SpeciesData.PokemonActor, Position, Rotation, SpawnInfo);
+	PlayerPokemonActor = GetWorld()->SpawnActor<AStaticOverworldPokemon>(PlayerController->PokemonParty[PokemonId].SpeciesData.PokemonActor, Position, Rotation);
 
 	PlayerController->SetViewTargetWithBlend(PlayerCamera, 0, EViewTargetBlendFunction::VTBlend_Linear);
 	Hud->ShowText("You sent out " + PlayerController->PokemonParty[PokemonId].SpeciesData.Name.ToString() + "!");
@@ -95,18 +103,17 @@ void ABattleGameMode::PlaceOpponentPokemon(int PokemonId)
 
 	FRotator Rotation;
 	Rotation.Yaw = 180;
-	FActorSpawnParameters SpawnInfo;
 	FVector Position = FVector(-350, 440, 115);
 
-	OpponentPokemonActor = GetWorld()->SpawnActor<AStaticOverworldPokemon>(OpponentTeam[PokemonId].SpeciesData.PokemonActor, Position, Rotation, SpawnInfo);
+	OpponentPokemonActor = GetWorld()->SpawnActor<AStaticOverworldPokemon>(OpponentTeam[PokemonId].SpeciesData.PokemonActor, Position, Rotation);
 
 	FString OpponentMessage;
 
-	if (OpponentTeam.Num() == 1) {
-		OpponentMessage = "A wild " + OpponentTeam[PokemonId].SpeciesData.Name.ToString() + " appeared!";
+	if (bIsOpponentTrainer) {
+		OpponentMessage = "Trainer sent out " + OpponentTeam[PokemonId].SpeciesData.Name.ToString() + "!";
 	}
 	else {
-		OpponentMessage = "Trainer sent out " + OpponentTeam[PokemonId].SpeciesData.Name.ToString() + "!";
+		OpponentMessage = "A wild " + OpponentTeam[PokemonId].SpeciesData.Name.ToString() + " appeared!";
 	}
 
 	SwitchToOpponentCamera();
@@ -578,12 +585,21 @@ void ABattleGameMode::OpponentFaints()
 
 	int Exp = OpponentTeam[OpponentPokemonId].Level * OpponentTeam[OpponentPokemonId].SpeciesData.BaseExp / 7;
 
-	if (PlayerController->PokemonParty[PlayerPokemonId].GainExp(Exp) == true) {
-		PlayerController->PokemonParty[PlayerPokemonId].CheckForNewMoves();
+	if (bIsOpponentTrainer) {
+		Exp *= 1.5;
 	}
 
-	Hud->ShowText("The opponent " + OpponentTeam[OpponentPokemonId].SpeciesData.Name.ToString() + " was defeated, " +
-		PlayerController->PokemonParty[PlayerPokemonId].SpeciesData.Name.ToString() + " recieved " + FString::FromInt(Exp) + " Exp!");
+	FString DefeatMessage = "The opponent " + OpponentTeam[OpponentPokemonId].SpeciesData.Name.ToString() + " was defeated! ";
+
+	if(!PlayerController->PokemonParty[PlayerPokemonId].bIsFainted){
+		if (PlayerController->PokemonParty[PlayerPokemonId].GainExp(Exp) == true) {
+			PlayerController->PokemonParty[PlayerPokemonId].CheckForNewMoves();
+		}
+
+		DefeatMessage += PlayerController->PokemonParty[PlayerPokemonId].SpeciesData.Name.ToString() + " recieved " + FString::FromInt(Exp) + " Exp!";
+	}
+
+	Hud->ShowText(DefeatMessage);
 
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("OpponentFaints"));
 }
@@ -847,7 +863,12 @@ void ABattleGameMode::SelectItem(int InId)
 			Hud->ShowText("You can't catch more pokemon!");
 			GetWorldTimerManager().SetTimer(ShowTurnStartTimer, Hud, &ABattleHUD::ShowBattleStartWidget, 1.5, false);
 		}
+		else if (bIsOpponentTrainer) {
+			FTimerHandle ShowTurnStartTimer;
 
+			Hud->ShowText("You can't catch other people's pokemon!");
+			GetWorldTimerManager().SetTimer(ShowTurnStartTimer, Hud, &ABattleHUD::ShowBattleStartWidget, 1.5, false);
+		}
 		else {
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Ball"));
 			SelectedItemID = InId;
@@ -1042,9 +1063,15 @@ void ABattleGameMode::Run()
 {
 	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 
-	FTimerHandle ExitTimer;
+	FTimerHandle RunTimer;
 
-	Hud->ShowText("Got away safely...");
-	GetWorldTimerManager().SetTimer(ExitTimer, this, &ABattleGameMode::ExitBattleMap, 2, false);
+	if (bIsOpponentTrainer) {
+		Hud->ShowText("You can't run away from a trainer battle!");
+		GetWorldTimerManager().SetTimer(RunTimer, Hud, &ABattleHUD::ShowBattleStartWidget, 2, false);
+	}
+	else {
+		Hud->ShowText("Got away safely...");
+		GetWorldTimerManager().SetTimer(RunTimer, this, &ABattleGameMode::ExitBattleMap, 2, false);
+	}
 }
 

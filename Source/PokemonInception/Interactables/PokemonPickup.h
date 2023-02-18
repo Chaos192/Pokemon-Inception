@@ -23,9 +23,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* Mesh = nullptr;
 
-	UPROPERTY(EditDefaultsOnly)
-	class UDataTable* PokemonDatatable;
-
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int PokemonLevel;

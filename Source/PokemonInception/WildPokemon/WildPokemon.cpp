@@ -54,10 +54,12 @@ void AWildPokemon::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 
 	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(OtherActor);
 	if (IsValid(Player)) {
+		TArray<FPokemonStruct> Opponent;
+		Opponent.Add(Pokemon);
+
 		GameMode->SaveGame();
-		GameMode->SaveOpponent(Pokemon);
 		GameMode->SaveLevelData(this);
-		UGameplayStatics::OpenLevel(GetWorld(), FName("BattleMap"));
+		GameMode->SaveOpponent(Opponent, false);
 	}
 }
 

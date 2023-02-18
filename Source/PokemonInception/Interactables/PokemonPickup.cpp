@@ -35,7 +35,7 @@ void APokemonPickup::Interact(APlayerController* Controller)
 		return;
 	}
 
-	FPokemonBaseStruct* PokemonSpecies = PokemonDatatable->FindRow<FPokemonBaseStruct>(PokemonID, "");
+	FPokemonBaseStruct* PokemonSpecies = GameMode->PokemonDT->FindRow<FPokemonBaseStruct>(PokemonID, "");
 	FPokemonStruct AddedPokemon;
 	AddedPokemon.Init(PokemonLevel, *PokemonSpecies);
 	AddedPokemon.InitMoves(GameMode->GetMoveDT());
