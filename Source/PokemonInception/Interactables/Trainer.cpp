@@ -36,5 +36,5 @@ void ATrainer::Interact(APlayerController* Controller)
 
 	GameMode->SaveGame();
 	GameMode->SaveLevelData(nullptr);
-	GameMode->SaveOpponent(TrainerTeam, true);
+	GameMode->InitiateBattle(TrainerTeam, true);
 }

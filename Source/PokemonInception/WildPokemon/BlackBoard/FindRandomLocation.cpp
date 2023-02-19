@@ -15,15 +15,16 @@ UFindRandomLocation::UFindRandomLocation(FObjectInitializer const& object_initia
 
 EBTNodeResult::Type UFindRandomLocation::ExecuteTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemory)
 {
-	auto const cont = Cast<AWildPokemon_AIController>(ownerComp.GetAIOwner());
-	auto const npc = cont->GetPawn();
+	auto const Controller = Cast<AWildPokemon_AIController>(ownerComp.GetAIOwner());
+	auto const NPC = Controller->GetPawn();
 
-	FVector const origin = npc->GetActorLocation();
-	FNavLocation loc;
+	FVector const Origin = NPC->GetActorLocation();
+	FNavLocation Location;
 
-	UNavigationSystemV1* const nav_sys = UNavigationSystemV1::GetCurrent(GetWorld());
-	if (nav_sys->GetRandomPointInNavigableRadius(origin, SearchRadius, loc, nullptr)) {
-		cont->getBlackboard()->SetValueAsVector(bb_keys::targetLocation, loc.Location);
+	UNavigationSystemV1* const NavigationSystem = UNavigationSystemV1::GetCurrent(GetWorld());
+
+	if (NavigationSystem->GetRandomPointInNavigableRadius(Origin, SearchRadius, Location, nullptr)) {
+		Controller->getBlackboard()->SetValueAsVector(bb_keys::targetLocation, Location.Location);
 	}
 
 	FinishLatentTask(ownerComp, EBTNodeResult::Succeeded);

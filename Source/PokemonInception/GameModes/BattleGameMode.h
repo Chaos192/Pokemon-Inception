@@ -32,7 +32,7 @@ class POKEMONINCEPTION_API ABattleGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 private:
-	float CurrentAction = 0;
+	float CurrentBattleTime = 0;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ATrainer> TrainerClass;
@@ -58,10 +58,10 @@ private:
 	ABallActor* ThrownBallActor = nullptr;
 
 	UFUNCTION()
-	void PlacePlayerPokemon(int PokemonId);
+	void PlacePlayerPokemon();
 
 	UFUNCTION()
-	void PlaceOpponentPokemon(int PokemonId);
+	void PlaceOpponentPokemon();
 
 	int SelectedMoveID;
 	int SelectedPokemonID;

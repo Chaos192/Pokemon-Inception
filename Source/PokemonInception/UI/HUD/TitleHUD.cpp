@@ -18,20 +18,20 @@ void ATitleHUD::BeginPlay()
 	PlayerController->bShowMouseCursor = true;
 
 	TitleWidget = CreateWidget<UTitleWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TitleWidgetClass);
-	ControllsWidget = CreateWidget<UControllsWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ControllsWidgetClass);
+	ControlsWidget = CreateWidget<UControlsWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ControlsWidgetClass);
 
 	TitleWidget->PlayClicked.AddDynamic(GameMode, &ATitleGameMode::StartGame);
 	TitleWidget->ControllsClicked.AddDynamic(this, &ATitleHUD::ShowControlls);
 	TitleWidget->QuitClicked.AddDynamic(GameMode, &ATitleGameMode::QuitGame);
 
-	ControllsWidget->BackClicked.AddDynamic(this, &ATitleHUD::ShowTitle);
+	ControlsWidget->BackClicked.AddDynamic(this, &ATitleHUD::ShowTitle);
 
 	ShowTitle();
 }
 
 void ATitleHUD::ShowTitle()
 {
-	ControllsWidget->RemoveFromViewport();
+	ControlsWidget->RemoveFromViewport();
 
 	if (PlayerOwner && TitleWidget) {
 		TitleWidget->AddToViewport();
@@ -42,7 +42,7 @@ void ATitleHUD::ShowControlls()
 {
 	TitleWidget->RemoveFromViewport();
 
-	if (PlayerOwner && ControllsWidget) {
-		ControllsWidget->AddToViewport();
+	if (PlayerOwner && ControlsWidget) {
+		ControlsWidget->AddToViewport();
 	}
 }

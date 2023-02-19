@@ -20,7 +20,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
-	class UAIPerceptionStimuliSourceComponent* stimulus;
+	class UAIPerceptionStimuliSourceComponent* Stimulus;
 
 	void SetupStimulus();
 

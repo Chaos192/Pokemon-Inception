@@ -3,13 +3,13 @@
 
 #include "ControllsWidget.h"
 
-void UControllsWidget::OnBackClicked()
+void UControlsWidget::OnBackClicked()
 {
 	BackClicked.Broadcast();
 }
 
-void UControllsWidget::NativeOnInitialized()
+void UControlsWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-	Back->OnClicked.AddDynamic(this, &UControllsWidget::OnBackClicked);
+	Back->OnClicked.AddDynamic(this, &UControlsWidget::OnBackClicked);
 }

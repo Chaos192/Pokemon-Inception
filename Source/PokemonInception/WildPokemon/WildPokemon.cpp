@@ -15,7 +15,7 @@ AWildPokemon::AWildPokemon()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AWildPokemon::OnBeginOverlap);
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AWildPokemon::Collide);
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
@@ -45,21 +45,23 @@ void AWildPokemon::InitPokemon(UDataTable* PokemonDatatable, int Level, TArray<U
 	Pokemon.InitMoves(MoveTables);
 }
 
-void AWildPokemon::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AWildPokemon::Collide(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
 	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(OtherActor);
-	if (IsValid(Player)) {
-		TArray<FPokemonStruct> Opponent;
-		Opponent.Add(Pokemon);
-
-		GameMode->SaveGame();
-		GameMode->SaveLevelData(this);
-		GameMode->SaveOpponent(Opponent, false);
+	if (!IsValid(Player)) {
+		return;
 	}
+
+	TArray<FPokemonStruct> Opponent;
+	Opponent.Add(Pokemon);
+
+	GameMode->SaveGame();
+	GameMode->SaveLevelData(this);
+	GameMode->InitiateBattle(Opponent, false);
 }
 

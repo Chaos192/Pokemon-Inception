@@ -22,8 +22,9 @@ AWildPokemon_AIController::AWildPokemon_AIController(FObjectInitializer const& O
 	if (obj.Succeeded()) {
 		BTree = obj.Object;
 	}
-	BTree_component = ObjectInitializer.CreateDefaultSubobject<UBehaviorTreeComponent>(this, TEXT("BTComp"));
-	blackboard = CreateDefaultSubobject<UBlackboardComponent>(TEXT("Blackboard"));
+
+	BTreeComponent = ObjectInitializer.CreateDefaultSubobject<UBehaviorTreeComponent>(this, TEXT("BTComp"));
+	BlackBoard = CreateDefaultSubobject<UBlackboardComponent>(TEXT("Blackboard"));
 	SetupPerception();
 }
 
@@ -31,43 +32,43 @@ void AWildPokemon_AIController::BeginPlay()
 {
 	Super::BeginPlay();
 	RunBehaviorTree(BTree);
-	BTree_component->StartTree(*BTree);
+	BTreeComponent->StartTree(*BTree);
 }
 
 void AWildPokemon_AIController::OnPossess(APawn* const pawn)
 {
 	Super::OnPossess(pawn);
-	if (blackboard) {
-		blackboard->InitializeBlackboard(*BTree->BlackboardAsset);
+	if (Blackboard) {
+		Blackboard->InitializeBlackboard(*BTree->BlackboardAsset);
 	}
 }
 
 UBlackboardComponent* AWildPokemon_AIController::getBlackboard() const
 {
-	return blackboard;
+	return BlackBoard;
 }
 
 void AWildPokemon_AIController::PlayerDetected(AActor* actor, FAIStimulus const stimulus)
 {
-	if (APokemonInceptionCharacter* const character = Cast<APokemonInceptionCharacter>(actor)) {
+	if (APokemonInceptionCharacter* const Player = Cast<APokemonInceptionCharacter>(actor)) {
 		getBlackboard()->SetValueAsBool(bb_keys::CanSeePlayer, stimulus.WasSuccessfullySensed());
 	}
 }
 
 void AWildPokemon_AIController::SetupPerception()
 {
-	sight = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
+	Sight = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
 	SetPerceptionComponent(*CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("Perception Component")));
-	sight->SightRadius = 500.0f;
-	sight->LoseSightRadius = sight->SightRadius + 50.0f;
-	sight->PeripheralVisionAngleDegrees = 135.0f;
-	sight->SetMaxAge(5.0f);
-	sight->AutoSuccessRangeFromLastSeenLocation = 10.0f;
-	sight->DetectionByAffiliation.bDetectEnemies = true;
-	sight->DetectionByAffiliation.bDetectFriendlies = true;
-	sight->DetectionByAffiliation.bDetectNeutrals = true;
+	Sight->SightRadius = 500.0f;
+	Sight->LoseSightRadius = Sight->SightRadius + 50.0f;
+	Sight->PeripheralVisionAngleDegrees = 135.0f;
+	Sight->SetMaxAge(5.0f);
+	Sight->AutoSuccessRangeFromLastSeenLocation = 10.0f;
+	Sight->DetectionByAffiliation.bDetectEnemies = true;
+	Sight->DetectionByAffiliation.bDetectFriendlies = true;
+	Sight->DetectionByAffiliation.bDetectNeutrals = true;
 
-	GetPerceptionComponent()->SetDominantSense(*sight->GetSenseImplementation());
+	GetPerceptionComponent()->SetDominantSense(*Sight->GetSenseImplementation());
 	GetPerceptionComponent()->OnTargetPerceptionUpdated.AddDynamic(this, &AWildPokemon_AIController::PlayerDetected);
-	GetPerceptionComponent()->ConfigureSense(*sight);
+	GetPerceptionComponent()->ConfigureSense(*Sight);
 }

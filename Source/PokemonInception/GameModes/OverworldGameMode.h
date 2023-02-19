@@ -93,7 +93,7 @@ public:
 	void SaveGame();
 
 	UFUNCTION()
-	void SaveOpponent(TArray<FPokemonStruct> OpponentTeam, bool bIsOpponentTrainer);
+	void InitiateBattle(TArray<FPokemonStruct> OpponentTeam, bool bIsOpponentTrainer);
 
 	UFUNCTION()
 	void SaveLevelData(AWildPokemon* PokemonToIgnore);

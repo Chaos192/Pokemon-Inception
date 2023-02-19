@@ -92,19 +92,20 @@ struct FPokemonStruct
 		int LastLearnedMoveID = -1;
 
 		for (auto& Move : SpeciesData.MovePool) {
-			FMoveBaseStruct* AddedMove = nullptr;
+			FMoveBaseStruct* MoveRef = nullptr;
 
 			for (UDataTable* DataTable : MoveTables) {
-				AddedMove = DataTable->FindRow<FMoveBaseStruct>(Move.Value, "");
+				MoveRef = DataTable->FindRow<FMoveBaseStruct>(Move.Value, "");
 
-				if (AddedMove) {
-					
+				if (MoveRef) {
+					FMoveBaseStruct AddedMove = *MoveRef;
+
 					if (Move.Key <= Level) {
-						AddedMove->bIsLocked = false;
+						AddedMove.bIsLocked = false;
 						LastLearnedMoveID++;
 					}
 
-					Moves.Add(*AddedMove);
+					Moves.Add(AddedMove);
 				}
 			}
 		}
@@ -267,6 +268,16 @@ struct FPokemonStruct
 	bool AddEffect(EEffect Effect) {
 		if (Effects.Contains(Effect) == true) {
 			return false;
+		}
+
+		if (Effect == EEffect::RestoreHP) {
+			if (!bIsFullHp()) {
+				RestoreHP(MaxHP / 2);
+				return true;
+			}
+			else {
+				return false;
+			}
 		}
 
 		if (Effects.Contains(EEffect::AttackDown) && Effect == EEffect::AttackUp) {

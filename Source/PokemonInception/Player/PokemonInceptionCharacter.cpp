@@ -18,9 +18,9 @@
 
 void APokemonInceptionCharacter::SetupStimulus()
 {
-	stimulus = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("Stimulus"));
-	stimulus->RegisterForSense(TSubclassOf<UAISense_Sight>());
-	stimulus->RegisterWithPerceptionSystem();
+	Stimulus = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("Stimulus"));
+	Stimulus->RegisterForSense(TSubclassOf<UAISense_Sight>());
+	Stimulus->RegisterWithPerceptionSystem();
 }
 
 APokemonInceptionCharacter::APokemonInceptionCharacter()

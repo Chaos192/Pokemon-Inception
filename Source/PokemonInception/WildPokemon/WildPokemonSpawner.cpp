@@ -22,17 +22,17 @@ void AWildPokemonSpawner::Tick(float DeltaTime)
 void AWildPokemonSpawner::Generate()
 {
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	if (PlayerController == nullptr) {
+	if (!IsValid(PlayerController)) {
 		return;
 	}
 
 	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(PlayerController->GetPawn());
-	if (Player == nullptr) {
+	if (!IsValid(Player)) {
 		return;
 	}
 
@@ -40,17 +40,17 @@ void AWildPokemonSpawner::Generate()
 		return;
 	}
 
-	if (FVector::Dist(GetActorLocation(), Player->GetActorLocation()) > 1500 || FVector::Dist(GetActorLocation(), Player->GetActorLocation()) < 750) {
+	if (FVector::Dist(GetActorLocation(), Player->GetActorLocation()) > 1500 || FVector::Dist(GetActorLocation(), Player->GetActorLocation()) < 1000) {
 		return;
 	}
 
-	int index = (FMath::RandHelper(PokemonToSpawn.Num()));
+	int Index = (FMath::RandHelper(PokemonToSpawn.Num()));
 	int SpawnLevel = (FMath::RandRange(MinLevel, MaxLevel));
 
 	FRotator Rotation;
 	Rotation.Yaw = (FMath::RandRange(0, 360));
 
-	SpawnedPokemon = GetWorld()->SpawnActor<AWildPokemon>(PokemonToSpawn[index], GetActorLocation(), Rotation);
+	SpawnedPokemon = GetWorld()->SpawnActor<AWildPokemon>(PokemonToSpawn[Index], GetActorLocation(), Rotation);
 	SpawnedPokemon->InitPokemon(GameMode->PokemonDT, SpawnLevel, GameMode->GetMoveDT());
 }
 

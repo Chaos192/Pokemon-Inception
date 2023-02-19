@@ -15,10 +15,10 @@ UChasePlayer::UChasePlayer()
 
 EBTNodeResult::Type UChasePlayer::ExecuteTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemory)
 {
-	AWildPokemon_AIController* cont = Cast<AWildPokemon_AIController>(ownerComp.GetAIOwner());
-	FVector const PlayerLocation = cont->getBlackboard()->GetValueAsVector(bb_keys::targetLocation);
+	AWildPokemon_AIController* Controller = Cast<AWildPokemon_AIController>(ownerComp.GetAIOwner());
+	FVector const PlayerLocation = Controller->getBlackboard()->GetValueAsVector(bb_keys::targetLocation);
 
-	UAIBlueprintHelperLibrary::SimpleMoveToLocation(cont, PlayerLocation);
+	UAIBlueprintHelperLibrary::SimpleMoveToLocation(Controller, PlayerLocation);
 
 	FinishLatentTask(ownerComp, EBTNodeResult::Succeeded);
 	return EBTNodeResult::Succeeded;

@@ -10,7 +10,7 @@
 
 
 UCLASS()
-class POKEMONINCEPTION_API UControllsWidget : public UUserWidget
+class POKEMONINCEPTION_API UControlsWidget : public UUserWidget
 {
 	GENERATED_BODY()
 

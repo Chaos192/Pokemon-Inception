@@ -23,17 +23,17 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	class UBehaviorTreeComponent* BTree_component;
+	class UBehaviorTreeComponent* BTreeComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	class UBehaviorTree* BTree;
 
-	class UBlackboardComponent* blackboard;
+	class UBlackboardComponent* BlackBoard;
 
-	class UAISenseConfig_Sight* sight;
+	class UAISenseConfig_Sight* Sight;
 
 	UFUNCTION()
-	void PlayerDetected(AActor* actor, FAIStimulus const stimulus);
+	void PlayerDetected(AActor* Actor, FAIStimulus const Stimulus);
 
 	void SetupPerception();
 	

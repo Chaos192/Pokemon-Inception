@@ -17,15 +17,16 @@ UFindPlayerLocation::UFindPlayerLocation()
 
 EBTNodeResult::Type UFindPlayerLocation::ExecuteTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemory)
 {
-	AWildPokemon_AIController* cont = Cast<AWildPokemon_AIController>(ownerComp.GetAIOwner());
-	ACharacter* const player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	AWildPokemon_AIController* Controller = Cast<AWildPokemon_AIController>(ownerComp.GetAIOwner());
+	ACharacter* const Player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 
-	FVector const PlayerLocation = player->GetActorLocation();
-	FNavLocation location;
+	FVector const PlayerLocation = Player->GetActorLocation();
+	FNavLocation Location;
 
-	UNavigationSystemV1* navSys = UNavigationSystemV1::GetCurrent(GetWorld());
-	if (navSys->GetRandomPointInNavigableRadius(PlayerLocation, SearchRadius, location, nullptr)) {
-		cont->getBlackboard()->SetValueAsVector(bb_keys::targetLocation, location.Location);
+	UNavigationSystemV1* NavigationSystem = UNavigationSystemV1::GetCurrent(GetWorld());
+
+	if (NavigationSystem->GetRandomPointInNavigableRadius(PlayerLocation, SearchRadius, Location, nullptr)) {
+		Controller->getBlackboard()->SetValueAsVector(bb_keys::targetLocation, Location.Location);
 	}
 
 	FinishLatentTask(ownerComp, EBTNodeResult::Succeeded);

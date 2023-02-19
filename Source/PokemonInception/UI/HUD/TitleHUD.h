@@ -19,13 +19,13 @@ protected:
 	TSubclassOf<UTitleWidget> TitleWidgetClass;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UControllsWidget> ControllsWidgetClass;
+	TSubclassOf<UControlsWidget> ControlsWidgetClass;
 
 	UPROPERTY()
 	class UTitleWidget* TitleWidget;
 
 	UPROPERTY()
-	class UControllsWidget* ControllsWidget;
+	class UControlsWidget* ControlsWidget;
 
 	virtual void BeginPlay()override;
 

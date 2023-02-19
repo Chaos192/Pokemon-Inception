@@ -81,7 +81,7 @@ void AOverworldGameMode::MarkActorAsDestroyed(AActor* Actor)
 	ActorsToDestroy.Add(Actor);
 }
 
-void AOverworldGameMode::SaveOpponent(TArray<FPokemonStruct> OpponentTeam, bool bIsOpponentTrainer)
+void AOverworldGameMode::InitiateBattle(TArray<FPokemonStruct> OpponentTeam, bool bIsOpponentTrainer)
 {
 	UPlayerSaveData* SaveData = Cast<UPlayerSaveData>(UGameplayStatics::CreateSaveGameObject(UPlayerSaveData::StaticClass()));
 
