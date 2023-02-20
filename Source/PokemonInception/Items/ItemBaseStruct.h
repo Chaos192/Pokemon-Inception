@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
-#include "../Interactables/ItemPickup.h"
+//#include "../Interactables/ItemPickup.h"
 #include "ItemBaseStruct.generated.h"
 
 

@@ -11,20 +11,20 @@
 
 void APlayerCharacterController::Interact()
 {
-	APokemonInceptionCharacter* PlayerOwner = Cast<APokemonInceptionCharacter>(GetPawn());
+	APokemonInceptionCharacter* PlayerPawn = Cast<APokemonInceptionCharacter>(GetPawn());
 	
 	FHitResult HitResult;
 
 	TArray<AActor*> ActorsToIgnore;
-	ActorsToIgnore.Add(PlayerOwner);
+	ActorsToIgnore.Add(PlayerPawn);
 
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Destructible));
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
 
-	FVector BoxHalfSize = FVector(50, 50, 100);
-	FRotator PlayerFaceDirection = PlayerOwner->GetActorRotation();
-	FVector BoxLocation = PlayerOwner->GetActorLocation();
+	FVector BoxHalfSize = FVector(75, 75, 100);
+	FRotator PlayerFaceDirection = PlayerPawn->GetActorRotation();
+	FVector BoxLocation = PlayerPawn->GetActorLocation();
 
 	BoxLocation += PlayerFaceDirection.Vector() * BoxHalfSize.Y;
 
@@ -39,7 +39,7 @@ void APlayerCharacterController::Interact()
 	}
 	
 	AInteractable* CurrentInteractable = Cast<AInteractable>(HitResult.GetActor());
-	if (CurrentInteractable != nullptr) {
+	if (IsValid(CurrentInteractable)) {
 		CurrentInteractable->Interact(this);
 	}
 }
@@ -123,7 +123,6 @@ void APlayerCharacterController::MovePokemonToParty(int PokemonID)
 
 	if (bIsPartyFull()) {
 		Hud->ClearPopup();
-		Hud->ClearOnScreenMessage();
 		Hud->OnScreenMessage("Can't add more pokemon to your party!");
 		return;
 	}
@@ -145,7 +144,6 @@ void APlayerCharacterController::MovePokemonToStorage(int PokemonID)
 
 	if (!bCanRemoveFromParty(PokemonID)) {
 		Hud->ClearPopup();
-		Hud->ClearOnScreenMessage();
 		Hud->OnScreenMessage("You need at least one healthy pokemon!");
 		return;
 	}
@@ -167,7 +165,6 @@ void APlayerCharacterController::ReleasePokemonFromParty(int PokemonID)
 
 	if (!bCanRemoveFromParty(PokemonID)) {
 		Hud->ClearPopup();
-		Hud->ClearOnScreenMessage();
 		Hud->OnScreenMessage("You need at least one healthy pokemon!");
 		return;
 	}
@@ -202,7 +199,6 @@ void APlayerCharacterController::LearnMove(int MoveID)
 
 	if (PokemonParty[0].CurrentMoves.Num() == 4) {
 		Hud->ClearPopup();
-		Hud->ClearOnScreenMessage();
 		Hud->OnScreenMessage("Your pokemon can't learn more moves!");
 		return;
 	}
@@ -220,7 +216,6 @@ void APlayerCharacterController::ForgetMove(int MoveID)
 
 	if (PokemonParty[0].CurrentMoves.Num() == 1) {
 		Hud->ClearPopup();
-		Hud->ClearOnScreenMessage();
 		Hud->OnScreenMessage("Your pokemon must know at least one move!");
 		return;
 	}

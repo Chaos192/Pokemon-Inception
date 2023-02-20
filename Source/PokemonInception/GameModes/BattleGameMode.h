@@ -12,7 +12,7 @@
 #include "../UI/ItemUI/ItemInfoWidget.h"
 #include "../UI/WidgetDelegates.h"
 #include "../Items/BallActor.h"
-#include "../Interactables/Trainer.h"
+#include "../Interactables/NPC/Trainer.h"
 #include "BattleGameMode.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageSignature, FString, String);

@@ -598,7 +598,6 @@ void AOverworldHUD::TogglePause(bool IsPaused)
 		PlayerOwner->SetInputMode(FInputModeGameOnly());
 		PlayerOwner->bShowMouseCursor = false;
 	}
-	
 }
 
 void AOverworldHUD::Clear()

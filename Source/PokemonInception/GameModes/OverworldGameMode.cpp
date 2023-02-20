@@ -331,10 +331,10 @@ void AOverworldGameMode::FillBagWidget()
 void AOverworldGameMode::InitShop(TArray<FName> ItemsToSell)
 {
 	ShopSlots.Empty();
+
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
 	TArray<FItemBaseStruct> Inventory = PlayerController->Inventory;
-
 	TArray<FItemBaseStruct> ItemsInShop;
 
 	for (FName ItemID : ItemsToSell) 
