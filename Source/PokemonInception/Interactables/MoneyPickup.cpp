@@ -32,6 +32,10 @@ void AMoneyPickup::Interact(APlayerController* Controller)
 		return;
 	}
 	
+	if ((PlayerController->Money + money) > 1000000) {
+		Hud->OnScreenMessage("You can't get more money!");
+	}
+
 	Hud->OnScreenMessage("You got " + FString::FromInt(money) + "$!");
 	PlayerController->Money += money;
 	GameMode->MarkActorAsDestroyed(this);

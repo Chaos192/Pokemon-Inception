@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "WildPokemon.h"
 #include "../SaveGame/WildPokemonSaveData.h"
 #include "WildPokemonSpawner.generated.h"
 
@@ -22,7 +21,7 @@ public:
 
 	void ManualGenerate(FWildPokemonData SaveData);
 
-	AWildPokemon* SpawnedPokemon = nullptr;
+	class AWildPokemon* SpawnedPokemon = nullptr;
 
 protected:
 	UPROPERTY(EditAnywhere)
@@ -32,5 +31,5 @@ protected:
 	int MaxLevel = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<TSubclassOf<AWildPokemon>> PokemonToSpawn;
+	TArray<TSubclassOf<class AWildPokemon>> PokemonToSpawn;
 };

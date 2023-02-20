@@ -2,6 +2,7 @@
 
 
 #include "WildPokemonSpawner.h"
+#include "WildPokemon.h"
 #include "../Player/PokemonInceptionCharacter.h"
 #include "../Player/PlayerCharacterController.h"
 #include "../GameModes/OverworldGameMode.h"

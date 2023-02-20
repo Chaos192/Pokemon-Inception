@@ -45,6 +45,15 @@ void AOverworldGameMode::BeginPlay()
 		PlayerController->PokemonStorage = SaveData->StorageData;
 		PlayerController->Pokedex = SaveData->PokedexData;
 	}
+	else {
+		FPokemonBaseStruct* PokemonStarterSpecies = PokemonDT->FindRow<FPokemonBaseStruct>(FName(*FString::FromInt(4)), "");
+		FPokemonStruct StarterPokemon;
+
+		StarterPokemon.Init(5, *PokemonStarterSpecies);
+		StarterPokemon.InitMoves(GetMoveDT());
+
+		PlayerController->ObtainPokemon(StarterPokemon);
+	}
 	
 	LoadLevelData();
 
