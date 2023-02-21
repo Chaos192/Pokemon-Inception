@@ -36,6 +36,9 @@ protected:
 	TSubclassOf<UFightWidget> FightWidgetClass;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<UMoveInfoWidget> MoveInfoWidgetClass;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UPokemonWidget> PokemonWidgetClass;
 
 	UPROPERTY(EditAnywhere)
@@ -82,6 +85,9 @@ protected:
 
 	UPROPERTY()
 	class UFightWidget* FightWidget;
+
+	UPROPERTY()
+	class UMoveInfoWidget* MoveInfoWidget;
 
 	UPROPERTY()
 	class UPlayerPokemonStatusWidget* PlayerPokemonStatusWidget;
@@ -155,6 +161,9 @@ public:
 
 	UFUNCTION()
 	void ShowFightWidget();
+
+	UFUNCTION()
+	void ShowMoveInfo(int MoveID);
 
 	UFUNCTION()
 	void ShowBag();

@@ -9,6 +9,8 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "../../GameModes/BattleGameMode.h"
 #include "../../Player/BattleController.h"
+#include "../../Pokemon/AttackMoveStruct.h"
+#include "../../Pokemon/StatusMoveStruct.h"
 #include "Engine/Engine.h"
 
 void ABattleHUD::BeginPlay()
@@ -21,6 +23,7 @@ void ABattleHUD::BeginPlay()
 
 	BattleStartWidget = CreateWidget<UBattleStartWidget>(UGameplayStatics::GetGameInstance(GetWorld()), BattleStartWidgetClass);
 	FightWidget = CreateWidget<UFightWidget>(UGameplayStatics::GetGameInstance(GetWorld()), FightWidgetClass);
+	MoveInfoWidget = CreateWidget<UMoveInfoWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveInfoWidgetClass);
 	PokemonWidget = CreateWidget<UPokemonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonWidgetClass);
 	PokemonSummaryWidget = CreateWidget<UPokemonSummaryWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonSummaryWidgetClass);
 	SwitchOutWidget = CreateWidget<UPopupSelectionWidget>(UGameplayStatics::GetGameInstance(GetWorld()), SwitchOutWidgetClass);
@@ -100,6 +103,7 @@ void ABattleHUD::ClearPopup()
 {
 	SwitchOutWidget->RemoveFromViewport();
 	UseItemWidget->RemoveFromViewport();
+	MoveInfoWidget->RemoveFromViewport();
 }
 
 void ABattleHUD::ClearMovePopup()
@@ -138,6 +142,34 @@ void ABattleHUD::ShowFightWidget()
 		GameMode->ShowPokemonMoves();
 		FightWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;
+	}
+}
+
+void ABattleHUD::ShowMoveInfo(int MoveID)
+{
+	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (!IsValid(GameMode)) {
+		return;
+	}
+
+	if (PlayerOwner && MoveInfoWidget) {
+		ABattleController* PlayerController = Cast<ABattleController>(PlayerOwner);
+		FPokemonStruct Pokemon = PlayerController->PokemonParty[GameMode->GetPlayerPokemonId()];
+		FMoveBaseStruct Move = Pokemon.Moves[MoveID];
+
+		MoveInfoWidget->SetMoveName(Move.Name);
+		MoveInfoWidget->SetMoveType(FText::FromString(GameMode->ETypeToString(Move.MoveType)));
+		MoveInfoWidget->SetMoveDescription(Move.Description);
+
+		if (Move.MoveStructType == "Attack") {
+			FAttackMoveStruct* Attack = GameMode->AttackMovesDT->FindRow<FAttackMoveStruct>(Move.MoveID, "");
+			MoveInfoWidget->SetMovePower(FText::FromString(FString::FromInt(Attack->BaseDamage)));
+		}
+		else {
+			MoveInfoWidget->SetMovePower(FText::FromString("-"));
+		}
+
+		FightWidget->ShowMoveInfo(MoveInfoWidget);
 	}
 }
 

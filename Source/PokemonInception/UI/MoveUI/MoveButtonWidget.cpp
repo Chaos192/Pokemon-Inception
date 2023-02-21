@@ -8,10 +8,22 @@ void UMoveButtonWidget::OnButtonClicked()
 	ButtonClicked.Broadcast(MoveId);
 }
 
+void UMoveButtonWidget::OnButtonHovered()
+{
+	ButtonHovered.Broadcast(MoveId);
+}
+
+void UMoveButtonWidget::OnButtonUnHovered()
+{
+	ButtonUnHovered.Broadcast();
+}
+
 void UMoveButtonWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 	MoveButton->OnClicked.AddDynamic(this, &UMoveButtonWidget::OnButtonClicked);
+	MoveButton->OnHovered.AddDynamic(this, &UMoveButtonWidget::OnButtonHovered);
+	MoveButton->OnUnhovered.AddDynamic(this, &UMoveButtonWidget::OnButtonUnHovered);
 }
 
 void UMoveButtonWidget::InitButton(FText Name, int CurrPP, int MaxPP, ETypes MoveType)

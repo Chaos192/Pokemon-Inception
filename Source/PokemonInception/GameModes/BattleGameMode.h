@@ -120,12 +120,6 @@ protected:
 	ABattleCamera* OpponentCamera;
 
 	UPROPERTY(EditDefaultsOnly)
-	class UDataTable* AttackMovesDT;
-
-	UPROPERTY(EditDefaultsOnly)
-	class UDataTable* StatusMovesDT;
-
-	UPROPERTY(EditDefaultsOnly)
 	class UDataTable* TypesDT;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -141,6 +135,12 @@ protected:
 	class UDataTable* RevivesDT;
 
 public:
+	UPROPERTY(EditDefaultsOnly)
+	class UDataTable* AttackMovesDT;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UDataTable* StatusMovesDT;
+
 	bool bHasSelectedItem;
 	bool bHasSelectedEther;
 

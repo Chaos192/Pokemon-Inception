@@ -13,10 +13,22 @@ void UFightWidget::AddToWrapBox(UMoveButtonWidget* MoveButton)
 	WrapBox->AddChildToWrapBox(MoveButton);
 }
 
+void UFightWidget::ShowMoveInfo(UMoveInfoWidget* MoveInfo)
+{
+	InfoWrapBox->AddChildToWrapBox(MoveInfo);
+}
+
 void UFightWidget::ClearWrapBox()
 {
 	if (WrapBox->HasAnyChildren()) {
 		WrapBox->ClearChildren();
+	}
+}
+
+void UFightWidget::ClearInfoBox()
+{
+	if (InfoWrapBox->HasAnyChildren()) {
+		InfoWrapBox->ClearChildren();
 	}
 }
 

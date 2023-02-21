@@ -21,6 +21,12 @@ private:
 	UFUNCTION()
 	void OnButtonClicked();
 
+	UFUNCTION()
+	void OnButtonHovered();
+
+	UFUNCTION()
+	void OnButtonUnHovered();
+
 	int MoveId;
 
 protected:
@@ -46,4 +52,6 @@ public:
 	void SetMove(int InMoveId);
 
 	FElementIDSignature ButtonClicked;
+	FElementIDSignature ButtonHovered;
+	FButtonClicked ButtonUnHovered;
 };

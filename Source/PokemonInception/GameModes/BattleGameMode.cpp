@@ -970,11 +970,12 @@ void ABattleGameMode::FillBagWidget()
 void ABattleGameMode::ShowPokemonMoves()
 {
 	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 
 	FPokemonStruct Attacker = PlayerController->PokemonParty[PlayerPokemonId];
 
 	for (int i = 0; i < Attacker.CurrentMoves.Num(); i++) {
-		ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+		
 		UMoveButtonWidget* MoveButton = CreateWidget<UMoveButtonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetMoveButtonWidgetClass());
 
 		MoveButton->InitButton(Attacker.Moves[Attacker.CurrentMoves[i]].Name, Attacker.Moves[Attacker.CurrentMoves[i]].CurrPowerPoints,
@@ -984,6 +985,8 @@ void ABattleGameMode::ShowPokemonMoves()
 		if (Attacker.Moves[Attacker.CurrentMoves[i]].CurrPowerPoints > 0) {
 			MoveButton->ButtonClicked.AddDynamic(this, &ABattleGameMode::SelectMove);
 		}
+		MoveButton->ButtonHovered.AddDynamic(Hud, &ABattleHUD::ShowMoveInfo);
+		MoveButton->ButtonUnHovered.AddDynamic(Hud, &ABattleHUD::ClearPopup);
 
 		MoveDelegate.Broadcast(MoveButton);
 	}

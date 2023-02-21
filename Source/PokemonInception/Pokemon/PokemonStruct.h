@@ -85,7 +85,12 @@ struct FPokemonStruct
 			Exp = Level * Level * Level;
 		}
 
-		RequiredExp = (Level + 1) * (Level + 1) * (Level + 1) - Exp;
+		if (Level == 100) {
+			RequiredExp = 0;
+		}
+		else {
+			RequiredExp = (Level + 1) * (Level + 1) * (Level + 1) - Exp;
+		}
 	}
 
 	void InitMoves(TArray<UDataTable*> MoveTables) {
@@ -114,7 +119,7 @@ struct FPokemonStruct
 	}
 
 	void InitCurrentMoves(int LastLearnedMoveID) {
-		for (int i = LastLearnedMoveID - 4; i <= LastLearnedMoveID; i++) {
+		for (int i = LastLearnedMoveID - 4; i < LastLearnedMoveID; i++) {
 			if (i < 0) {
 				continue;
 			}
