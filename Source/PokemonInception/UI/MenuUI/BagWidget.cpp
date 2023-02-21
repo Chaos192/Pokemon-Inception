@@ -8,15 +8,15 @@ void UBagWidget::OnBackClicked()
 	BackClicked.Broadcast();
 }
 
-void UBagWidget::AddToWrapBox(UItemSlotWidget* ItemWidget)
+void UBagWidget::AddToItemBox(UItemSlotWidget* ItemWidget)
 {
-	WrapBox->AddChildToWrapBox(ItemWidget);
+	ItemBox->AddChild(ItemWidget);
 }
 
-void UBagWidget::ClearWrapBox()
+void UBagWidget::ClearItemBox()
 {
-	if (WrapBox->HasAnyChildren()) {
-		WrapBox->ClearChildren();
+	if (ItemBox->HasAnyChildren()) {
+		ItemBox->ClearChildren();
 	}
 }
 

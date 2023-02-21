@@ -94,7 +94,7 @@ struct FPokemonStruct
 	}
 
 	void InitMoves(TArray<UDataTable*> MoveTables) {
-		int LastLearnedMoveID = -1;
+		int LearnedMoves = 0;
 
 		for (auto& Move : SpeciesData.MovePool) {
 			FMoveBaseStruct* MoveRef = nullptr;
@@ -107,7 +107,7 @@ struct FPokemonStruct
 
 					if (Move.Key <= Level) {
 						AddedMove.bIsLocked = false;
-						LastLearnedMoveID++;
+						LearnedMoves++;
 					}
 
 					Moves.Add(AddedMove);
@@ -115,11 +115,11 @@ struct FPokemonStruct
 			}
 		}
 
-		InitCurrentMoves(LastLearnedMoveID);
+		InitCurrentMoves(LearnedMoves);
 	}
 
-	void InitCurrentMoves(int LastLearnedMoveID) {
-		for (int i = LastLearnedMoveID - 4; i < LastLearnedMoveID; i++) {
+	void InitCurrentMoves(int LearnedMoves) {
+		for (int i = LearnedMoves - 4; i < LearnedMoves; i++) {
 			if (i < 0) {
 				continue;
 			}

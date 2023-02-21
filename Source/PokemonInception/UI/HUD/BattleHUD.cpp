@@ -55,7 +55,7 @@ void ABattleHUD::BeginPlay()
 	MoveSelectionPopupWidget->BackClicked.AddDynamic(this, &ABattleHUD::ClearMovePopup);
 
 	GameMode->MessageUpdate.AddDynamic(TextBoxWidget, &UTextBoxWidget::ReturnMessage);
-	GameMode->ItemSlotDelegate.AddDynamic(BagWidget, &UBagWidget::AddToWrapBox);
+	GameMode->ItemSlotDelegate.AddDynamic(BagWidget, &UBagWidget::AddToItemBox);
 	GameMode->PokemonSlotDelegate.AddDynamic(PokemonWidget, &UPokemonWidget::AddToWrapBox);
 	GameMode->MoveDelegate.AddDynamic(FightWidget, &UFightWidget::AddToWrapBox);
 }
@@ -182,7 +182,7 @@ void ABattleHUD::ShowBag()
 	}
 
 	if (PlayerOwner && BagWidget) {
-		BagWidget->ClearWrapBox();
+		BagWidget->ClearItemBox();
 		BagWidget->ClearInfoBox();
 		GameMode->FillBagWidget();
 		BagWidget->AddToViewport();

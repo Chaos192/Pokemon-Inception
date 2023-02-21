@@ -41,7 +41,7 @@ void AOverworldHUD::BeginPlay()
 	MoveManagerOperationWidget = CreateWidget<UPopupSelectionWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveManagerOperationWidgetClass);
 
 	GameMode->ShopMessageDelegate.AddDynamic(ShopWidget, &UShopWidget::ShowText);
-	GameMode->ItemSlotDelegate.AddDynamic(BagWidget, &UBagWidget::AddToWrapBox);
+	GameMode->ItemSlotDelegate.AddDynamic(BagWidget, &UBagWidget::AddToItemBox);
 	GameMode->ItemShopSlotDelegate.AddDynamic(ShopWidget, &UShopWidget::DisplayInShop);
 	GameMode->PokemonSlotDelegate.AddDynamic(PokemonWidget, &UPokemonWidget::AddToWrapBox);
 	GameMode->PokedexSlotDelegate.AddDynamic(PokedexWidget, &UPokedexWidget::AddPokedexSlotToBox);
@@ -226,7 +226,7 @@ void AOverworldHUD::ShowBag()
 	}
 
 	if (PlayerOwner && BagWidget) {
-		BagWidget->ClearWrapBox();
+		BagWidget->ClearItemBox();
 		BagWidget->ClearInfoBox();
 		GameMode->FillBagWidget();
 		BagWidget->AddToViewport();

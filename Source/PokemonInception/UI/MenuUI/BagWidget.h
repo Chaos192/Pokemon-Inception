@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
 #include "Components/WrapBox.h"
+#include "Components/ScrollBox.h"
 #include "Components/TextBlock.h"
 #include "../ItemUI/ItemSlotWidget.h"
 #include "../ItemUI/ItemInfoWidget.h"
@@ -27,7 +28,7 @@ protected:
 	class UButton* Back;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UWrapBox* WrapBox;
+	class UScrollBox* ItemBox;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UWrapBox* InfoBox;
@@ -36,9 +37,9 @@ public:
 	virtual void NativeOnInitialized() override;
 
 	UFUNCTION()
-	void AddToWrapBox(UItemSlotWidget* ItemWidget);
+	void AddToItemBox(UItemSlotWidget* ItemWidget);
 
-	void ClearWrapBox();
+	void ClearItemBox();
 
 	UFUNCTION()
 	void ShowInfo(UItemInfoWidget* ItemInfoWidget);
