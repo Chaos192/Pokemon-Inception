@@ -3,3 +3,6 @@
 
 #include "NPCBase.h"
 
+void ANPCBase::Interact(APlayerController* PlayerController)
+{
+}

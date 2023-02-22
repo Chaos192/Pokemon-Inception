@@ -2,22 +2,17 @@
 
 
 #include "MoveTutor.h"
-#include "Components/SkeletalMeshComponent.h"
-#include "Components/CapsuleComponent.h"
 #include "../../GameModes/OverworldGameMode.h"
 #include "../../UI/HUD/OverworldHUD.h"
 
 AMoveTutor::AMoveTutor()
 {
-	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Skeletal Mesh"));
-	Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
-
-	Capsule->SetupAttachment(SkeletalMesh);
+	Name = "Move Tutor";
 }
 
-void AMoveTutor::Interact(APlayerController* Controller)
+void AMoveTutor::Interact(APlayerController* PlayerController)
 {
-	AOverworldHUD* Hud = Cast<AOverworldHUD>(Controller->GetHUD());
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(PlayerController->GetHUD());
 	if (Hud == nullptr) {
 		return;
 	}

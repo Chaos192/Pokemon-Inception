@@ -17,7 +17,7 @@ public:
 	ATrainer();
 
 	UFUNCTION()
-	virtual void Interact(APlayerController* Controller) override;
+	virtual void Interact(APlayerController* PlayerController) override;
 
 	UPROPERTY(EditAnywhere)
 	TArray<FName> PokemonIDs;

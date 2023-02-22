@@ -64,8 +64,8 @@ void ABattleGameMode::BeginPlay()
 
 	if (bIsOpponentTrainer) {
 		FRotator Rotation;
-		Rotation.Yaw = 180;
-		FVector Position = FVector(-350, 770, 115);
+		Rotation.Yaw = -90;
+		FVector Position = FVector(-340, 800, 190);
 
 		TrainerActor = GetWorld()->SpawnActor<ATrainer>(TrainerClass, Position, Rotation);
 	}

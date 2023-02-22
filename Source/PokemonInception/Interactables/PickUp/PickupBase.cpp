@@ -3,3 +3,6 @@
 
 #include "PickupBase.h"
 
+void APickupBase::Interact(APlayerController* Controller)
+{
+}

@@ -2,23 +2,18 @@
 
 
 #include "PokemonStorageManager.h"
-#include "Components/SkeletalMeshComponent.h"
-#include "Components/CapsuleComponent.h"
 #include "../../Player/PlayerCharacterController.h"
 #include "../../GameModes/OverworldGameMode.h"
 #include "../../UI/HUD/OverworldHUD.h"
 
 APokemonStorageManager::APokemonStorageManager()
 {
-	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Skeletal Mesh"));
-	Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
-
-	Capsule->SetupAttachment(SkeletalMesh);
+	Name = "Pokemon Storage Manager";
 }
 
-void APokemonStorageManager::Interact(APlayerController* Controller)
+void APokemonStorageManager::Interact(APlayerController* PlayerController)
 {
-	AOverworldHUD* Hud = Cast<AOverworldHUD>(Controller->GetHUD());
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(PlayerController->GetHUD());
 	if (Hud == nullptr) {
 		return;
 	}

@@ -3,7 +3,7 @@
 
 #include "PlayerCharacterController.h"
 #include "../PokemonInception.h"
-#include "../Interactables/Interactable.h"
+#include "../Interactables/InteractableInterface.h"
 #include "../GameModes/OverworldGameMode.h"
 #include "PokemonInceptionCharacter.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -31,16 +31,15 @@ void APlayerCharacterController::Interact()
 	FRotator BoxDirection = PlayerFaceDirection;
 	BoxDirection.Yaw += 90;
 
-	if (UKismetSystemLibrary::BoxTraceSingleForObjects(GetWorld(), BoxLocation, BoxLocation, BoxHalfSize, BoxDirection,
+	if (!UKismetSystemLibrary::BoxTraceSingleForObjects(GetWorld(), BoxLocation, BoxLocation, BoxHalfSize, BoxDirection,
 		ObjectTypes, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true,
-		FLinearColor(1, 0, 0), FLinearColor(0, 1, 0), 1.f) == false) 
+		FLinearColor(1, 0, 0), FLinearColor(0, 1, 0), 1.f)) 
 	{
 		return;
 	}
 	
-	AInteractable* CurrentInteractable = Cast<AInteractable>(HitResult.GetActor());
-	if (IsValid(CurrentInteractable)) {
-		CurrentInteractable->Interact(this);
+	if (HitResult.GetActor()->GetClass()->ImplementsInterface(UInteractableInterface::StaticClass())) {
+		Cast<IInteractableInterface>(HitResult.GetActor())->Interact(this);
 	}
 }
 

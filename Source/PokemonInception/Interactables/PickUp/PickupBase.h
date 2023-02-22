@@ -3,16 +3,22 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "../Interactable.h"
+#include "GameFramework/Actor.h"
+#include "../InteractableInterface.h"
 #include "PickupBase.generated.h"
 
 
 UCLASS()
-class POKEMONINCEPTION_API APickupBase : public AInteractable
+class POKEMONINCEPTION_API APickupBase : public AActor, public IInteractableInterface
 {
 	GENERATED_BODY()
 	
 public:
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* Mesh = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	FString Action;
+
+	virtual void Interact(APlayerController* PlayerController) override;
 };

@@ -16,7 +16,7 @@ public:
 	AShopkeeper();
 
 	UFUNCTION()
-	virtual void Interact(APlayerController* Controller) override;
+	virtual void Interact(APlayerController* PlayerController) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FName> ItemsToSell;

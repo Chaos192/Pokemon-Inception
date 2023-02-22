@@ -2,21 +2,16 @@
 
 
 #include "Trainer.h"
-#include "Components/SkeletalMeshComponent.h"
-#include "Components/CapsuleComponent.h"
 #include "../../Player/PlayerCharacterController.h"
 #include "../../GameModes/OverworldGameMode.h"
 
 
 ATrainer::ATrainer()
 {
-	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Skeletal Mesh"));
-	Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
-
-	Capsule->SetupAttachment(SkeletalMesh);
+	Name = "Trainer";
 }
 
-void ATrainer::Interact(APlayerController* Controller)
+void ATrainer::Interact(APlayerController* PlayerController)
 {
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
 	if (GameMode == nullptr) {

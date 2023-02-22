@@ -3,19 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "../Interactable.h"
+#include "GameFramework/Character.h"
+#include "../InteractableInterface.h"
 #include "NPCBase.generated.h"
 
 
 UCLASS()
-class POKEMONINCEPTION_API ANPCBase : public AInteractable
+class POKEMONINCEPTION_API ANPCBase : public ACharacter, public IInteractableInterface
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere)
-	class USkeletalMeshComponent* SkeletalMesh = nullptr;
+	UPROPERTY(EditDefaultsOnly)
+	FString Name;
 
-	UPROPERTY(EditAnywhere)
-	class UCapsuleComponent* Capsule = nullptr;
+	virtual void Interact(APlayerController* PlayerController) override;
 };

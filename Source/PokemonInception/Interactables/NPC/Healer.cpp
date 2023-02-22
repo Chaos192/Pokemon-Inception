@@ -2,29 +2,24 @@
 
 
 #include "Healer.h"
-#include "Components/SkeletalMeshComponent.h"
-#include "Components/CapsuleComponent.h"
 #include "../../Player/PlayerCharacterController.h"
 #include "../../GameModes/OverworldGameMode.h"
 #include "../../UI/HUD/OverworldHUD.h"
 
 AHealer::AHealer()
 {
-	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Skeletal Mesh"));
-	Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
-
-	Capsule->SetupAttachment(SkeletalMesh);
+	Name = "Healer";
 }
 
-void AHealer::Interact(APlayerController* Controller)
+void AHealer::Interact(APlayerController* PlayerController)
 {
-	AOverworldHUD* Hud = Cast<AOverworldHUD>(Controller->GetHUD());
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(PlayerController->GetHUD());
 	if (Hud == nullptr) {
 		return;
 	}
 
-	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Controller);
+	APlayerCharacterController* ThePlayerController = Cast<APlayerCharacterController>(PlayerController);
 
-	PlayerController->FullRestoreAllPokemon();
+	ThePlayerController->FullRestoreAllPokemon();
 	Hud->OnScreenMessage("Your Pokemon were fully healed!");
 }

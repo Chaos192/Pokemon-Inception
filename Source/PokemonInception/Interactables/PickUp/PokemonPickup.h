@@ -18,7 +18,7 @@ public:
 	APokemonPickup();
 
 	UFUNCTION()
-	virtual void Interact(APlayerController* Controller) override;
+	virtual void Interact(APlayerController* PlayerController) override;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
