@@ -43,31 +43,27 @@ void ABattleGameMode::BeginPlay()
 	}
 
 	TArray<AActor*> CamerasInLevel;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), Camera, CamerasInLevel);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), CameraClass, CamerasInLevel);
 
 	for (AActor* Actor : CamerasInLevel) {
-		ABattleCamera* CameraActor = Cast<ABattleCamera>(Actor);
+		ACameraActor* CameraActor = Cast<ACameraActor>(Actor);
 
-		if (CameraActor->Tag == "Scene") {
+		if (CameraActor->ActorHasTag(FName("Scene"))) {
 			SceneCamera = CameraActor;
 			continue;
 		}
-		if (CameraActor->Tag == "Player") {
+		if (CameraActor->ActorHasTag(FName("Player"))) {
 			PlayerCamera = CameraActor;
 			continue;
 		}
-		if (CameraActor->Tag == "Opponent") {
+		if (CameraActor->ActorHasTag(FName("Opponent"))) {
 			OpponentCamera = CameraActor;
 			continue;
 		}
-	}
-
-	if (bIsOpponentTrainer) {
-		FRotator Rotation;
-		Rotation.Yaw = -90;
-		FVector Position = FVector(-340, 800, 190);
-
-		TrainerActor = GetWorld()->SpawnActor<ATrainer>(TrainerClass, Position, Rotation);
+		if (CameraActor->ActorHasTag(FName("Trainer"))) {
+			TrainerCamera = CameraActor;
+			continue;
+		}
 	}
 
 	ResetCamera();
@@ -120,6 +116,20 @@ void ABattleGameMode::PlaceOpponentPokemon()
 
 	SwitchToOpponentCamera();
 	Hud->ShowText(OpponentMessage);
+}
+
+void ABattleGameMode::PlaceOpponentTrainer()
+{
+	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+
+	FRotator Rotation;
+	Rotation.Yaw = -90;
+	FVector Position = FVector(-340, 800, 190);
+
+	TrainerActor = GetWorld()->SpawnActor<ATrainer>(TrainerClass, Position, Rotation);
+
+	SwitchToTrainerCamera();
+	Hud->ShowText("Trainer wants to battle!");
 }
 
 bool ABattleGameMode::bIsOpponentDefeated()
@@ -626,15 +636,32 @@ void ABattleGameMode::BattleStart()
 		return;
 	}
 
+	CurrentBattleTime = 0;
+
+	FTimerHandle TrainerTimer;
 	FTimerHandle SendOutOpponentTimer;
 	FTimerHandle SendOutPlayerTimer;
 	FTimerHandle StartTimer;
 
 	PlayerPokemonId = PlayerController->GetLeadPokemon();
 
-	GetWorldTimerManager().SetTimer(SendOutOpponentTimer, this, &ABattleGameMode::PlaceOpponentPokemon, 0.0001, false);
-	GetWorldTimerManager().SetTimer(SendOutPlayerTimer, this, &ABattleGameMode::PlacePlayerPokemon, 1.5, false);
-	GetWorldTimerManager().SetTimer(StartTimer, Hud, &ABattleHUD::ShowBattleStartWidget, 3, false);
+	if (bIsOpponentTrainer) {
+		GetWorldTimerManager().SetTimer(TrainerTimer, this, &ABattleGameMode::PlaceOpponentTrainer, 0.0001, false);
+		CurrentBattleTime += 1.5;
+	}
+
+	if (CurrentBattleTime == 0) {
+		GetWorldTimerManager().SetTimer(SendOutOpponentTimer, this, &ABattleGameMode::PlaceOpponentPokemon, 0.0001, false);
+		CurrentBattleTime += 1.5;
+	}
+	else {
+		GetWorldTimerManager().SetTimer(SendOutOpponentTimer, this, &ABattleGameMode::PlaceOpponentPokemon, CurrentBattleTime, false);
+		CurrentBattleTime += 1.5;
+	}
+
+	GetWorldTimerManager().SetTimer(SendOutPlayerTimer, this, &ABattleGameMode::PlacePlayerPokemon, CurrentBattleTime, false);
+	CurrentBattleTime += 1.5;
+	GetWorldTimerManager().SetTimer(StartTimer, Hud, &ABattleHUD::ShowBattleStartWidget, CurrentBattleTime, false);
 }
 
 void ABattleGameMode::BattleTurn(EAction PlayerAction)
@@ -771,6 +798,13 @@ void ABattleGameMode::SwitchToOpponentCamera()
 	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
 	PlayerController->SetViewTargetWithBlend(OpponentCamera, 0, EViewTargetBlendFunction::VTBlend_Linear);
+}
+
+void ABattleGameMode::SwitchToTrainerCamera()
+{
+	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+	PlayerController->SetViewTargetWithBlend(TrainerCamera, 0, EViewTargetBlendFunction::VTBlend_Linear);
 }
 
 FString ABattleGameMode::ETypeToString(ETypes Type)

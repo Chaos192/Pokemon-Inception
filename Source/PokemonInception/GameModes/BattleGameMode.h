@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "../Player/Camera/BattleCamera.h"
+#include "Camera/CameraActor.h"
 #include "../Pokemon/PokemonStruct.h"
 #include "../Pokemon/TypeStruct.h"
 #include "../Pokemon/MoveBaseStruct.h"
@@ -63,6 +63,9 @@ private:
 	UFUNCTION()
 	void PlaceOpponentPokemon();
 
+	UFUNCTION()
+	void PlaceOpponentTrainer();
+
 	int SelectedMoveID;
 	int SelectedPokemonID;
 	int SelectedItemID;
@@ -113,11 +116,12 @@ protected:
 	void ExitBattleMap();
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<ABattleCamera> Camera;
+	TSubclassOf<ACameraActor> CameraClass;
 
-	ABattleCamera* SceneCamera;
-	ABattleCamera* PlayerCamera;
-	ABattleCamera* OpponentCamera;
+	ACameraActor* SceneCamera;
+	ACameraActor* PlayerCamera;
+	ACameraActor* OpponentCamera;
+	ACameraActor* TrainerCamera;
 
 	UPROPERTY(EditDefaultsOnly)
 	class UDataTable* TypesDT;
@@ -152,6 +156,9 @@ public:
 
 	UFUNCTION()
 	void SwitchToOpponentCamera();
+
+	UFUNCTION()
+	void SwitchToTrainerCamera();
 
 	UFUNCTION()
 	FString ETypeToString(ETypes Type);

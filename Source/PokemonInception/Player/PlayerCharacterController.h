@@ -6,7 +6,6 @@
 #include "GameFramework/PlayerController.h"
 #include "../Pokemon/PokemonBaseStruct.h"
 #include "../Pokemon/PokemonStruct.h"
-#include "../Interactables/Interactable.h"
 #include "../Items/ItemBaseStruct.h"
 #include "PlayerCharacterController.generated.h"
 

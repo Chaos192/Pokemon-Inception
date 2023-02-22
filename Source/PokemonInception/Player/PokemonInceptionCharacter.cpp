@@ -9,7 +9,6 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
-#include "../Interactables/Interactable.h"
 #include "PlayerCharacterController.h"
 #include "../UI/HUD/OverworldHUD.h"
 
