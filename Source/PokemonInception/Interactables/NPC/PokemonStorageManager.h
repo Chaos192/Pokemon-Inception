@@ -15,6 +15,8 @@ class POKEMONINCEPTION_API APokemonStorageManager : public ANPCBase
 public:
 	APokemonStorageManager();
 
+	virtual void BeginPlay() override;
+
 	UFUNCTION()
 	virtual void Interact(APlayerController* PlayerController) override;
 };

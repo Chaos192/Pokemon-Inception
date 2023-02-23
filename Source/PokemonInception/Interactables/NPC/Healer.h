@@ -15,6 +15,8 @@ class POKEMONINCEPTION_API AHealer : public ANPCBase
 public:
 	AHealer();
 
+	virtual void BeginPlay() override;
+
 	UFUNCTION()
 	virtual void Interact(APlayerController* PlayerController) override;
 };

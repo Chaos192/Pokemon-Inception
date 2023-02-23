@@ -52,7 +52,7 @@ void AWildPokemonSpawner::Generate()
 	Rotation.Yaw = (FMath::RandRange(0, 360));
 
 	SpawnedPokemon = GetWorld()->SpawnActor<AWildPokemon>(PokemonToSpawn[Index], GetActorLocation(), Rotation);
-	SpawnedPokemon->InitPokemon(GameMode->PokemonDT, SpawnLevel, GameMode->GetMoveDT());
+	SpawnedPokemon->InitPokemon(GameMode->PokemonDT, SpawnLevel, GameMode->GetMoveDT()); //this right here, officer
 }
 
 void AWildPokemonSpawner::ManualGenerate(FWildPokemonData SaveData)

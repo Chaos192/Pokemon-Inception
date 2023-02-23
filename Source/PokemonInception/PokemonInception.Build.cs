@@ -17,7 +17,10 @@ public class PokemonInception : ModuleRules
 			"HeadMountedDisplay", 
 			"AIModule", 
 			"GameplayTasks", 
-			"NavigationSystem" 
+			"NavigationSystem" ,
+			"UMG",
+			"Slate",
+			"SlateCore"
 		});
 	}
 }

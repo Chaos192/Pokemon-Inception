@@ -15,6 +15,8 @@ class POKEMONINCEPTION_API AShopkeeper : public ANPCBase
 public:
 	AShopkeeper();
 
+	virtual void BeginPlay() override;
+
 	UFUNCTION()
 	virtual void Interact(APlayerController* PlayerController) override;
 

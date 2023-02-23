@@ -3,8 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
+#include "Components/WidgetComponent.h"
 #include "../InteractableInterface.h"
+#include "../../UI/MessageUI/OverheadNameWidget.h"
+#include "../../Player/PokemonInceptionCharacter.h"
 #include "NPCBase.generated.h"
 
 
@@ -14,8 +18,13 @@ class POKEMONINCEPTION_API ANPCBase : public ACharacter, public IInteractableInt
 	GENERATED_BODY()
 
 public:
+	class UWidgetComponent* OverheadNameWidget;
+
 	UPROPERTY(EditDefaultsOnly)
 	FString Name;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UOverheadNameWidget> OverheadNameWidgetClass;
 
 	virtual void Interact(APlayerController* PlayerController) override;
 };

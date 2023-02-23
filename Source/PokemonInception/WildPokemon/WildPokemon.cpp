@@ -40,9 +40,12 @@ void AWildPokemon::Tick(float DeltaTime)
 
 void AWildPokemon::InitPokemon(UDataTable* PokemonDatatable, int Level, TArray<UDataTable*> MoveTables)
 {
-	FPokemonBaseStruct* PokemonSpecies = PokemonDatatable->FindRow<FPokemonBaseStruct>(PokemonID, "");
-	Pokemon.Init(Level, *PokemonSpecies);
-	Pokemon.InitMoves(MoveTables);
+	FPokemonBaseStruct* PokemonSpecies = PokemonDatatable->FindRow<FPokemonBaseStruct>(PokemonID, ""); //this right here, officer
+
+	if (PokemonSpecies) {
+		Pokemon.Init(Level, *PokemonSpecies);
+		Pokemon.InitMoves(MoveTables);
+	}
 }
 
 void AWildPokemon::Collide(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

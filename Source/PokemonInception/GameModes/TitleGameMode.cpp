@@ -14,7 +14,7 @@ void ATitleGameMode::StartGame()
 	Hud->PlayerOwner->SetInputMode(FInputModeGameOnly());
 	Hud->PlayerOwner->bShowMouseCursor = false;
 
-	UGameplayStatics::OpenLevel(GetWorld(), "TestingMap");
+	UGameplayStatics::OpenLevel(GetWorld(), "MainMap");
 }
 
 void ATitleGameMode::QuitGame()

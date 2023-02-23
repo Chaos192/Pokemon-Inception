@@ -15,6 +15,8 @@ class POKEMONINCEPTION_API AMoveTutor : public ANPCBase
 public:
 	AMoveTutor();
 
+	virtual void BeginPlay() override;
+
 	UFUNCTION()
 	virtual void Interact(APlayerController* PlayerController) override;
 };

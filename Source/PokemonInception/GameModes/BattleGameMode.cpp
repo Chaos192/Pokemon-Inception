@@ -1070,7 +1070,7 @@ void ABattleGameMode::ExitBattleMap()
 	PlayerController->SetInputMode(FInputModeGameOnly());
 	PlayerController->bShowMouseCursor = false;
 
-	UGameplayStatics::OpenLevel(GetWorld(), "TestingMap");
+	UGameplayStatics::OpenLevel(GetWorld(), "MainMap");
 }
 
 void ABattleGameMode::Run()
