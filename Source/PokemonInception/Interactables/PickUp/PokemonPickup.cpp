@@ -16,17 +16,17 @@ APokemonPickup::APokemonPickup()
 void APokemonPickup::Interact(APlayerController* Controller)
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Controller);
-	if (PlayerController == nullptr) {
+	if (!IsValid(PlayerController)) {
 		return;
 	}
 
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
 	AOverworldHUD* Hud = Cast<AOverworldHUD>(PlayerController->GetHUD());
-	if (Hud == nullptr) {
+	if (!IsValid(Hud)) {
 		return;
 	}
 
@@ -36,12 +36,15 @@ void APokemonPickup::Interact(APlayerController* Controller)
 	}
 
 	FPokemonBaseStruct* PokemonSpecies = GameMode->PokemonDT->FindRow<FPokemonBaseStruct>(PokemonID, "");
-	FPokemonStruct AddedPokemon;
-	AddedPokemon.Init(PokemonLevel, *PokemonSpecies);
-	AddedPokemon.InitMoves(GameMode->GetMoveDT());
 
-	Hud->OnScreenMessage("You got a " + PokemonSpecies->Name.ToString() + "!");
-	PlayerController->ObtainPokemon(AddedPokemon);
-	GameMode->MarkActorAsDestroyed(this);
-	Destroy();
+	if (PokemonSpecies) {
+		FPokemonStruct AddedPokemon;
+		AddedPokemon.Init(PokemonLevel, *PokemonSpecies);
+		AddedPokemon.InitMoves(GameMode->GetMoveDT());
+
+		Hud->OnScreenMessage("You got a " + PokemonSpecies->Name.ToString() + "!");
+		PlayerController->ObtainPokemon(AddedPokemon);
+		GameMode->MarkActorAsDestroyed(this);
+		Destroy();
+	}
 }

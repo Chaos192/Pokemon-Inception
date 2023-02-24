@@ -24,12 +24,12 @@ void AWildPokemon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	if (PlayerController == nullptr) {
+	if (!IsValid(PlayerController)) {
 		return;
 	}
 
 	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(PlayerController->GetPawn());
-	if (Player == nullptr) {
+	if (!IsValid(Player)) {
 		return;
 	}
 

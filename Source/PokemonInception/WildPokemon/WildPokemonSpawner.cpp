@@ -51,8 +51,15 @@ void AWildPokemonSpawner::Generate()
 	FRotator Rotation;
 	Rotation.Yaw = (FMath::RandRange(0, 360));
 
+	if (!IsValid(PokemonToSpawn[Index])) {
+		return;
+	}
+
 	SpawnedPokemon = GetWorld()->SpawnActor<AWildPokemon>(PokemonToSpawn[Index], GetActorLocation(), Rotation);
-	SpawnedPokemon->InitPokemon(GameMode->PokemonDT, SpawnLevel, GameMode->GetMoveDT()); //this right here, officer
+
+	if (IsValid(SpawnedPokemon)) {
+		SpawnedPokemon->InitPokemon(GameMode->PokemonDT, SpawnLevel, GameMode->GetMoveDT()); //this right here, officer
+	}
 }
 
 void AWildPokemonSpawner::ManualGenerate(FWildPokemonData SaveData)
@@ -62,7 +69,7 @@ void AWildPokemonSpawner::ManualGenerate(FWildPokemonData SaveData)
 	}
 
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 

@@ -132,12 +132,20 @@ void AOverworldGameMode::SaveLevelData(AWildPokemon* PokemonToIgnore)
 	for (AActor* Spawner : Spawners) {
 		AWildPokemonSpawner* PokemonSpawner = Cast<AWildPokemonSpawner>(Spawner);
 		
-		if (IsValid(PokemonSpawner->SpawnedPokemon) && PokemonSpawner->SpawnedPokemon != PokemonToIgnore) {
+		if (!IsValid(PokemonSpawner->SpawnedPokemon)) {
+			continue;
+		}
+			
+		if(PokemonSpawner->SpawnedPokemon != PokemonToIgnore){
 			FWildPokemonData PokemonData;
 
 			PokemonData.Pokemon = PokemonSpawner->SpawnedPokemon;
 			PokemonData.PokemonStruct = PokemonSpawner->SpawnedPokemon->Pokemon;
-			PokemonData.PokemonClass = PokemonSpawner->SpawnedPokemon->GetClass();
+
+			if (IsValid(PokemonSpawner->SpawnedPokemon->GetClass())) {
+				PokemonData.PokemonClass = PokemonSpawner->SpawnedPokemon->GetClass();
+			}
+
 			PokemonData.PokemonLocation = PokemonSpawner->SpawnedPokemon->GetActorLocation();
 			PokemonData.PokemonRotation = PokemonSpawner->SpawnedPokemon->GetActorRotation();
 
