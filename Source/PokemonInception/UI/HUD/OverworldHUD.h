@@ -16,7 +16,7 @@
 #include "../PokedexUI/PokedexSlotWidget.h"
 #include "../PokedexUI/PokedexInfoWidget.h"
 #include "../ItemUI/ItemSlotWidget.h"
-#include "../ItemUI/ItemShopSlotWidget.h"
+#include "../ItemUI/ItemShopInfoWidget.h"
 #include "../PokemonUI/PokemonSlotWidget.h"
 #include "../PopupUI/StorageOperationPopup.h"
 #include "../PopupUI/MoveSelectionPopupWidget.h"
@@ -67,13 +67,13 @@ protected:
 	TSubclassOf<UItemInfoWidget> ItemInfoWidgetClass;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<UItemShopInfoWidget> ItemShopInfoWidgetClass;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UPopupSelectionWidget> UseItemWidgetClass;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UMoveSelectionPopupWidget> MoveSelectionPopupWidgetClass;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UItemShopSlotWidget> ItemShopSlotWidgetClass;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UPokedexSlotWidget> PokedexSlotWidgetClass;
@@ -139,6 +139,9 @@ protected:
 	class UItemInfoWidget* ItemInfoWidget;
 
 	UPROPERTY()
+	class UItemShopInfoWidget* ItemShopInfoWidget;
+
+	UPROPERTY()
 	class UPopupSelectionWidget* UseItemWidget;
 
 	UPROPERTY()
@@ -192,8 +195,6 @@ public:
 
 	TSubclassOf<UItemSlotWidget> GetItemSlotWidgetClass();
 
-	TSubclassOf<UItemShopSlotWidget> GetItemShopSlotWidgetClass();
-
 	TSubclassOf<UPokedexSlotWidget> GetPokedexSlotWidgetClass();
 
 	TSubclassOf<UPokemonSlotWidget> GetPokemonSlotWidgetClass();
@@ -236,7 +237,10 @@ public:
 	void ShowTrainerCard();
 
 	UFUNCTION()
-	void ShowShop(TArray<FName> ItemsToSell);
+	void ShowBuyShop();
+
+	UFUNCTION()
+	void ShowSellShop();
 
 	UFUNCTION()
 	void ShowPokemonStorage();

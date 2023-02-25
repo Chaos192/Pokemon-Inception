@@ -7,11 +7,11 @@
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "../ButtonClick.h"
-#include "ItemInfoWidget.generated.h"
+#include "ItemShopInfoWidget.generated.h"
 
 
 UCLASS()
-class POKEMONINCEPTION_API UItemInfoWidget : public UUserWidget
+class POKEMONINCEPTION_API UItemShopInfoWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
@@ -19,21 +19,35 @@ private:
 	int ItemID;
 
 	UFUNCTION()
-	void OnUseClicked();
+	void OnOperationClicked();
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Use;
+	class UButton* Operation;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UTextBlock* OperationText;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UTextBlock* DescriptionText;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UTextBlock* PriceText;
+
 public:
+	virtual void NativeOnInitialized() override;
+
+	UFUNCTION()
+	void SetOperation(FString OperationName);
+
 	UFUNCTION()
 	void SetDescription(FText Description);
 
 	UFUNCTION()
+	void SetPrice(int Price);
+
+	UFUNCTION()
 	void SetID(int InItemID);
 
-	FElementIDSignature UseClicked;
+	FElementIDSignature OperationClicked;
 };

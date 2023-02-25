@@ -8,20 +8,42 @@ void UShopWidget::OnExitClicked()
 	ExitClicked.Broadcast();
 }
 
-void UShopWidget::DisplayInShop(UItemShopSlotWidget* ItemWidget)
+void UShopWidget::OnBuyModeClicked()
 {
-	WrapBox->AddChildToWrapBox(ItemWidget);
+	BuyModeClicked.Broadcast();
 }
 
-void UShopWidget::ShowText(FString Message)
+void UShopWidget::OnSellModeClicked()
 {
-	TextBox->SetText(FText::FromString(Message));
+	SellModeClicked.Broadcast();
+}
+
+void UShopWidget::DisplayInShop(UItemSlotWidget* ItemWidget)
+{
+	ItemBox->AddChild(ItemWidget);
+}
+
+void UShopWidget::ShowShopInfo(UItemShopInfoWidget* InfoWidget)
+{
+	InfoBox->AddChildToWrapBox(InfoWidget);
+}
+
+void UShopWidget::ShowMoney(FString Message)
+{
+	Money->SetText(FText::FromString(Message));
 }
 
 void UShopWidget::ClearShop()
 {
-	if (WrapBox->HasAnyChildren()) {
-		WrapBox->ClearChildren();
+	if (ItemBox->HasAnyChildren()) {
+		ItemBox->ClearChildren();
+	}
+}
+
+void UShopWidget::ClearShopInfo()
+{
+	if (InfoBox->HasAnyChildren()) {
+		InfoBox->ClearChildren();
 	}
 }
 
@@ -29,4 +51,6 @@ void UShopWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 	Exit->OnClicked.AddDynamic(this, &UShopWidget::OnExitClicked);
+	BuyMode->OnClicked.AddDynamic(this, &UShopWidget::OnBuyModeClicked);
+	SellMode->OnClicked.AddDynamic(this, &UShopWidget::OnSellModeClicked);
 }

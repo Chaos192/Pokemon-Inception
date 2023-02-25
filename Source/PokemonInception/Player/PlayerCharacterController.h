@@ -32,6 +32,9 @@ public:
 	void LoseItem(FItemBaseStruct Item);
 
 	UFUNCTION()
+	int GetItemCount(FName ItemID);
+
+	UFUNCTION()
 	void ObtainPokemon(FPokemonStruct Pokemon);
 
 	UFUNCTION()

@@ -5,9 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "Engine/DataTable.h"
-#include "../UI/MenuUI/ShopWidget.h"
-#include "../UI/ItemUI/ItemShopSlotWidget.h"
-#include "../UI/ItemUI/ItemInfoWidget.h"
 #include "../UI/WidgetDelegates.h"
 #include "OverworldGameMode.generated.h"
 
@@ -35,8 +32,6 @@ private:
 
 	UPROPERTY()
 	TArray<AActor*> ActorsToDestroy;
-
-	TArray<UItemShopSlotWidget*> ShopSlots;
 
 protected:
 	virtual void BeginPlay() override;
@@ -76,6 +71,9 @@ public:
 	bool bHasSelectedItem;
 	bool bHasSelectedEther;
 	bool bIsSwappingPosition;
+
+	TArray<FItemBaseStruct> ItemsToSell;
+	FString ShopMode;
 
 	UPROPERTY(EditDefaultsOnly)
 	class UDataTable* PokemonDT;
@@ -120,10 +118,16 @@ public:
 	void FillBagWidget();
 
 	UFUNCTION()
-	void InitShop(TArray<FName> ItemsToSell);
+	void InitItemsToSell(TArray<FName> ItemIDs);
 
 	UFUNCTION()
-	void RefreshShop();
+	void InitBuyShop();
+
+	UFUNCTION()
+	void InitSellShop();
+
+	UFUNCTION()
+	void RefreshItemShopInfo();
 
 	UFUNCTION()
 	void ShowPokemonInMenu();
@@ -145,7 +149,7 @@ public:
 	FTextSignature ShopMessageDelegate;
 
 	FItemSlotSignature ItemSlotDelegate;
-	FShopSlotSignature ItemShopSlotDelegate;
+	FItemSlotSignature ItemShopSlotDelegate;
 
 	FPokedexSlotSignature PokedexSlotDelegate;
 	FPokemonSlotSignature PokemonSlotDelegate;

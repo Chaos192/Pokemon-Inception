@@ -29,8 +29,16 @@ void AShopkeeper::BeginPlay()
 
 void AShopkeeper::Interact(APlayerController* PlayerController)
 {
-	AOverworldHUD* Hud = Cast<AOverworldHUD>(PlayerController->GetHUD());
-	if (Hud != nullptr) {
-		Hud->ShowShop(ItemsToSell);
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
+	if (!IsValid(GameMode)) {
+		return;
 	}
+
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(PlayerController->GetHUD());
+	if (!IsValid(Hud)) {
+		return;
+	}
+
+	GameMode->InitItemsToSell(ItemsToSell);
+	Hud->ShowBuyShop();
 }

@@ -101,6 +101,19 @@ void APlayerCharacterController::LoseItem(FItemBaseStruct Item)
 	Inventory.RemoveSingle(Item);
 }
 
+int APlayerCharacterController::GetItemCount(FName ItemID)
+{
+	int Count = 0;
+
+	for (FItemBaseStruct Item : Inventory) {
+		if (Item.ItemID == ItemID) {
+			Count++;
+		}
+	}
+
+	return Count;
+}
+
 void APlayerCharacterController::ObtainPokemon(FPokemonStruct Pokemon)
 {
 	if (bIsRegisteredInPokedex(Pokemon.SpeciesData.PokemonID) == false) {

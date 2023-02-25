@@ -336,51 +336,55 @@ void AOverworldGameMode::FillBagWidget()
 	}
 }
 
-void AOverworldGameMode::InitShop(TArray<FName> ItemsToSell)
+void AOverworldGameMode::InitItemsToSell(TArray<FName> ItemIDs)
 {
-	ShopSlots.Empty();
-
-	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-
-	TArray<FItemBaseStruct> Inventory = PlayerController->Inventory;
-	TArray<FItemBaseStruct> ItemsInShop;
-
-	for (FName ItemID : ItemsToSell) 
-	{
-		for (UDataTable* ItemTable : GetItemDT()) 
-		{
+	for (FName ItemID : ItemIDs){
+		for (UDataTable* ItemTable : GetItemDT()){
 			FItemBaseStruct* Item = ItemTable->FindRow<FItemBaseStruct>(ItemID, "");
 
-			if(Item) 
-			{
-				ItemsInShop.Add(*Item);
+			if (Item){
+				ItemsToSell.Add(*Item);
 			}
 		}
 	}
-	
-	for (int i = 0; i < ItemsInShop.Num(); i++) {
-		AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
-		UItemShopSlotWidget* ShopSlotWidget = CreateWidget<UItemShopSlotWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetItemShopSlotWidgetClass());
-
-		ShopSlotWidget->SetItemName(ItemsInShop[i].Name);
-		ShopSlotWidget->SetItemImage(ItemsInShop[i].Image);
-		ShopSlotWidget->SetItemCount(0);
-		ShopSlotWidget->SetItem(ItemsInShop[i]);
-
-		ShopSlotWidget->BuyClicked.AddDynamic(this, &AOverworldGameMode::BuyItem);
-		ShopSlotWidget->SellClicked.AddDynamic(this, &AOverworldGameMode::SellItem);
-
-		ShopSlots.Add(ShopSlotWidget);
-
-		ItemShopSlotDelegate.Broadcast(ShopSlotWidget);
-	}
-
-	RefreshShop();
 }
 
-void AOverworldGameMode::RefreshShop()
+void AOverworldGameMode::InitBuyShop()
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (!IsValid(PlayerController)) {
+		return;
+	}
+
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	if (!IsValid(Hud)) {
+		return;
+	}
+	
+	ShopMode = "Buy";
+
+	for (int i = 0; i < ItemsToSell.Num(); i++) {
+		UItemSlotWidget* ItemSlotWidget = CreateWidget<UItemSlotWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetItemSlotWidgetClass());
+
+		ItemSlotWidget->SetItemName(ItemsToSell[i].Name);
+		ItemSlotWidget->SetItemImage(ItemsToSell[i].Image);
+		ItemSlotWidget->SetItemCount(PlayerController->GetItemCount(ItemsToSell[i].ItemID));
+		ItemSlotWidget->SetItemID(i);
+
+		//ShopSlotWidget->BuyClicked.AddDynamic(this, &AOverworldGameMode::BuyItem);
+		//ShopSlotWidget->SellClicked.AddDynamic(this, &AOverworldGameMode::SellItem);
+
+		ItemShopSlotDelegate.Broadcast(ItemSlotWidget);
+	}
+}
+
+void AOverworldGameMode::InitSellShop()
+{
+}
+
+void AOverworldGameMode::RefreshItemShopInfo()
+{
+	/*APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	TArray<FItemBaseStruct> Inventory = PlayerController->Inventory;
 
 	for (UItemShopSlotWidget* Slot : ShopSlots) {
@@ -417,7 +421,7 @@ void AOverworldGameMode::RefreshShop()
 		}
 	}
 
-	ShopMessageDelegate.Broadcast("You currently have " + FString::FromInt(PlayerController->Money) + "$");
+	ShopMessageDelegate.Broadcast("Money: " + FString::FromInt(PlayerController->Money) + "$");*/
 }
 
 void AOverworldGameMode::BuyItem(FItemBaseStruct Item)
@@ -426,7 +430,7 @@ void AOverworldGameMode::BuyItem(FItemBaseStruct Item)
 	PlayerController->ObtainItem(Item);
 	PlayerController->Money -= Item.Value;
 
-	RefreshShop();
+	//RefreshShop();
 }
 
 void AOverworldGameMode::SellItem(FItemBaseStruct Item)
@@ -435,7 +439,7 @@ void AOverworldGameMode::SellItem(FItemBaseStruct Item)
 	PlayerController->LoseItem(Item);
 	PlayerController->Money += Item.Value;
 
-	RefreshShop();
+	//RefreshShop();
 }
 
 void AOverworldGameMode::ShowPokemonInMenu()
