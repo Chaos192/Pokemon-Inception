@@ -228,6 +228,9 @@ public:
 	void ShowItemInfo(int ItemID);
 
 	UFUNCTION()
+	void ShowItemShopInfo(int ItemID);
+
+	UFUNCTION()
 	void ShowUseItemPopup(int PokemonId);
 
 	UFUNCTION()

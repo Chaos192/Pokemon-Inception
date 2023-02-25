@@ -230,7 +230,7 @@ void AOverworldHUD::ShowBag()
 {
 	Clear();
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
@@ -246,7 +246,7 @@ void AOverworldHUD::ShowBag()
 
 void AOverworldHUD::ShowItemInfo(int ItemID)
 {
-	if (PlayerOwner && BagWidget) {
+	if (PlayerOwner && ItemInfoWidget) {
 		APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(PlayerOwner);
 		TArray<FItemBaseStruct> Inventory = PlayerController->Inventory;
 
@@ -254,6 +254,42 @@ void AOverworldHUD::ShowItemInfo(int ItemID)
 		ItemInfoWidget->SetID(ItemID);
 
 		BagWidget->ShowInfo(ItemInfoWidget);
+	}
+}
+
+void AOverworldHUD::ShowItemShopInfo(int ItemID)
+{
+	ShopWidget->ClearShopInfo();
+
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (!IsValid(GameMode)) {
+		return;
+	}
+
+	ItemShopInfoWidget->OperationClicked.RemoveAll(GameMode);
+
+	if (PlayerOwner && ItemShopInfoWidget) {
+		if (GameMode->ShopMode == "Buy") {
+			ItemShopInfoWidget->SetOperation("Buy");
+			ItemShopInfoWidget->SetDescription(GameMode->ItemsToSell[ItemID].Description);
+			ItemShopInfoWidget->SetPrice(GameMode->ItemsToSell[ItemID].Value);
+			ItemShopInfoWidget->SetID(ItemID);
+
+			ItemShopInfoWidget->OperationClicked.AddDynamic(GameMode, &AOverworldGameMode::BuyItem);
+		}
+
+		else if (GameMode->ShopMode == "Sell") {
+			APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(PlayerOwner);
+
+			ItemShopInfoWidget->SetOperation("Sell");
+			ItemShopInfoWidget->SetDescription(PlayerController->Inventory[ItemID].Description);
+			ItemShopInfoWidget->SetPrice(PlayerController->Inventory[ItemID].Value);
+			ItemShopInfoWidget->SetID(ItemID);
+
+			ItemShopInfoWidget->OperationClicked.AddDynamic(GameMode, &AOverworldGameMode::SellItem);
+		}
+
+		ShopWidget->ShowShopInfo(ItemShopInfoWidget);
 	}
 }
 
@@ -328,13 +364,17 @@ void AOverworldHUD::ShowTrainerCard()
 
 void AOverworldHUD::ShowBuyShop()
 {
-	ShopWidget->ClearShop();
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (!IsValid(GameMode)) {
 		return;
 	}
 
 	if (PlayerOwner && ShopWidget) {
+		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(PlayerOwner);
+
+		ShopWidget->ClearShop();
+		ShopWidget->ClearShopInfo();
+		ShopWidget->ShowMoney("Money: " + FString::FromInt(Controller->Money) + "$");
 		GameMode->InitBuyShop();
 
 		if (!ShopWidget->IsInViewport()) {
@@ -349,13 +389,17 @@ void AOverworldHUD::ShowBuyShop()
 
 void AOverworldHUD::ShowSellShop()
 {
-	ShopWidget->ClearShop();
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (!IsValid(GameMode)) {
 		return;
 	}
 
 	if (PlayerOwner && ShopWidget) {
+		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(PlayerOwner);
+
+		ShopWidget->ClearShop();
+		ShopWidget->ClearShopInfo();
+		ShopWidget->ShowMoney("Money: " + FString::FromInt(Controller->Money) + "$");
 		GameMode->InitSellShop();
 
 		if (!ShopWidget->IsInViewport()) {

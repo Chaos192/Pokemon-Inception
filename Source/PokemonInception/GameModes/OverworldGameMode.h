@@ -36,12 +36,6 @@ private:
 protected:
 	virtual void BeginPlay() override;
 
-	UFUNCTION()
-	void BuyItem(FItemBaseStruct Item);
-
-	UFUNCTION()
-	void SellItem(FItemBaseStruct Item);
-
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class AWildPokemonSpawner> SpawnerClass;
 
@@ -127,7 +121,10 @@ public:
 	void InitSellShop();
 
 	UFUNCTION()
-	void RefreshItemShopInfo();
+	void BuyItem(int ItemID);
+
+	UFUNCTION()
+	void SellItem(int ItemID);
 
 	UFUNCTION()
 	void ShowPokemonInMenu();
