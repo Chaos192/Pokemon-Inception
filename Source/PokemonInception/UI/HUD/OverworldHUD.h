@@ -22,6 +22,7 @@
 #include "../PopupUI/MoveSelectionPopupWidget.h"
 #include "../PopupUI/PopupSelectionWidget.h"
 #include "../MessageUI/TextBoxWidget.h"
+#include "../MessageUI/InGameWidget.h"
 
 #include "OverworldHUD.generated.h"
 
@@ -41,6 +42,9 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UTextBoxWidget> OnScreenMessageWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UInGameWidget> InGameWidgetClass;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UPokedexWidget> PokedexWidgetClass;
@@ -116,6 +120,9 @@ protected:
 
 	UPROPERTY()
 	class UTextBoxWidget* OnScreenMessageWidget;
+
+	UPROPERTY()
+	class UInGameWidget* InGameWidget;
 
 	UPROPERTY()
 	class UPokedexWidget* PokedexWidget;
@@ -202,6 +209,9 @@ public:
 	TSubclassOf<UMoveButtonWidget> GetMoveButtonWidgetClass();
 
 	TSubclassOf<UPokemonIconWidget> GetPokemonIconWidgetClass();
+
+	UFUNCTION()
+	void ShowInGameWidget();
 
 	UFUNCTION()
 	void ShowMenu();

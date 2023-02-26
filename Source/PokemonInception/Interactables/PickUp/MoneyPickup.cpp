@@ -11,7 +11,7 @@ AMoneyPickup::AMoneyPickup()
 {
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 
-	Action = "pick up";
+	Name = "Money Pickup";
 	money = 100;
 }
 

@@ -10,7 +10,7 @@ APokemonPickup::APokemonPickup()
 {
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 
-	Action = "pick up";
+	Name = "Pokemon Pickup";
 }
 
 void APokemonPickup::Interact(APlayerController* Controller)

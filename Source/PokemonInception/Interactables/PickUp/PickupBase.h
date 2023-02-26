@@ -18,7 +18,7 @@ public:
 	class UStaticMeshComponent* Mesh = nullptr;
 
 	UPROPERTY(EditAnywhere)
-	FString Action;
+	FString Name;
 
 	virtual void Interact(APlayerController* PlayerController) override;
 };

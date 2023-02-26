@@ -11,6 +11,7 @@
 #include "Perception/AISense_Sight.h"
 #include "PlayerCharacterController.h"
 #include "../UI/HUD/OverworldHUD.h"
+#include "../Interactables/InteractableInterface.h"
 
 //////////////////////////////////////////////////////////////////////////
 // APokemonInceptionCharacter
@@ -62,6 +63,12 @@ APokemonInceptionCharacter::APokemonInceptionCharacter()
 	SetTickableWhenPaused(true);
 }
 
+void APokemonInceptionCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	CheckForInteractables();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -109,6 +116,32 @@ void APokemonInceptionCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * TurnRateGamepad * GetWorld()->GetDeltaSeconds());
+}
+
+void APokemonInceptionCharacter::CheckForInteractables()
+{
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(GetController());
+	if (!IsValid(PlayerController)) {
+		return;
+	}
+
+	FHitResult HitResult;
+
+	FVector StartTrace = FollowCamera->GetComponentLocation();
+	FVector EndTrace = StartTrace + (FollowCamera->GetForwardVector() * 450);
+
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_Pawn, QueryParams)) {
+		if (HitResult.GetActor()->GetClass()->ImplementsInterface(UInteractableInterface::StaticClass())) {
+
+			PlayerController->SetFoundInteractable(HitResult.GetActor());
+			return;
+		}
+	}
+
+	PlayerController->SetFoundInteractable(nullptr);
 }
 
 void APokemonInceptionCharacter::MoveForward(float Value)

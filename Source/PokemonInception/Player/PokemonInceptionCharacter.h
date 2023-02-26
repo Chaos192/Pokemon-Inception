@@ -27,6 +27,8 @@ private:
 public:
 	APokemonInceptionCharacter();
 
+	virtual void Tick(float DeltaTime) override;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Input)
 	float TurnRateGamepad;
 
@@ -35,6 +37,8 @@ public:
 
 
 protected:
+	void CheckForInteractables();
+
 	void MoveForward(float Value);
 
 	void MoveRight(float Value);

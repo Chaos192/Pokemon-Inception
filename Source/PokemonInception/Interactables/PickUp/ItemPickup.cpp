@@ -11,7 +11,7 @@ AItemPickup::AItemPickup()
 {
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 
-	Action = "pick up";
+	Name = "Item Pickup";
 	ItemID = FName("None");
 }
 

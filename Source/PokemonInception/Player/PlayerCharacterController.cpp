@@ -4,6 +4,8 @@
 #include "PlayerCharacterController.h"
 #include "../PokemonInception.h"
 #include "../Interactables/InteractableInterface.h"
+#include "../Interactables/PickUp/PickupBase.h"
+#include "../Interactables/NPC/NPCBase.h"
 #include "../GameModes/OverworldGameMode.h"
 #include "PokemonInceptionCharacter.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -11,36 +13,11 @@
 
 void APlayerCharacterController::Interact()
 {
-	APokemonInceptionCharacter* PlayerPawn = Cast<APokemonInceptionCharacter>(GetPawn());
-	
-	FHitResult HitResult;
-
-	TArray<AActor*> ActorsToIgnore;
-	ActorsToIgnore.Add(PlayerPawn);
-
-	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
-	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Destructible));
-	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
-
-	FVector BoxHalfSize = FVector(75, 75, 100);
-	FRotator PlayerFaceDirection = PlayerPawn->GetActorRotation();
-	FVector BoxLocation = PlayerPawn->GetActorLocation();
-
-	BoxLocation += PlayerFaceDirection.Vector() * BoxHalfSize.Y;
-
-	FRotator BoxDirection = PlayerFaceDirection;
-	BoxDirection.Yaw += 90;
-
-	if (!UKismetSystemLibrary::BoxTraceSingleForObjects(GetWorld(), BoxLocation, BoxLocation, BoxHalfSize, BoxDirection,
-		ObjectTypes, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true,
-		FLinearColor(1, 0, 0), FLinearColor(0, 1, 0), 1.f)) 
-	{
+	if (!IsValid(FoundInteractable)) {
 		return;
 	}
-	
-	if (HitResult.GetActor()->GetClass()->ImplementsInterface(UInteractableInterface::StaticClass())) {
-		Cast<IInteractableInterface>(HitResult.GetActor())->Interact(this);
-	}
+
+	Cast<IInteractableInterface>(FoundInteractable)->Interact(this);
 }
 
 bool APlayerCharacterController::bIsPartyDefeated()
@@ -89,6 +66,26 @@ bool APlayerCharacterController::bCanObtainMorePokemon()
 	}
 	
 	return true;
+}
+
+void APlayerCharacterController::SetFoundInteractable(AActor* Interactable)
+{
+	FoundInteractable = Interactable;
+
+	if (!FoundInteractable) {
+		InteractableMessageDelegate.Broadcast(" ");
+		return;
+	}
+
+	if (ANPCBase* NPC = Cast<ANPCBase>(FoundInteractable)) {
+		InteractableMessageDelegate.Broadcast(NPC->Name + ": Press E to talk to");
+		return;
+	}
+
+	if (APickupBase* Pickup = Cast<APickupBase>(FoundInteractable)) {
+		InteractableMessageDelegate.Broadcast(Pickup->Name + ": Press E to pick up");
+		return;
+	}
 }
 
 void APlayerCharacterController::ObtainItem(FItemBaseStruct Item)

@@ -19,9 +19,18 @@ void AOverworldHUD::BeginPlay()
 	Super::BeginPlay();
 	
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (!IsValid(GameMode)) {
+		return;
+	}
+
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(PlayerOwner);
+	if (!IsValid(PlayerController)) {
+		return;
+	}
 
 	TextBoxWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TextBoxWidgetClass);
 	OnScreenMessageWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), OnScreenMessageWidgetClass);
+	InGameWidget = CreateWidget<UInGameWidget>(UGameplayStatics::GetGameInstance(GetWorld()), InGameWidgetClass);
 
 	MenuWidget = CreateWidget<UMenuWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MenuWidgetClass);
 	PokedexWidget = CreateWidget<UPokedexWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokedexWidgetClass);
@@ -54,6 +63,8 @@ void AOverworldHUD::BeginPlay()
 	GameMode->PartyPokemonIconDelegate.AddDynamic(PokemonStorageWidget, &UPokemonStorageWidget::AddToPartyBox);
 	GameMode->StoragePokemonIconDelegate.AddDynamic(PokemonStorageWidget, &UPokemonStorageWidget::AddToStorageBox);
 
+	PlayerController->InteractableMessageDelegate.AddDynamic(InGameWidget, &UInGameWidget::SetMessage);
+
 	MenuWidget->PokedexClicked.AddDynamic(this, &AOverworldHUD::ShowPokedex);
 	MenuWidget->PokemonClicked.AddDynamic(this, &AOverworldHUD::ShowPokemon);
 	MenuWidget->BagClicked.AddDynamic(this, &AOverworldHUD::ShowBag);
@@ -84,6 +95,19 @@ void AOverworldHUD::BeginPlay()
 	StorageOperationPopupWidget->CancelClicked.AddDynamic(this, &AOverworldHUD::ClearPopup);
 
 	MoveManagerOperationWidget->CancelClicked.AddDynamic(this, &AOverworldHUD::ClearPopup);
+
+	ShowInGameWidget();
+}
+
+void AOverworldHUD::ShowInGameWidget()
+{
+	Clear();
+
+	if (PlayerOwner && InGameWidget) {
+		InGameWidget->AddToViewport();
+		PlayerOwner->bShowMouseCursor = false;
+		PlayerOwner->SetInputMode(FInputModeGameOnly());
+	}
 }
 
 void AOverworldHUD::ShowMenu()
@@ -259,6 +283,7 @@ void AOverworldHUD::ShowItemInfo(int ItemID)
 
 void AOverworldHUD::ShowItemShopInfo(int ItemID)
 {
+	ClearOnScreenMessage();
 	ShopWidget->ClearShopInfo();
 
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
@@ -364,6 +389,8 @@ void AOverworldHUD::ShowTrainerCard()
 
 void AOverworldHUD::ShowBuyShop()
 {
+	ClearOnScreenMessage();
+
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (!IsValid(GameMode)) {
 		return;
@@ -389,6 +416,8 @@ void AOverworldHUD::ShowBuyShop()
 
 void AOverworldHUD::ShowSellShop()
 {
+	ClearOnScreenMessage();
+
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (!IsValid(GameMode)) {
 		return;
@@ -671,7 +700,7 @@ void AOverworldHUD::TogglePause(bool IsPaused)
 		ShowMenu();
 	}
 	else {
-		Clear();
+		ShowInGameWidget();
 		PlayerOwner->SetInputMode(FInputModeGameOnly());
 		PlayerOwner->bShowMouseCursor = false;
 	}
@@ -684,7 +713,7 @@ void AOverworldHUD::Clear()
 
 void AOverworldHUD::ClearAndUnpause()
 {
-	Clear();
+	ShowInGameWidget();
 	PlayerOwner->SetInputMode(FInputModeGameOnly());
 	PlayerOwner->bShowMouseCursor = false;
 	PlayerOwner->SetPause(false);

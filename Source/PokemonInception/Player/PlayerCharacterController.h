@@ -10,6 +10,7 @@
 #include "PlayerCharacterController.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPauseSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteractableMessageSignature, FString, String);
 
 UCLASS()
 class POKEMONINCEPTION_API APlayerCharacterController : public APlayerController
@@ -24,6 +25,8 @@ public:
 	bool bIsPartyFull();
 
 	bool bCanObtainMorePokemon();
+
+	void SetFoundInteractable(AActor* Interactable);
 
 	UFUNCTION()
 	void ObtainItem(FItemBaseStruct Item);
@@ -80,8 +83,11 @@ public:
 	TArray<FPokemonStruct> PokemonStorage;
 
 	FPauseSignature PauseDelegate;
+	FInteractableMessageSignature InteractableMessageDelegate;
 
 protected:
+	AActor* FoundInteractable;
+
 	void Interact();
 
 	void TogglePause();
