@@ -10,7 +10,6 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEndTextSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTextSignature, FString, String);
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGamePauseSignature, bool, bIsPaused);
 
 UCLASS(minimalapi)

@@ -5,6 +5,7 @@
 #include "GameFramework/WorldSettings.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Kismet/GameplayStatics.h"
+#include "Camera/CameraComponent.h"
 #include "../Player/PokemonInceptionCharacter.h"
 #include "../Player/PlayerCharacterController.h"
 #include "../UI/HUD/OverworldHUD.h"
@@ -124,6 +125,8 @@ void AOverworldGameMode::SaveLevelData(AWildPokemon* PokemonToIgnore)
 
 	SaveData->PlayerLocation = PlayerOwner->GetActorLocation();
 	SaveData->PlayerRotation = PlayerOwner->GetActorRotation();
+	SaveData->PlayerCameraLocation = PlayerOwner->FollowCamera->GetComponentLocation();
+	SaveData->PlayerCameraRotation = PlayerOwner->FollowCamera->GetComponentRotation();
 	SaveData->ActorsToDestroy = ActorsToDestroy;
 
 	TArray<AActor*> Spawners;
@@ -179,6 +182,7 @@ void AOverworldGameMode::LoadLevelData()
 		else {
 			PlayerOwner->SetActorLocation(SaveData->PlayerLocation);
 			PlayerOwner->SetActorRotation(SaveData->PlayerRotation, ETeleportType::None);
+			//PlayerOwner->FollowCamera->SetWorldLocationAndRotation(SaveData->PlayerCameraLocation, SaveData->PlayerCameraRotation);
 		}
 
 		ActorsToDestroy = SaveData->ActorsToDestroy;

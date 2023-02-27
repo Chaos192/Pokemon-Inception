@@ -45,4 +45,33 @@ struct FTypeStruct : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<ETypes> NoEffectAgainst;
+
+	FString ToString(ETypes Type) {
+		switch (Type) {
+			case ETypes::Normal:
+				return "Normal";
+			case ETypes::Grass:
+				return "Grass";
+			case ETypes::Fire:
+				return "Fire";
+			case ETypes::Water:
+				return "Water";
+			case ETypes::Earth:
+				return "Earth";
+			case ETypes::Air:
+				return "Air";
+			case ETypes::Electric:
+				return "Electric";
+			case ETypes::Bug:
+				return "Bug";
+			case ETypes::Light:
+				return "Light";
+			case ETypes::Dark:
+				return "Dark";
+			case ETypes::Dragon:
+				return "Dragon";
+			default:
+				return " ";
+		}
+	}
 };

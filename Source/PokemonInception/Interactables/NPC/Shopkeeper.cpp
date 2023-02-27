@@ -9,22 +9,6 @@
 AShopkeeper::AShopkeeper()
 {
 	Name = "Shopkeeper";
-
-	OverheadNameWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Name"));
-	OverheadNameWidget->SetupAttachment(RootComponent);
-	OverheadNameWidget->SetWidgetSpace(EWidgetSpace::Screen);
-}
-
-void AShopkeeper::BeginPlay()
-{
-	Super::BeginPlay();
-	UOverheadNameWidget* Widget = CreateWidget<UOverheadNameWidget>(UGameplayStatics::GetGameInstance(GetWorld()), OverheadNameWidgetClass);
-
-	if (Widget) {
-		OverheadNameWidget->SetWidget(Widget);
-		OverheadNameWidget->SetRelativeLocation(FVector(10, 0, 125));
-		Widget->SetName(Name);
-	}
 }
 
 void AShopkeeper::Interact(APlayerController* PlayerController)

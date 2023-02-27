@@ -5,9 +5,7 @@
 #include "CoreMinimal.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
-#include "Components/WidgetComponent.h"
 #include "../InteractableInterface.h"
-#include "../../UI/MessageUI/OverheadNameWidget.h"
 #include "../../Player/PokemonInceptionCharacter.h"
 #include "NPCBase.generated.h"
 
@@ -22,9 +20,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	FString Name;
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UOverheadNameWidget> OverheadNameWidgetClass;
 
 	virtual void Interact(APlayerController* PlayerController) override;
 };

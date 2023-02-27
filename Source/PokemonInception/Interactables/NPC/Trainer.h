@@ -16,8 +16,6 @@ class POKEMONINCEPTION_API ATrainer : public ANPCBase
 public:
 	ATrainer();
 
-	virtual void BeginPlay() override;
-
 	UFUNCTION()
 	virtual void Interact(APlayerController* PlayerController) override;
 

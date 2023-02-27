@@ -45,5 +45,11 @@ public:
 	FRotator PlayerRotation;
 
 	UPROPERTY(EditDefaultsOnly)
+	FVector PlayerCameraLocation;
+
+	UPROPERTY(EditDefaultsOnly)
+	FRotator PlayerCameraRotation;
+
+	UPROPERTY(EditDefaultsOnly)
 	TArray<AActor*> ActorsToDestroy;
 };
