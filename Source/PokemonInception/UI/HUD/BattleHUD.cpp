@@ -11,6 +11,7 @@
 #include "../../Player/BattleController.h"
 #include "../../Pokemon/AttackMoveStruct.h"
 #include "../../Pokemon/StatusMoveStruct.h"
+#include "../../Pokemon/TypeStruct.h"
 #include "Engine/Engine.h"
 
 void ABattleHUD::BeginPlay()
@@ -158,7 +159,7 @@ void ABattleHUD::ShowMoveInfo(int MoveID)
 		FMoveBaseStruct Move = Pokemon.Moves[MoveID];
 
 		MoveInfoWidget->SetMoveName(Move.Name);
-		MoveInfoWidget->SetMoveType(FText::FromString(GameMode->ETypeToString(Move.MoveType)));
+		MoveInfoWidget->SetMoveType(FText::FromString(FTypeStruct::ToString(Move.MoveType)));
 		MoveInfoWidget->SetMoveDescription(Move.Description);
 
 		if (Move.MoveStructType == "Attack") {
@@ -230,17 +231,17 @@ void ABattleHUD::ShowPokemonSummary(int PokemonID)
 	if (GameMode == nullptr) {
 		return;
 	}
-
+	
 	if (PlayerOwner && PokemonSummaryWidget) {
 		ABattleController* Controller = Cast<ABattleController>(PlayerOwner);
 		FPokemonStruct Pokemon = Controller->PokemonParty[PokemonID];
 
 		FString PokemonType;
 		if (Pokemon.SpeciesData.Type2 == ETypes::None) {
-			PokemonType = GameMode->ETypeToString(Pokemon.SpeciesData.Type1);
+			PokemonType = FTypeStruct::ToString(Pokemon.SpeciesData.Type1);
 		}
 		else {
-			PokemonType = GameMode->ETypeToString(Pokemon.SpeciesData.Type1) + " " + GameMode->ETypeToString(Pokemon.SpeciesData.Type2);
+			PokemonType = FTypeStruct::ToString(Pokemon.SpeciesData.Type1) + " " + FTypeStruct::ToString(Pokemon.SpeciesData.Type2);
 		}
 
 		FString PokemonHP = FString::FromInt(Pokemon.CurrHP) + "/" + FString::FromInt(Pokemon.MaxHP);

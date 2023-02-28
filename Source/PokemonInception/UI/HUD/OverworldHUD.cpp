@@ -12,6 +12,7 @@
 #include "../../Player/PokemonInceptionCharacter.h"
 #include "../../Player/PlayerCharacterController.h"
 #include "../../Pokemon/AttackMoveStruct.h"
+#include "../../Pokemon/TypeStruct.h"
 
 
 void AOverworldHUD::BeginPlay()
@@ -159,10 +160,10 @@ void AOverworldHUD::ShowPokedexInfo(FName PokemonID)
 		
 		FString PokemonType;
 		if (PokemonData.Type2 == ETypes::None) {
-			PokemonType = GameMode->ETypeToString(PokemonData.Type1);
+			PokemonType = FTypeStruct::ToString(PokemonData.Type1);
 		}
 		else {
-			PokemonType = GameMode->ETypeToString(PokemonData.Type1) + " " + GameMode->ETypeToString(PokemonData.Type2);
+			PokemonType = FTypeStruct::ToString(PokemonData.Type1) + " " + FTypeStruct::ToString(PokemonData.Type2);
 		}
 
 		PokedexInfoWidget->SetPokedexInfo(PokemonData, PokemonType);
@@ -225,10 +226,10 @@ void AOverworldHUD::ShowPokemonSummary(int PokemonID)
 
 		FString PokemonType;
 		if (Pokemon.SpeciesData.Type2 == ETypes::None) {
-			PokemonType = GameMode->ETypeToString(Pokemon.SpeciesData.Type1);
+			PokemonType = FTypeStruct::ToString(Pokemon.SpeciesData.Type1);
 		}
 		else {
-			PokemonType = GameMode->ETypeToString(Pokemon.SpeciesData.Type1) + " " + GameMode->ETypeToString(Pokemon.SpeciesData.Type2);
+			PokemonType = FTypeStruct::ToString(Pokemon.SpeciesData.Type1) + " " + FTypeStruct::ToString(Pokemon.SpeciesData.Type2);
 		}
 
 		FString PokemonHP = FString::FromInt(Pokemon.CurrHP) + "/" + FString::FromInt(Pokemon.MaxHP);
@@ -578,7 +579,7 @@ void AOverworldHUD::ShowMoveInfo(int MoveID)
 		FMoveBaseStruct Move = Pokemon.Moves[MoveID];
 
 		MoveInfoWidget->SetMoveName(Move.Name);
-		MoveInfoWidget->SetMoveType(FText::FromString(GameMode->ETypeToString(Move.MoveType)));
+		MoveInfoWidget->SetMoveType(FText::FromString(FTypeStruct::ToString(Move.MoveType)));
 		MoveInfoWidget->SetMoveDescription(Move.Description);
 
 		if (Move.MoveStructType == "Attack") {

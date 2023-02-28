@@ -17,6 +17,9 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION()
+	void ClearPokemonReference(AActor* Pokemon);
+
 	void Generate();
 
 	void ManualGenerate(FWildPokemonData SaveData);

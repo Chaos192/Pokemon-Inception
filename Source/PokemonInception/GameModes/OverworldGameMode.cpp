@@ -134,23 +134,25 @@ void AOverworldGameMode::SaveLevelData(AWildPokemon* PokemonToIgnore)
 	
 	for (AActor* Spawner : Spawners) {
 		AWildPokemonSpawner* PokemonSpawner = Cast<AWildPokemonSpawner>(Spawner);
-		
-		if (!IsValid(PokemonSpawner->SpawnedPokemon)) {
+		AWildPokemon* PokemonRef = PokemonSpawner->SpawnedPokemon;
+
+		if (!IsValid(PokemonRef)) {
 			continue;
 		}
-			
-		if(PokemonSpawner->SpawnedPokemon != PokemonToIgnore){
+
+		if(PokemonRef != PokemonToIgnore){
 			FWildPokemonData PokemonData;
 
-			PokemonData.Pokemon = PokemonSpawner->SpawnedPokemon;
-			PokemonData.PokemonStruct = PokemonSpawner->SpawnedPokemon->Pokemon;
+			PokemonData.Pokemon = PokemonRef;
+			PokemonData.PokemonStruct = PokemonRef->Pokemon;
 
-			if (IsValid(PokemonSpawner->SpawnedPokemon->GetClass())) {
-				PokemonData.PokemonClass = PokemonSpawner->SpawnedPokemon->GetClass();
-			}
+			/*if (!IsValid(PokemonRef->GetClass())) {
+				return;
+			}*/
+			PokemonData.PokemonClass = PokemonRef->GetClass();
 
-			PokemonData.PokemonLocation = PokemonSpawner->SpawnedPokemon->GetActorLocation();
-			PokemonData.PokemonRotation = PokemonSpawner->SpawnedPokemon->GetActorRotation();
+			PokemonData.PokemonLocation = PokemonRef->GetActorLocation();
+			PokemonData.PokemonRotation = PokemonRef->GetActorRotation();
 
 			SaveData->PokemonSpawners.Add(PokemonSpawner, PokemonData);
 		}
@@ -266,36 +268,6 @@ void AOverworldGameMode::SelectItem(int InId)
 
 	SelectedItemID = InId;
 	Hud->ShowPokemon();
-}
-
-FString AOverworldGameMode::ETypeToString(ETypes Type)
-{
-	switch (Type) {
-	case ETypes::Normal:
-		return "Normal";
-	case ETypes::Grass:
-		return "Grass";
-	case ETypes::Fire:
-		return "Fire";
-	case ETypes::Water:
-		return "Water";
-	case ETypes::Earth:
-		return "Earth";
-	case ETypes::Air:
-		return "Air";
-	case ETypes::Electric:
-		return "Electric";
-	case ETypes::Bug:
-		return "Bug";
-	case ETypes::Light:
-		return "Light";
-	case ETypes::Dark:
-		return "Dark";
-	case ETypes::Dragon:
-		return "Dragon";
-	default:
-		return " ";
-	}
 }
 
 void AOverworldGameMode::FillBagWidget()
@@ -448,8 +420,8 @@ void AOverworldGameMode::SellItem(int ItemID)
 		return;
 	}
 
-	PlayerController->LoseItem(PlayerController->Inventory[ItemID]);
 	PlayerController->Money += PlayerController->Inventory[ItemID].Value;
+	PlayerController->LoseItem(PlayerController->Inventory[ItemID]);
 
 	Hud->ShowSellShop();
 }

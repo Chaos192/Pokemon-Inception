@@ -29,6 +29,8 @@ protected:
 	class UTextBlock* DescriptionText;
 
 public:
+	virtual void NativeOnInitialized() override;
+
 	UFUNCTION()
 	void SetDescription(FText Description);
 

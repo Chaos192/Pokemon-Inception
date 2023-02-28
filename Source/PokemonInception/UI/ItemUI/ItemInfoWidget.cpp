@@ -5,7 +5,14 @@
 
 void UItemInfoWidget::OnUseClicked()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 4, FColor::Green, TEXT("Use Clicked!"));
 	UseClicked.Broadcast(ItemID);
+}
+
+void UItemInfoWidget::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+	Use->OnClicked.AddDynamic(this, &UItemInfoWidget::OnUseClicked);
 }
 
 void UItemInfoWidget::SetDescription(FText Description)

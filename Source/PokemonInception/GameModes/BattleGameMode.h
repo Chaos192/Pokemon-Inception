@@ -161,9 +161,6 @@ public:
 	void SwitchToTrainerCamera();
 
 	UFUNCTION()
-	FString ETypeToString(ETypes Type);
-
-	UFUNCTION()
 	void ShowPokemonInMenu();
 
 	UFUNCTION()

@@ -78,9 +78,6 @@ public:
 	class UDataTable* StatusMovesDT;
 
 	UFUNCTION()
-	FString ETypeToString(ETypes Type);
-
-	UFUNCTION()
 	void SaveGame();
 
 	UFUNCTION()

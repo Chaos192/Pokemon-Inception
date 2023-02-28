@@ -46,7 +46,7 @@ struct FTypeStruct : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<ETypes> NoEffectAgainst;
 
-	FString ToString(ETypes Type) {
+	static FString ToString(ETypes Type) {
 		switch (Type) {
 			case ETypes::Normal:
 				return "Normal";

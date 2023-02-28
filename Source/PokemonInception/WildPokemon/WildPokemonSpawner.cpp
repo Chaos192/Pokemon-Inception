@@ -20,8 +20,17 @@ void AWildPokemonSpawner::Tick(float DeltaTime)
 	Generate();
 }
 
+void AWildPokemonSpawner::ClearPokemonReference(AActor* Pokemon)
+{
+	SpawnedPokemon = nullptr;
+}
+
 void AWildPokemonSpawner::Generate()
 {
+	if (IsValid(SpawnedPokemon)) {
+		return;
+	}
+
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
 	if (!IsValid(GameMode)) {
 		return;
@@ -34,10 +43,6 @@ void AWildPokemonSpawner::Generate()
 
 	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(PlayerController->GetPawn());
 	if (!IsValid(Player)) {
-		return;
-	}
-
-	if (IsValid(SpawnedPokemon)) {
 		return;
 	}
 
@@ -58,7 +63,8 @@ void AWildPokemonSpawner::Generate()
 	SpawnedPokemon = GetWorld()->SpawnActor<AWildPokemon>(PokemonToSpawn[Index], GetActorLocation(), Rotation);
 
 	if (IsValid(SpawnedPokemon)) {
-		SpawnedPokemon->InitPokemon(GameMode->PokemonDT, SpawnLevel, GameMode->GetMoveDT()); //this right here, officer
+		SpawnedPokemon->InitPokemon(GameMode->PokemonDT, SpawnLevel, GameMode->GetMoveDT());
+		SpawnedPokemon->OnDestroyed.AddDynamic(this, &AWildPokemonSpawner::ClearPokemonReference);
 	}
 }
 
