@@ -37,5 +37,8 @@ public:
 	UFUNCTION()
 	void SetID(int InItemID);
 
+	UFUNCTION()
+	void SetUseButton(bool bUsable);
+
 	FElementIDSignature UseClicked;
 };

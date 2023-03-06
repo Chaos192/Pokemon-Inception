@@ -277,6 +277,7 @@ void AOverworldHUD::ShowItemInfo(int ItemID)
 
 		ItemInfoWidget->SetDescription(Inventory[ItemID].Description);
 		ItemInfoWidget->SetID(ItemID);
+		ItemInfoWidget->SetUseButton(Inventory[ItemID].bUsableOutsideBattle);
 
 		BagWidget->ShowInfo(ItemInfoWidget);
 	}
@@ -581,6 +582,7 @@ void AOverworldHUD::ShowMoveInfo(int MoveID)
 		MoveInfoWidget->SetMoveName(Move.Name);
 		MoveInfoWidget->SetMoveType(FText::FromString(FTypeStruct::ToString(Move.MoveType)));
 		MoveInfoWidget->SetMoveDescription(Move.Description);
+		MoveInfoWidget->SetWidgetColor(Move.MoveType);
 
 		if (Move.MoveStructType == "Attack") {
 			FAttackMoveStruct* Attack = GameMode->AttackMovesDT->FindRow<FAttackMoveStruct>(Move.MoveID, "");

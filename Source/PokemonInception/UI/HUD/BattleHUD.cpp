@@ -161,6 +161,7 @@ void ABattleHUD::ShowMoveInfo(int MoveID)
 		MoveInfoWidget->SetMoveName(Move.Name);
 		MoveInfoWidget->SetMoveType(FText::FromString(FTypeStruct::ToString(Move.MoveType)));
 		MoveInfoWidget->SetMoveDescription(Move.Description);
+		MoveInfoWidget->SetWidgetColor(Move.MoveType);
 
 		if (Move.MoveStructType == "Attack") {
 			FAttackMoveStruct* Attack = GameMode->AttackMovesDT->FindRow<FAttackMoveStruct>(Move.MoveID, "");
@@ -198,6 +199,7 @@ void ABattleHUD::ShowItemInfo(int ItemID)
 
 		ItemInfoWidget->SetDescription(Controller->Inventory[ItemID].Description);
 		ItemInfoWidget->SetID(ItemID);
+		ItemInfoWidget->SetUseButton(Controller->Inventory[ItemID].bUsableInBattle);
 
 		BagWidget->ShowInfo(ItemInfoWidget);
 	}

@@ -8,7 +8,6 @@
 #include "../Pokemon/PokemonStruct.h"
 #include "../Pokemon/TypeStruct.h"
 #include "../Pokemon/MoveBaseStruct.h"
-#include "../SaveGame/WorldSaveData.h"
 #include "../UI/ItemUI/ItemInfoWidget.h"
 #include "../UI/WidgetDelegates.h"
 #include "../Items/BallActor.h"

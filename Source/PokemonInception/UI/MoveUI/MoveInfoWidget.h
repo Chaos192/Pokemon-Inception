@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
+#include "Components/Border.h"
+#include "../../Pokemon/TypeStruct.h"
 #include "MoveInfoWidget.generated.h"
 
 
@@ -26,6 +28,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UTextBlock* MoveDescription;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UBorder* WidgetBorder;
+
 public:
 	UFUNCTION()
 	void SetMoveName(FText Name);
@@ -38,4 +43,7 @@ public:
 
 	UFUNCTION()
 	void SetMoveDescription(FText Description);
+
+	UFUNCTION()
+	void SetWidgetColor(ETypes Type);
 };

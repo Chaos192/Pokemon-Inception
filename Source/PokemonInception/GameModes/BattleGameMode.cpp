@@ -16,6 +16,7 @@
 #include "../Items/EtherBaseStruct.h"
 #include "../Items/PotionBaseStruct.h"
 #include "../Items/ReviveBaseStruct.h"
+#include "../SaveGame/PlayerSaveData.h"
 
 
 void ABattleGameMode::BeginPlay()

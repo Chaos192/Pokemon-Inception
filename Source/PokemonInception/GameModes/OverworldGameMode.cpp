@@ -13,8 +13,8 @@
 #include "../Items/EtherBaseStruct.h"
 #include "../Items/PotionBaseStruct.h"
 #include "../Items/ReviveBaseStruct.h"
-#include "../SaveGame/WorldSaveData.h"
-#include "../SaveGame/WildPokemonSaveData.h"
+#include "../SaveGame/PlayerSaveData.h"
+#include "../SaveGame/LevelSaveData.h"
 #include "../WildPokemon/WildPokemonSpawner.h"
 #include "../WildPokemon/WildPokemon.h"
 
@@ -24,12 +24,7 @@ void AOverworldGameMode::BeginPlay()
 	Super::BeginPlay();
 
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	if (PlayerController == nullptr) {
-		return;
-	}
-
-	APokemonInceptionCharacter* PlayerOwner = Cast<APokemonInceptionCharacter>(PlayerController->GetPawn());
-	if (PlayerOwner == nullptr) {
+	if (!IsValid(PlayerController)) {
 		return;
 	}
 
@@ -59,19 +54,13 @@ void AOverworldGameMode::BeginPlay()
 	LoadLevelData();
 
 	PlayerController->PauseDelegate.AddDynamic(this, &AOverworldGameMode::TogglePause);
-
 	OnGamePaused.AddDynamic(Cast<AOverworldHUD>(PlayerController->GetHUD()), &AOverworldHUD::TogglePause);
 }
 
 void AOverworldGameMode::SaveGame()
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	if (PlayerController == nullptr) {
-		return;
-	}
-
-	APokemonInceptionCharacter* PlayerOwner = Cast<APokemonInceptionCharacter>(PlayerController->GetPawn());
-	if (PlayerOwner == nullptr) {
+	if (!IsValid(PlayerController)) {
 		return;
 	}
 
@@ -110,12 +99,12 @@ void AOverworldGameMode::InitiateBattle(TArray<FPokemonStruct> OpponentTeam, boo
 void AOverworldGameMode::SaveLevelData(AWildPokemon* PokemonToIgnore)
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	if (PlayerController == nullptr) {
+	if (!IsValid(PlayerController)) {
 		return;
 	}
 
-	APokemonInceptionCharacter* PlayerOwner = Cast<APokemonInceptionCharacter>(PlayerController->GetPawn());
-	if (PlayerOwner == nullptr) {
+	APokemonInceptionCharacter* PlayerPawn = Cast<APokemonInceptionCharacter>(PlayerController->GetPawn());
+	if (!IsValid(PlayerPawn)) {
 		return;
 	}
 
@@ -123,10 +112,10 @@ void AOverworldGameMode::SaveLevelData(AWildPokemon* PokemonToIgnore)
 
 	SaveData->PokemonSpawners.Empty();
 
-	SaveData->PlayerLocation = PlayerOwner->GetActorLocation();
-	SaveData->PlayerRotation = PlayerOwner->GetActorRotation();
-	SaveData->PlayerCameraLocation = PlayerOwner->FollowCamera->GetComponentLocation();
-	SaveData->PlayerCameraRotation = PlayerOwner->FollowCamera->GetComponentRotation();
+	SaveData->PlayerLocation = PlayerPawn->GetActorLocation();
+	SaveData->PlayerRotation = PlayerPawn->GetActorRotation();
+	SaveData->PlayerCameraLocation = PlayerPawn->FollowCamera->GetComponentLocation();
+	SaveData->PlayerCameraRotation = PlayerPawn->FollowCamera->GetComponentRotation();
 	SaveData->ActorsToDestroy = ActorsToDestroy;
 
 	TArray<AActor*> Spawners;
@@ -145,12 +134,7 @@ void AOverworldGameMode::SaveLevelData(AWildPokemon* PokemonToIgnore)
 
 			PokemonData.Pokemon = PokemonRef;
 			PokemonData.PokemonStruct = PokemonRef->Pokemon;
-
-			/*if (!IsValid(PokemonRef->GetClass())) {
-				return;
-			}*/
 			PokemonData.PokemonClass = PokemonRef->GetClass();
-
 			PokemonData.PokemonLocation = PokemonRef->GetActorLocation();
 			PokemonData.PokemonRotation = PokemonRef->GetActorRotation();
 
@@ -164,12 +148,12 @@ void AOverworldGameMode::SaveLevelData(AWildPokemon* PokemonToIgnore)
 void AOverworldGameMode::LoadLevelData()
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	if (PlayerController == nullptr) {
+	if (!IsValid(PlayerController)) {
 		return;
 	}
 
-	APokemonInceptionCharacter* PlayerOwner = Cast<APokemonInceptionCharacter>(PlayerController->GetPawn());
-	if (PlayerOwner == nullptr) {
+	APokemonInceptionCharacter* PlayerPawn = Cast<APokemonInceptionCharacter>(PlayerController->GetPawn());
+	if (!IsValid(PlayerPawn)) {
 		return;
 	}
 
@@ -182,8 +166,8 @@ void AOverworldGameMode::LoadLevelData()
 			PlayerController->FullRestoreAllPokemon();
 		}
 		else {
-			PlayerOwner->SetActorLocation(SaveData->PlayerLocation);
-			PlayerOwner->SetActorRotation(SaveData->PlayerRotation, ETeleportType::None);
+			PlayerPawn->SetActorLocation(SaveData->PlayerLocation);
+			PlayerPawn->SetActorRotation(SaveData->PlayerRotation, ETeleportType::None);
 			//PlayerOwner->FollowCamera->SetWorldLocationAndRotation(SaveData->PlayerCameraLocation, SaveData->PlayerCameraRotation);
 		}
 
@@ -211,18 +195,25 @@ void AOverworldGameMode::SaveAndExit()
 void AOverworldGameMode::SelectMove(int InId)
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (!IsValid(PlayerController)) {
+		return;
+	}
 
 	SelectedMoveID = InId;
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Using ether on " + PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString() +
-		" to restore " + PlayerController->PokemonParty[SelectedPokemonID].Moves[SelectedMoveID].Name.ToString()));
-
 	UseItem();
 }
 
 void AOverworldGameMode::SelectPokemon(int InId)
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (!IsValid(PlayerController)) {
+		return;
+	}
+
 	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	if (!IsValid(Hud)) {
+		return;
+	}
 
 	if (Hud->BIsMovePopupInViewport()) {
 		return;
@@ -231,7 +222,6 @@ void AOverworldGameMode::SelectPokemon(int InId)
 	SelectedPokemonID = InId;
 
 	if (bHasSelectedItem) {
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Using item on " + PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString()));
 		UseItem();
 	}
 	else {
@@ -244,25 +234,27 @@ void AOverworldGameMode::SelectPokemon(int InId)
 
 void AOverworldGameMode::SelectItem(int InId)
 {
-	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	if (PlayerController == nullptr) {
+	if (!IsValid(PlayerController)) {
+		return;
+	}
+
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	if (!IsValid(Hud)) {
 		return;
 	}
 
 	FItemBaseStruct Item = PlayerController->Inventory[InId];
 
 	if (!Item.bUsableOutsideBattle) {
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Can't use this item!"));
 		return;
 	}
 
 	if (Item.ItemStructType == "Ether") {
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Using an ether!"));
 		bHasSelectedEther = true;
 	}
+
 	else {
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Using a healing item/candy!"));
 		bHasSelectedItem = true;
 	}
 
@@ -273,9 +265,16 @@ void AOverworldGameMode::SelectItem(int InId)
 void AOverworldGameMode::FillBagWidget()
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (!IsValid(PlayerController)) {
+		return;
+	}
+
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	if (!IsValid(Hud)) {
+		return;
+	}
 
 	TArray<FItemBaseStruct> Inventory = PlayerController->Inventory;
-
 	TArray<FItemBaseStruct> UniqueItems;
 
 	for (FItemBaseStruct Item : Inventory) {
@@ -285,7 +284,6 @@ void AOverworldGameMode::FillBagWidget()
 	}
 
 	for (int i = 0; i < UniqueItems.Num(); i++) {
-		AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 		UItemSlotWidget* ItemSlotWidget = CreateWidget<UItemSlotWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetItemSlotWidgetClass());
 
 		ItemSlotWidget->SetItemName(UniqueItems[i].Name);
@@ -429,7 +427,14 @@ void AOverworldGameMode::SellItem(int ItemID)
 void AOverworldGameMode::ShowPokemonInMenu()
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (!IsValid(PlayerController)) {
+		return;
+	}
+
 	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	if (!IsValid(Hud)) {
+		return;
+	}
 
 	Hud->ClearPokemonSlots();
 
@@ -471,7 +476,14 @@ void AOverworldGameMode::ShowPokemonInMenu()
 void AOverworldGameMode::FillPokedex()
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (!IsValid(PlayerController)) {
+		return;
+	}
+
 	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	if (!IsValid(Hud)) {
+		return;
+	}
 
 	TArray<FPokemonBaseStruct*> AllPokemonData;
 	PokemonDT->GetAllRows<FPokemonBaseStruct>(TEXT("PokemonDT"), AllPokemonData);
@@ -495,7 +507,14 @@ void AOverworldGameMode::FillPokedex()
 void AOverworldGameMode::ShowPokemonInStorage()
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (!IsValid(PlayerController)) {
+		return;
+	}
+
 	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	if (!IsValid(Hud)) {
+		return;
+	}
 
 	Hud->ClearPokemonIcons();
 
@@ -503,7 +522,6 @@ void AOverworldGameMode::ShowPokemonInStorage()
 	TArray<FPokemonStruct> Storage = PlayerController->PokemonStorage;
 
 	for (int i = 0; i < Party.Num(); i++) {
-
 		UPokemonIconWidget* PokemonIconWidget = CreateWidget<UPokemonIconWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetPokemonIconWidgetClass());
 		PokemonIconWidget->SetPokemonName(Party[i].SpeciesData.Name);
 		PokemonIconWidget->SetPokemonLevel(Party[i].Level);
@@ -517,7 +535,6 @@ void AOverworldGameMode::ShowPokemonInStorage()
 	}
 
 	for (int i = 0; i < Storage.Num(); i++) {
-
 		UPokemonIconWidget* PokemonIconWidget = CreateWidget<UPokemonIconWidget>(UGameplayStatics::GetGameInstance(GetWorld()), Hud->GetPokemonIconWidgetClass());
 		PokemonIconWidget->SetPokemonName(Storage[i].SpeciesData.Name);
 		PokemonIconWidget->SetPokemonLevel(Storage[i].Level);
@@ -539,7 +556,11 @@ FPokemonBaseStruct AOverworldGameMode::GetPokemonSpeciesData(FName PokemonID)
 
 void AOverworldGameMode::TogglePause()
 {
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (!IsValid(PlayerController)) {
+		return;
+	}
+
 	bIsPaused = !bIsPaused;
 	PlayerController->SetPause(bIsPaused);
 	OnGamePaused.Broadcast(bIsPaused);
@@ -548,7 +569,14 @@ void AOverworldGameMode::TogglePause()
 void AOverworldGameMode::UseItem()
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (!IsValid(PlayerController)) {
+		return;
+	}
+
 	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	if (!IsValid(Hud)) {
+		return;
+	}
 
 	FString ItemMessage = "You used a " + PlayerController->Inventory[SelectedItemID].Name.ToString() + ", ";
 
@@ -624,12 +652,16 @@ void AOverworldGameMode::UseItem()
 void AOverworldGameMode::SwapPositionWith(int NewPositionId)
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (!IsValid(PlayerController)) {
+		return;
+	}
+
 	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	if (!IsValid(Hud)) {
+		return;
+	}
 
 	PlayerController->PokemonParty.Swap(SelectedPokemonID, NewPositionId);
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Swapping " + PlayerController->PokemonParty[SelectedPokemonID].SpeciesData.Name.ToString()
-	+ " and " + PlayerController->PokemonParty[NewPositionId].SpeciesData.Name.ToString()));
-
 	bIsSwappingPosition = false;
 
 	Hud->ClearOnScreenMessage();

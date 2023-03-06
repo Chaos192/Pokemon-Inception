@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "../SaveGame/WildPokemonSaveData.h"
+#include "../SaveGame/LevelSaveData.h"
 #include "WildPokemonSpawner.generated.h"
 
 UCLASS()

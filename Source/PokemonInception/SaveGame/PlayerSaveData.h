@@ -7,7 +7,7 @@
 #include "../WildPokemon/WildPokemon.h"
 #include "../Items/ItemBaseStruct.h"
 #include "../Pokemon/PokemonStruct.h"
-#include "WorldSaveData.generated.h"
+#include "PlayerSaveData.generated.h"
 
 
 UCLASS()

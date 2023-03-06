@@ -6,7 +6,7 @@
 #include "GameFramework/SaveGame.h"
 #include "../WildPokemon/WildPokemon.h"
 #include "../Pokemon/PokemonStruct.h"
-#include "WildPokemonSaveData.generated.h"
+#include "LevelSaveData.generated.h"
 
 USTRUCT()
 struct FWildPokemonData

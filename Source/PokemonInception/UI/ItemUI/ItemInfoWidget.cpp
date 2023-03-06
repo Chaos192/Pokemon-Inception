@@ -5,7 +5,6 @@
 
 void UItemInfoWidget::OnUseClicked()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 4, FColor::Green, TEXT("Use Clicked!"));
 	UseClicked.Broadcast(ItemID);
 }
 
@@ -23,4 +22,16 @@ void UItemInfoWidget::SetDescription(FText Description)
 void UItemInfoWidget::SetID(int InItemID)
 {
 	ItemID = InItemID;
+}
+
+void UItemInfoWidget::SetUseButton(bool bUsable)
+{
+	if (bUsable) {
+		Use->SetColorAndOpacity(FLinearColor(0, 0, 0, 1));
+		Use->SetBackgroundColor(FLinearColor(0.5, 0.5, 0.5, 1));
+	}
+	else {
+		Use->SetColorAndOpacity(FLinearColor(0, 0, 0, 0));
+		Use->SetBackgroundColor(FLinearColor(0, 0, 0, 0));
+	}
 }
