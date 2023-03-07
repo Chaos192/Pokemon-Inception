@@ -115,7 +115,7 @@ void AOverworldHUD::ShowMenu()
 {
 	Clear();
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
@@ -134,7 +134,7 @@ void AOverworldHUD::ShowPokedex()
 {
 	Clear();
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
@@ -151,7 +151,7 @@ void AOverworldHUD::ShowPokedex()
 void AOverworldHUD::ShowPokedexInfo(FName PokemonID)
 {
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
@@ -175,7 +175,7 @@ void AOverworldHUD::ShowPokemon()
 {
 	Clear();
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
@@ -195,16 +195,29 @@ void AOverworldHUD::ShowSwapPositionPopup(int PokemonId)
 	}
 
 	if (PlayerOwner && SwapPositionWidget) {
+		FVector2D ScreenSize;
+		GEngine->GameViewport->GetViewportSize(ScreenSize);
+
+		float XDiference = 1920 / ScreenSize.X;
+		float YDiference = 1080 / ScreenSize.Y;
+
 		float MouseX;
 		float MouseY;
 
 		PlayerOwner->GetMousePosition(MouseX, MouseY);
+
+		MouseX *= XDiference;
+		MouseY *= YDiference;
 
 		SwapPositionWidget->SetId(PokemonId);
 		SwapPositionWidget->AddToViewport();
 		SwapPositionWidget->SetPositionInViewport(FVector2D(MouseX, MouseY), false);
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
+
+		/*GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Green, "Teoretical resolution: 1920x1080 - 1,777777");
+		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Green, "Real resolution: " + FString::SanitizeFloat(ScreenSize.X) +
+			"x" + FString::SanitizeFloat(ScreenSize.Y) + " - " + FString::SanitizeFloat(ScreenSize.X / ScreenSize.Y));*/
 	}
 }
 
@@ -216,7 +229,7 @@ void AOverworldHUD::ShowPokemonSummary(int PokemonID)
 
 	PokemonSummaryWidget->ClearMoves();
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
@@ -327,10 +340,19 @@ void AOverworldHUD::ShowUseItemPopup(int PokemonId)
 	}
 
 	if (PlayerOwner && UseItemWidget) {
+		FVector2D ScreenSize;
+		GEngine->GameViewport->GetViewportSize(ScreenSize);
+
+		float XDiference = 1920 / ScreenSize.X;
+		float YDiference = 1080 / ScreenSize.Y;
+
 		float MouseX;
 		float MouseY;
 
 		PlayerOwner->GetMousePosition(MouseX, MouseY);
+
+		MouseX *= XDiference;
+		MouseY *= YDiference;
 
 		UseItemWidget->SetId(PokemonId);
 		UseItemWidget->AddToViewport();
@@ -347,7 +369,7 @@ void AOverworldHUD::ShowMoveSelectionPopup(int PokemonId)
 	}
 
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
@@ -447,7 +469,7 @@ void AOverworldHUD::ShowPokemonStorage()
 {
 	Clear();
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
@@ -472,10 +494,19 @@ void AOverworldHUD::ShowWithdrawPopup(int PokemonID)
 		StorageOperationPopupWidget->OperationClicked.RemoveAll(Controller);
 		StorageOperationPopupWidget->ActionClicked.RemoveAll(Controller);
 
+		FVector2D ScreenSize;
+		GEngine->GameViewport->GetViewportSize(ScreenSize);
+
+		float XDiference = 1920 / ScreenSize.X;
+		float YDiference = 1080 / ScreenSize.Y;
+
 		float MouseX;
 		float MouseY;
 
-		Controller->GetMousePosition(MouseX, MouseY);
+		PlayerOwner->GetMousePosition(MouseX, MouseY);
+
+		MouseX *= XDiference;
+		MouseY *= YDiference;
 
 		StorageOperationPopupWidget->SetId(PokemonID);
 		StorageOperationPopupWidget->SetOperationText(FText::FromString("Withdraw"));
@@ -502,10 +533,19 @@ void AOverworldHUD::ShowDepositPopup(int PokemonID)
 		StorageOperationPopupWidget->OperationClicked.RemoveAll(Controller);
 		StorageOperationPopupWidget->ActionClicked.RemoveAll(Controller);
 
+		FVector2D ScreenSize;
+		GEngine->GameViewport->GetViewportSize(ScreenSize);
+
+		float XDiference = 1920 / ScreenSize.X;
+		float YDiference = 1080 / ScreenSize.Y;
+
 		float MouseX;
 		float MouseY;
 
-		Controller->GetMousePosition(MouseX, MouseY);
+		PlayerOwner->GetMousePosition(MouseX, MouseY);
+
+		MouseX *= XDiference;
+		MouseY *= YDiference;
 
 		StorageOperationPopupWidget->SetId(PokemonID);
 		StorageOperationPopupWidget->SetOperationText(FText::FromString("Deposit"));
@@ -525,7 +565,7 @@ void AOverworldHUD::ShowMoveManager(int PokemonID)
 	Clear();
 	MoveManagerWidget->Clear();
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
@@ -570,7 +610,7 @@ void AOverworldHUD::ShowMoveInfo(int MoveID)
 	}
 
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
@@ -607,10 +647,19 @@ void AOverworldHUD::ShowLearnPopup(int MoveID)
 
 		MoveManagerOperationWidget->ActionClicked.RemoveAll(Controller);
 
+		FVector2D ScreenSize;
+		GEngine->GameViewport->GetViewportSize(ScreenSize);
+
+		float XDiference = 1920 / ScreenSize.X;
+		float YDiference = 1080 / ScreenSize.Y;
+
 		float MouseX;
 		float MouseY;
 
-		Controller->GetMousePosition(MouseX, MouseY);
+		PlayerOwner->GetMousePosition(MouseX, MouseY);
+
+		MouseX *= XDiference;
+		MouseY *= YDiference;
 
 		MoveManagerOperationWidget->SetId(MoveID);
 		MoveManagerOperationWidget->SetActionText(FText::FromString("Learn"));
@@ -635,10 +684,19 @@ void AOverworldHUD::ShowForgetPopup(int MoveID)
 
 		MoveManagerOperationWidget->ActionClicked.RemoveAll(Controller);
 
+		FVector2D ScreenSize;
+		GEngine->GameViewport->GetViewportSize(ScreenSize);
+
+		float XDiference = 1920 / ScreenSize.X;
+		float YDiference = 1080 / ScreenSize.Y;
+
 		float MouseX;
 		float MouseY;
 
-		Controller->GetMousePosition(MouseX, MouseY);
+		PlayerOwner->GetMousePosition(MouseX, MouseY);
+
+		MouseX *= XDiference;
+		MouseY *= YDiference;
 
 		MoveManagerOperationWidget->SetId(MoveID);
 		MoveManagerOperationWidget->SetActionText(FText::FromString("Forget"));

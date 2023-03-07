@@ -14,8 +14,6 @@
 #include "../Interactables/NPC/Trainer.h"
 #include "BattleGameMode.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageSignature, FString, String);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWidgetSignature, UUserWidget*, Widget);
 
 UENUM()
 enum class EAction {
@@ -198,12 +196,8 @@ public:
 	UFUNCTION()
 	void Run();
 
-	FMessageSignature MessageUpdate;
-	FWidgetSignature WidgetUpdate;
 
 	FItemSlotSignature ItemSlotDelegate;
-
 	FPokemonSlotSignature PokemonSlotDelegate;
-
 	FMoveSignature MoveDelegate;
 };

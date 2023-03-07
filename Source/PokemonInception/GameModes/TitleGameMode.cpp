@@ -9,10 +9,12 @@
 void ATitleGameMode::StartGame()
 {
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	ATitleHUD* Hud = Cast<ATitleHUD>(PlayerController->GetHUD());
+	if (!IsValid(PlayerController)) {
+		return;
+	}
 
-	Hud->PlayerOwner->SetInputMode(FInputModeGameOnly());
-	Hud->PlayerOwner->bShowMouseCursor = false;
+	PlayerController->SetInputMode(FInputModeGameOnly());
+	PlayerController->bShowMouseCursor = false;
 
 	UGameplayStatics::OpenLevel(GetWorld(), "MainMap");
 }

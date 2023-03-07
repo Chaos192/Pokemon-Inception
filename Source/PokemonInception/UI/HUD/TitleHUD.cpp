@@ -12,10 +12,12 @@ void ATitleHUD::BeginPlay()
 {
 	Super::BeginPlay();
 	ATitleGameMode* GameMode = Cast<ATitleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (!IsValid(GameMode)) {
+		return;
+	}
 
-	PlayerController->SetInputMode(FInputModeUIOnly());
-	PlayerController->bShowMouseCursor = true;
+	PlayerOwner->SetInputMode(FInputModeUIOnly());
+	PlayerOwner->bShowMouseCursor = true;
 
 	TitleWidget = CreateWidget<UTitleWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TitleWidgetClass);
 	ControlsWidget = CreateWidget<UControlsWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ControlsWidgetClass);

@@ -55,7 +55,6 @@ void ABattleHUD::BeginPlay()
 
 	MoveSelectionPopupWidget->BackClicked.AddDynamic(this, &ABattleHUD::ClearMovePopup);
 
-	GameMode->MessageUpdate.AddDynamic(TextBoxWidget, &UTextBoxWidget::ReturnMessage);
 	GameMode->ItemSlotDelegate.AddDynamic(BagWidget, &UBagWidget::AddToItemBox);
 	GameMode->PokemonSlotDelegate.AddDynamic(PokemonWidget, &UPokemonWidget::AddToWrapBox);
 	GameMode->MoveDelegate.AddDynamic(FightWidget, &UFightWidget::AddToWrapBox);
@@ -89,14 +88,14 @@ void ABattleHUD::Clear()
 void ABattleHUD::ClearPokemon()
 {
 	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
 	if (GameMode->bHasToSwitchPokemon() == true) {
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("You have to select a pokemon"));
 		return;
 	}
+
 	ShowBattleStartWidget();
 }
 
@@ -127,7 +126,7 @@ void ABattleHUD::ShowFightWidget()
 {
 	Clear();
 	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
@@ -179,7 +178,7 @@ void ABattleHUD::ShowBag()
 {
 	Clear();
 	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
@@ -209,7 +208,7 @@ void ABattleHUD::ShowPokemon()
 {
 	Clear();
 	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
@@ -230,7 +229,7 @@ void ABattleHUD::ShowPokemonSummary(int PokemonID)
 
 	PokemonSummaryWidget->ClearMoves();
 	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 	
@@ -271,10 +270,19 @@ void ABattleHUD::ShowSwitchOutPopup(int PokemonId)
 	}
 
 	if (PlayerOwner && SwitchOutWidget) {
+		FVector2D ScreenSize;
+		GEngine->GameViewport->GetViewportSize(ScreenSize);
+
+		float XDiference = 1920 / ScreenSize.X;
+		float YDiference = 1080 / ScreenSize.Y;
+
 		float MouseX;
 		float MouseY;
 
 		PlayerOwner->GetMousePosition(MouseX, MouseY);
+
+		MouseX *= XDiference;
+		MouseY *= YDiference;
 
 		SwitchOutWidget->SetId(PokemonId);
 		SwitchOutWidget->AddToViewport();
@@ -290,10 +298,19 @@ void ABattleHUD::ShowUseItemPopup(int PokemonId)
 	}
 
 	if (PlayerOwner && UseItemWidget) {
+		FVector2D ScreenSize;
+		GEngine->GameViewport->GetViewportSize(ScreenSize);
+
+		float XDiference = 1920 / ScreenSize.X;
+		float YDiference = 1080 / ScreenSize.Y;
+
 		float MouseX;
 		float MouseY;
 
 		PlayerOwner->GetMousePosition(MouseX, MouseY);
+
+		MouseX *= XDiference;
+		MouseY *= YDiference;
 
 		UseItemWidget->SetId(PokemonId);
 		UseItemWidget->AddToViewport();
@@ -309,7 +326,7 @@ void ABattleHUD::ShowMoveSelectionPopup(int PokemonId)
 	}
 
 	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
@@ -336,7 +353,7 @@ void ABattleHUD::ShowMoveSelectionPopup(int PokemonId)
 void ABattleHUD::ShowPlayerPokemonStatus()
 {
 	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
@@ -349,7 +366,7 @@ void ABattleHUD::ShowPlayerPokemonStatus()
 void ABattleHUD::ShowOpponentPokemonStatus()
 {
 	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
@@ -363,7 +380,7 @@ void ABattleHUD::RefreshPlayerPokemonStatus()
 {
 	ABattleController* Controller = Cast<ABattleController>(PlayerOwner);
 	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
@@ -378,7 +395,7 @@ void ABattleHUD::RefreshPlayerPokemonStatus()
 void ABattleHUD::RefreshOpponentPokemonStatus()
 {
 	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
@@ -393,7 +410,7 @@ void ABattleHUD::ShowBattleStartWidget()
 {
 	Clear();
 	ABattleGameMode* GameMode = Cast<ABattleGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GameMode == nullptr) {
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
