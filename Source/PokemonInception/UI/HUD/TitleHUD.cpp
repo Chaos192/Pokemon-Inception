@@ -25,6 +25,7 @@ void ATitleHUD::BeginPlay()
 	TitleWidget->PlayClicked.AddDynamic(GameMode, &ATitleGameMode::StartGame);
 	TitleWidget->ControllsClicked.AddDynamic(this, &ATitleHUD::ShowControlls);
 	TitleWidget->QuitClicked.AddDynamic(GameMode, &ATitleGameMode::QuitGame);
+	TitleWidget->ResetClicked.AddDynamic(GameMode, &ATitleGameMode::ResetGame);
 
 	ControlsWidget->BackClicked.AddDynamic(this, &ATitleHUD::ShowTitle);
 

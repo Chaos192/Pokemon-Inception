@@ -18,4 +18,7 @@ public:
 
 	UFUNCTION()
 	void QuitGame();
+
+	UFUNCTION()
+	void ResetGame();
 };

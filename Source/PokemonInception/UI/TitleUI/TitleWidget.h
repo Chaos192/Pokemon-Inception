@@ -24,6 +24,9 @@ private:
 	UFUNCTION()
 	void OnQuitClicked();
 
+	UFUNCTION()
+	void OnResetClicked();
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* Play;
@@ -34,10 +37,14 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* Quit;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UButton* Reset;
+
 public:
 	virtual void NativeOnInitialized() override;
 
 	FButtonClicked PlayClicked;
 	FButtonClicked ControllsClicked;
 	FButtonClicked QuitClicked;
+	FButtonClicked ResetClicked;
 };

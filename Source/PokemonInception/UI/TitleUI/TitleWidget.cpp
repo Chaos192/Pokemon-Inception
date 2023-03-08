@@ -18,10 +18,16 @@ void UTitleWidget::OnQuitClicked()
 	QuitClicked.Broadcast();
 }
 
+void UTitleWidget::OnResetClicked()
+{
+	ResetClicked.Broadcast();
+}
+
 void UTitleWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 	Play->OnClicked.AddDynamic(this, &UTitleWidget::OnPlayClicked);
 	Controlls->OnClicked.AddDynamic(this, &UTitleWidget::OnControllsClicked);
 	Quit->OnClicked.AddDynamic(this, &UTitleWidget::OnQuitClicked);
+	Reset->OnClicked.AddDynamic(this, &UTitleWidget::OnResetClicked);
 }
