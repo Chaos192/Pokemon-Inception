@@ -29,8 +29,7 @@ void UMoveButtonWidget::NativeOnInitialized()
 void UMoveButtonWidget::InitButton(FText Name, int CurrPP, int MaxPP, ETypes MoveType)
 {
 	MoveName->SetText(Name);
-	MovePP->SetText(FText::FromString(FString::FromInt(CurrPP)));
-	MoveMaxPP->SetText(FText::FromString(FString::FromInt(MaxPP)));
+	MovePP->SetText(FText::FromString(FString::FromInt(CurrPP) + "/" + FString::FromInt(MaxPP)));
 
 	switch (MoveType) {
 		case ETypes::Normal: MoveButton->SetBackgroundColor(FLinearColor(0.811, 0.811, 0.811, 1));
@@ -56,6 +55,11 @@ void UMoveButtonWidget::InitButton(FText Name, int CurrPP, int MaxPP, ETypes Mov
 		case ETypes::Dragon: MoveButton->SetBackgroundColor(FLinearColor(0.523, 0.092, 0.515, 1));
 			break;
 	}
+}
+
+void UMoveButtonWidget::SetEffectiveness(FString Effectiveness)
+{
+	MoveEffectiveness->SetText(FText::FromString(Effectiveness));
 }
 
 void UMoveButtonWidget::SetMove(int InMoveId)

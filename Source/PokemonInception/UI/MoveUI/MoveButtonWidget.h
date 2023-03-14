@@ -34,10 +34,10 @@ protected:
 	class UTextBlock* MoveName;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* MovePP;
+	class UTextBlock* MoveEffectiveness;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* MoveMaxPP;
+	class UTextBlock* MovePP;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* MoveButton;
@@ -47,6 +47,9 @@ public:
 
 	UFUNCTION()
 	void InitButton(FText Name, int CurrPP, int MaxPP, ETypes MoveType);
+
+	UFUNCTION()
+	void SetEffectiveness(FString Effectiveness);
 
 	UFUNCTION()
 	void SetMove(int InMoveId);

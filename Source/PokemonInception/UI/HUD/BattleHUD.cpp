@@ -256,6 +256,11 @@ void ABattleHUD::ShowPokemonSummary(int PokemonID)
 
 			MoveButton->InitButton(Pokemon.Moves[Pokemon.CurrentMoves[i]].Name, Pokemon.Moves[Pokemon.CurrentMoves[i]].CurrPowerPoints, 
 				Pokemon.Moves[Pokemon.CurrentMoves[i]].PowerPoints, Pokemon.Moves[Pokemon.CurrentMoves[i]].MoveType);
+
+			if (Pokemon.Moves[Pokemon.CurrentMoves[i]].MoveStructType == "Attack") {
+				MoveButton->SetEffectiveness(GameMode->GetMoveEffectiveness(Pokemon.CurrentMoves[i]));
+			}
+			
 			PokemonSummaryWidget->AddMove(MoveButton);
 		}
 

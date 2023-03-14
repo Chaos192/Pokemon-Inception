@@ -1110,6 +1110,10 @@ void ABattleGameMode::ShowPokemonMoves()
 			Attacker.Moves[Attacker.CurrentMoves[i]].PowerPoints, Attacker.Moves[Attacker.CurrentMoves[i]].MoveType);
 		MoveButton->SetMove(Attacker.CurrentMoves[i]);
 
+		if (Attacker.Moves[Attacker.CurrentMoves[i]].MoveStructType == "Attack") {
+			MoveButton->SetEffectiveness(GetMoveEffectiveness(Attacker.CurrentMoves[i]));
+		}
+
 		if (Attacker.Moves[Attacker.CurrentMoves[i]].CurrPowerPoints > 0) {
 			MoveButton->ButtonClicked.AddDynamic(this, &ABattleGameMode::SelectMove);
 		}
@@ -1118,6 +1122,57 @@ void ABattleGameMode::ShowPokemonMoves()
 
 		MoveDelegate.Broadcast(MoveButton);
 	}
+}
+
+FString ABattleGameMode::GetMoveEffectiveness(int MoveID)
+{
+	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (!IsValid(PlayerController)) {
+		return " ";
+	}
+
+	FMoveBaseStruct Move = PlayerController->PokemonParty[PlayerPokemonId].Moves[MoveID];
+	FTypeStruct* MovetTypeStruct = TypesDT->FindRow<FTypeStruct>(FName(FTypeStruct::ToString(Move.MoveType)), "");
+
+	int DamageMultiplier = 1;
+
+	if (MovetTypeStruct->SuperEffectiveAgainst.Contains(OpponentTeam[OpponentPokemonId].SpeciesData.Type1)) {
+		DamageMultiplier *= 2;
+	}
+	else if (MovetTypeStruct->NotVeryEffectiveAgainst.Contains(OpponentTeam[OpponentPokemonId].SpeciesData.Type1)) {
+		DamageMultiplier *= 0.5;
+	}
+	else if (MovetTypeStruct->NoEffectAgainst.Contains(OpponentTeam[OpponentPokemonId].SpeciesData.Type1)) {
+		DamageMultiplier *= 0;
+	}
+	
+	if (OpponentTeam[OpponentPokemonId].SpeciesData.Type2 != ETypes::None) {
+		if (MovetTypeStruct->SuperEffectiveAgainst.Contains(OpponentTeam[OpponentPokemonId].SpeciesData.Type2)) {
+			DamageMultiplier *= 2;
+		}
+		else if (MovetTypeStruct->NotVeryEffectiveAgainst.Contains(OpponentTeam[OpponentPokemonId].SpeciesData.Type2)) {
+			DamageMultiplier *= 0.5;
+		}
+		else if (MovetTypeStruct->NoEffectAgainst.Contains(OpponentTeam[OpponentPokemonId].SpeciesData.Type2)) {
+			DamageMultiplier *= 0;
+		}
+	}
+	
+	if (DamageMultiplier == 0) {
+		GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, "No effect");
+		return "No Effect";
+	}
+	if (DamageMultiplier > 1) {
+		GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, "super effect");
+		return "Super Effective";
+	}
+	if (DamageMultiplier < 1) {
+		GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, "Not very effect");
+		return "Not Very Effective";
+	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, "Normal");
+	return "Effective";
 }
 
 FPokemonStruct ABattleGameMode::GetCurrentOpponentStruct() {
@@ -1131,6 +1186,9 @@ int ABattleGameMode::GetPlayerPokemonId() {
 bool ABattleGameMode::HasPlayerRanOutOfPP()
 {
 	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (!IsValid(PlayerController)) {
+		return false;
+	}
 
 	return PlayerController->PokemonParty[PlayerPokemonId].bHasRanOutOfPP();
 }

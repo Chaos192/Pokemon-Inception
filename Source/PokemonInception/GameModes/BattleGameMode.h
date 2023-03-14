@@ -181,6 +181,8 @@ public:
 	UFUNCTION()
 	void ShowPokemonMoves();
 
+	FString GetMoveEffectiveness(int MoveID);
+
 	UFUNCTION()
 	FPokemonStruct GetCurrentOpponentStruct();
 
