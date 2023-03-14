@@ -20,11 +20,6 @@ void AWildPokemonSpawner::Tick(float DeltaTime)
 	Generate();
 }
 
-void AWildPokemonSpawner::ClearPokemonReference(AActor* Pokemon)
-{
-	SpawnedPokemon = nullptr;
-}
-
 void AWildPokemonSpawner::Generate()
 {
 	if (IsValid(SpawnedPokemon)) {
@@ -65,21 +60,43 @@ void AWildPokemonSpawner::Generate()
 	if (IsValid(SpawnedPokemon)) {
 		SpawnedPokemon->InitPokemon(GameMode->PokemonDT, SpawnLevel, GameMode->GetMoveDT());
 		SpawnedPokemon->OnDestroyed.AddDynamic(this, &AWildPokemonSpawner::ClearPokemonReference);
+
+		GameMode->PokemonInLevel.Add(SpawnedPokemon);
 	}
 }
 
-void AWildPokemonSpawner::ManualGenerate(FWildPokemonData SaveData)
+void AWildPokemonSpawner::ClearPokemonReference(AActor* Pokemon)
 {
-	if (IsValid(SpawnedPokemon)) {
-		SpawnedPokemon->Destroy();
-	}
-
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
 	if (!IsValid(GameMode)) {
 		return;
 	}
 
+	if (GameMode->PokemonInLevel.Contains(SpawnedPokemon)) {
+		GameMode->PokemonInLevel.Remove(SpawnedPokemon);
+	}
+
+	SpawnedPokemon = nullptr;
+}
+
+void AWildPokemonSpawner::ManualGenerate(FWildPokemonData SaveData)
+{
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
+	if (!IsValid(GameMode)) {
+		return;
+	}
+
+	if (IsValid(SpawnedPokemon)) {
+		SpawnedPokemon->Destroy();
+	}
+
 	SpawnedPokemon = GetWorld()->SpawnActor<AWildPokemon>(SaveData.PokemonClass, SaveData.PokemonLocation, SaveData.PokemonRotation);
-	SpawnedPokemon->Pokemon = SaveData.PokemonStruct;
+	if (IsValid(SpawnedPokemon)) {
+		SpawnedPokemon->InitPokemon(GameMode->PokemonDT, SaveData.PokemonLevel, GameMode->GetMoveDT());
+		SpawnedPokemon->OnDestroyed.AddDynamic(this, &AWildPokemonSpawner::ClearPokemonReference);
+
+		GameMode->PokemonInLevel.Add(SpawnedPokemon);
+	}
+	
 }
 

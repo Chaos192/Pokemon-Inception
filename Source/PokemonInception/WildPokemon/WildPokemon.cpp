@@ -40,7 +40,7 @@ void AWildPokemon::Tick(float DeltaTime)
 
 void AWildPokemon::InitPokemon(UDataTable* PokemonDatatable, int Level, TArray<UDataTable*> MoveTables)
 {
-	FPokemonBaseStruct* PokemonSpecies = PokemonDatatable->FindRow<FPokemonBaseStruct>(PokemonID, ""); //this right here, officer
+	FPokemonBaseStruct* PokemonSpecies = PokemonDatatable->FindRow<FPokemonBaseStruct>(PokemonID, ""); 
 
 	if (PokemonSpecies) {
 		Pokemon.Init(Level, *PokemonSpecies);

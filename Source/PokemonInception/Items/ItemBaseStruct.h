@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
-//#include "../Interactables/ItemPickup.h"
 #include "ItemBaseStruct.generated.h"
 
 
@@ -26,7 +25,7 @@ struct FItemBaseStruct : public FTableRowBase
 	int Value;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UTexture2D* Image;
+	UTexture2D* Image = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bUsableInBattle;

@@ -28,12 +28,6 @@ struct FTypeStruct : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	FTypeStruct() {
-		SuperEffectiveAgainst.Add(ETypes::None);
-		NotVeryEffectiveAgainst.Add(ETypes::None);
-		NoEffectAgainst.Add(ETypes::None);
-	}
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ETypes TypeName;
 
@@ -45,6 +39,13 @@ struct FTypeStruct : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<ETypes> NoEffectAgainst;
+
+	FTypeStruct() {
+		TypeName = ETypes::None;
+		SuperEffectiveAgainst.Add(ETypes::None);
+		NotVeryEffectiveAgainst.Add(ETypes::None);
+		NoEffectAgainst.Add(ETypes::None);
+	}
 
 	static FString ToString(ETypes Type) {
 		switch (Type) {

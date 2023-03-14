@@ -22,7 +22,7 @@ struct FPokemonBaseStruct : public FTableRowBase
 	FText Info;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UTexture2D* Image;
+	UTexture2D* Image = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class AStaticOverworldPokemon> PokemonActor;

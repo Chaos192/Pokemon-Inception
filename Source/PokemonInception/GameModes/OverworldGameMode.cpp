@@ -108,41 +108,43 @@ void AOverworldGameMode::SaveLevelData(AWildPokemon* PokemonToIgnore)
 		return;
 	}
 
-	ULevelSaveData* SaveData = Cast<ULevelSaveData>(UGameplayStatics::CreateSaveGameObject(ULevelSaveData::StaticClass()));
+	LevelSaveData = Cast<ULevelSaveData>(UGameplayStatics::CreateSaveGameObject(ULevelSaveData::StaticClass()));
 
-	SaveData->PokemonSpawners.Empty();
+	LevelSaveData->PokemonSpawners.Empty();
 
-	SaveData->PlayerLocation = PlayerPawn->GetActorLocation();
-	SaveData->PlayerRotation = PlayerPawn->GetActorRotation();
-	SaveData->PlayerCameraLocation = PlayerPawn->FollowCamera->GetComponentLocation();
-	SaveData->PlayerCameraRotation = PlayerPawn->FollowCamera->GetComponentRotation();
-	SaveData->ActorsToDestroy = ActorsToDestroy;
+	LevelSaveData->PlayerLocation = PlayerPawn->GetActorLocation();
+	LevelSaveData->PlayerRotation = PlayerPawn->GetActorRotation();
+	LevelSaveData->PlayerCameraLocation = PlayerPawn->FollowCamera->GetComponentLocation();
+	LevelSaveData->PlayerCameraRotation = PlayerPawn->FollowCamera->GetComponentRotation();
+	LevelSaveData->ActorsToDestroy = ActorsToDestroy;
 
-	TArray<AActor*> Spawners;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), SpawnerClass, Spawners);
-	
-	for (AActor* Spawner : Spawners) {
-		AWildPokemonSpawner* PokemonSpawner = Cast<AWildPokemonSpawner>(Spawner);
-		AWildPokemon* PokemonRef = PokemonSpawner->SpawnedPokemon;
+	if (!PokemonInLevel.IsEmpty()) {
+		TArray<AActor*> Spawners;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), SpawnerClass, Spawners);
 
-		if (!IsValid(PokemonRef)) {
-			continue;
-		}
+		for (AActor* Spawner : Spawners) {
+			AWildPokemonSpawner* PokemonSpawner = Cast<AWildPokemonSpawner>(Spawner);
+			AWildPokemon* PokemonRef = PokemonSpawner->SpawnedPokemon;
 
-		if(PokemonRef != PokemonToIgnore){
-			FWildPokemonData PokemonData;
+			if (PokemonRef == nullptr) {
+				continue;
+			}
 
-			PokemonData.Pokemon = PokemonRef;
-			PokemonData.PokemonStruct = PokemonRef->Pokemon;
-			PokemonData.PokemonClass = PokemonRef->GetClass();
-			PokemonData.PokemonLocation = PokemonRef->GetActorLocation();
-			PokemonData.PokemonRotation = PokemonRef->GetActorRotation();
+			if (PokemonRef != PokemonToIgnore) {
+				FWildPokemonData PokemonData;
 
-			SaveData->PokemonSpawners.Add(PokemonSpawner, PokemonData);
+				PokemonData.PokemonLevel = PokemonRef->Pokemon.Level;
+				PokemonData.PokemonClass = PokemonRef->GetClass();
+
+				PokemonData.PokemonLocation = PokemonRef->GetActorLocation();
+				PokemonData.PokemonRotation = PokemonRef->GetActorRotation();
+
+				LevelSaveData->PokemonSpawners.Add(PokemonSpawner, PokemonData);
+			}
 		}
 	}
 
-	UGameplayStatics::SaveGameToSlot(SaveData, "WorldSaveSlot", 0);
+	UGameplayStatics::SaveGameToSlot(LevelSaveData, "WorldSaveSlot", 0);
 }
 
 void AOverworldGameMode::LoadLevelData()
@@ -157,21 +159,21 @@ void AOverworldGameMode::LoadLevelData()
 		return;
 	}
 
-	ULevelSaveData* SaveData = Cast<ULevelSaveData>(UGameplayStatics::CreateSaveGameObject(ULevelSaveData::StaticClass()));
+	LevelSaveData = Cast<ULevelSaveData>(UGameplayStatics::CreateSaveGameObject(ULevelSaveData::StaticClass()));
 
 	if (UGameplayStatics::DoesSaveGameExist("WorldSaveSlot", 0)) {
-		SaveData = Cast<ULevelSaveData>(UGameplayStatics::LoadGameFromSlot("WorldSaveSlot", 0));
+		LevelSaveData = Cast<ULevelSaveData>(UGameplayStatics::LoadGameFromSlot("WorldSaveSlot", 0));
 
 		if (PlayerController->bIsPartyDefeated() == true) {
 			PlayerController->FullRestoreAllPokemon();
 		}
 		else {
-			PlayerPawn->SetActorLocation(SaveData->PlayerLocation);
-			PlayerPawn->SetActorRotation(SaveData->PlayerRotation, ETeleportType::None);
+			PlayerPawn->SetActorLocation(LevelSaveData->PlayerLocation);
+			PlayerPawn->SetActorRotation(LevelSaveData->PlayerRotation, ETeleportType::None);
 			//PlayerOwner->FollowCamera->SetWorldLocationAndRotation(SaveData->PlayerCameraLocation, SaveData->PlayerCameraRotation);
 		}
 
-		ActorsToDestroy = SaveData->ActorsToDestroy;
+		ActorsToDestroy = LevelSaveData->ActorsToDestroy;
 
 		for (AActor* Actor : ActorsToDestroy) {
 			if (IsValid(Actor)) {
@@ -179,7 +181,7 @@ void AOverworldGameMode::LoadLevelData()
 			}
 		}
 
-		for (auto& Spawner : SaveData->PokemonSpawners) {
+		for (auto& Spawner : LevelSaveData->PokemonSpawners) {
 			Spawner.Key->ManualGenerate(Spawner.Value);
 		}
 	}

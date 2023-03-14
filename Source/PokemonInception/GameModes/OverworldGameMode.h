@@ -31,6 +31,9 @@ private:
 	UPROPERTY()
 	TArray<AActor*> ActorsToDestroy;
 
+	UPROPERTY()
+	class ULevelSaveData* LevelSaveData;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -63,6 +66,9 @@ public:
 	bool bHasSelectedItem;
 	bool bHasSelectedEther;
 	bool bIsSwappingPosition;
+
+	UPROPERTY()
+	TArray<AWildPokemon*> PokemonInLevel;
 
 	TArray<FItemBaseStruct> ItemsToSell;
 	FString ShopMode;

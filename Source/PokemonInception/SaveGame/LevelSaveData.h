@@ -14,19 +14,16 @@ struct FWildPokemonData
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly)
-	AWildPokemon* Pokemon;
-
-	UPROPERTY(EditDefaultsOnly)
-	FPokemonStruct PokemonStruct;
+	int PokemonLevel = 0;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AWildPokemon> PokemonClass;
 
 	UPROPERTY(EditDefaultsOnly)
-	FVector PokemonLocation;
+	FVector PokemonLocation = FVector();
 
 	UPROPERTY(EditDefaultsOnly)
-	FRotator PokemonRotation;
+	FRotator PokemonRotation = FRotator();
 };
 
 UCLASS()
