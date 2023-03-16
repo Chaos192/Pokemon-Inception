@@ -1134,7 +1134,7 @@ FString ABattleGameMode::GetMoveEffectiveness(int MoveID)
 	FMoveBaseStruct Move = PlayerController->PokemonParty[PlayerPokemonId].Moves[MoveID];
 	FTypeStruct* MovetTypeStruct = TypesDT->FindRow<FTypeStruct>(FName(FTypeStruct::ToString(Move.MoveType)), "");
 
-	int DamageMultiplier = 1;
+	float DamageMultiplier = 1;
 
 	if (MovetTypeStruct->SuperEffectiveAgainst.Contains(OpponentTeam[OpponentPokemonId].SpeciesData.Type1)) {
 		DamageMultiplier *= 2;
@@ -1158,20 +1158,18 @@ FString ABattleGameMode::GetMoveEffectiveness(int MoveID)
 		}
 	}
 	
-	if (DamageMultiplier == 0) {
-		GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, "No effect");
-		return "No Effect";
-	}
-	if (DamageMultiplier > 1) {
-		GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, "super effect");
-		return "Super Effective";
-	}
-	if (DamageMultiplier < 1) {
-		GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, "Not very effect");
+	if (DamageMultiplier < 1 && DamageMultiplier > 0) {
 		return "Not Very Effective";
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, "Normal");
+	if (DamageMultiplier > 1) {
+		return "Super Effective";
+	}
+	
+	if (DamageMultiplier == 0) {
+		return "No Effect";
+	}
+
 	return "Effective";
 }
 
