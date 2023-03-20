@@ -12,13 +12,13 @@ void UPokemonStatusWidget::SetPokemonName(FText Name)
 
 void UPokemonStatusWidget::SetPokemonLevel(int Level)
 {
-	PokemonLevel->SetText(FText::FromString(FString::FromInt(Level)));
+	PokemonLevel->SetText(FText::FromString("Lv. " + FString::FromInt(Level)));
 }
 
 void UPokemonStatusWidget::SetPokemonHP(int CurrHP, int MaxHP)
 {
-	PokemonCurrHP->SetText(FText::FromString(FString::FromInt(CurrHP)));
-	PokemonMaxHP->SetText(FText::FromString(FString::FromInt(MaxHP)));
+	FText HP = FText::FromString(FString::FromInt(CurrHP) + "/" + FString::FromInt(MaxHP));
+	PokemonHP->SetText(HP);
 
 	float HpPercent = float(CurrHP) / float(MaxHP);
 	HPBar->SetPercent(HpPercent);

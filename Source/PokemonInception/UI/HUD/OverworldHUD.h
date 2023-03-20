@@ -44,6 +44,12 @@ protected:
 	TSubclassOf<UTextBoxWidget> OnScreenMessageWidgetClass;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<UTextBoxWidget> AreaMessageWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPickupMessageWidget> PickupMessageWidgetClass;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UInGameWidget> InGameWidgetClass;
 
 	UPROPERTY(EditAnywhere)
@@ -120,6 +126,9 @@ protected:
 
 	UPROPERTY()
 	class UTextBoxWidget* OnScreenMessageWidget;
+
+	UPROPERTY()
+	class UTextBoxWidget* AreaMessageWidget;
 
 	UPROPERTY()
 	class UInGameWidget* InGameWidget;
@@ -281,6 +290,12 @@ public:
 
 	UFUNCTION()
 	void ShowText(FString Message);
+
+	UFUNCTION()
+	void ShowAreaName(FString AreaName);
+
+	UFUNCTION()
+	void ShowPickupMessage(FString Message, UTexture2D* Image);
 
 	UFUNCTION()
 	void TogglePause(bool IsPaused);

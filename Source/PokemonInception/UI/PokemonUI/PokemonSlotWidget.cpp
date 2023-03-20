@@ -15,7 +15,7 @@ void UPokemonSlotWidget::SetPokemonName(FText Name)
 
 void UPokemonSlotWidget::SetPokemonLevel(int Level)
 {
-	PokemonLevel->SetText(FText::FromString(FString::FromInt(Level)));
+	PokemonLevel->SetText(FText::FromString("Lv. " + FString::FromInt(Level)));
 }
 
 void UPokemonSlotWidget::SetPokemonImage(UTexture2D* Image)
@@ -25,8 +25,8 @@ void UPokemonSlotWidget::SetPokemonImage(UTexture2D* Image)
 
 void UPokemonSlotWidget::SetPokemonHP(int CurrHP, int MaxHP)
 {
-	PokemonCurrHP->SetText(FText::FromString(FString::FromInt(CurrHP)));
-	PokemonMaxHP->SetText(FText::FromString(FString::FromInt(MaxHP)));
+	FText HP = FText::FromString(FString::FromInt(CurrHP) + "/" + FString::FromInt(MaxHP));
+	PokemonHP->SetText(HP);
 
 	if (CurrHP == 0) {
 		PokemonButton->SetBackgroundColor(FLinearColor(0.583, 0.051, 0.051, 1));

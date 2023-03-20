@@ -31,6 +31,7 @@ void AOverworldHUD::BeginPlay()
 
 	TextBoxWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TextBoxWidgetClass);
 	OnScreenMessageWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), OnScreenMessageWidgetClass);
+	AreaMessageWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), AreaMessageWidgetClass);
 	InGameWidget = CreateWidget<UInGameWidget>(UGameplayStatics::GetGameInstance(GetWorld()), InGameWidgetClass);
 
 	MenuWidget = CreateWidget<UMenuWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MenuWidgetClass);
@@ -751,6 +752,40 @@ void AOverworldHUD::ShowText(FString Message)
 		TextBoxWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = false;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
+	}
+}
+
+void AOverworldHUD::ShowAreaName(FString AreaName)
+{
+	FTimerHandle ClearTimer;
+
+	if (AreaMessageWidget->IsInViewport()) {
+		AreaMessageWidget->RemoveFromViewport();
+		GetWorldTimerManager().ClearTimer(ClearTimer);
+	}
+
+	if (PlayerOwner && AreaMessageWidget) {
+		AreaMessageWidget->ReturnMessage(AreaName);
+		AreaMessageWidget->AddToViewport();
+		
+		GetWorldTimerManager().SetTimer(ClearTimer, AreaMessageWidget, &UTextBoxWidget::RemoveFromViewport, 2, false);
+	}
+}
+
+void AOverworldHUD::ShowPickupMessage(FString Message, UTexture2D* Image)
+{
+	if (PlayerOwner && InGameWidget) {
+		FTimerHandle ClearTimer;
+
+		UPickupMessageWidget* PickupMessageWidget = CreateWidget<UPickupMessageWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PickupMessageWidgetClass);
+		PickupMessageWidget->ReturnMessage(Message);
+
+		if (Image != nullptr) {
+			PickupMessageWidget->SetImage(Image);
+		}
+
+		InGameWidget->ShowPickupMessage(PickupMessageWidget);
+		GetWorldTimerManager().SetTimer(ClearTimer, PickupMessageWidget, &UPickupMessageWidget::RemoveFromViewport, 2, false);
 	}
 }
 

@@ -42,7 +42,7 @@ void APokemonPickup::Interact(APlayerController* Controller)
 		AddedPokemon.Init(PokemonLevel, *PokemonSpecies);
 		AddedPokemon.InitMoves(GameMode->GetMoveDT());
 
-		Hud->OnScreenMessage("You got a " + PokemonSpecies->Name.ToString() + "!");
+		Hud->ShowPickupMessage("You got a " + PokemonSpecies->Name.ToString() + "!", PokemonSpecies->Image);
 		PlayerController->ObtainPokemon(AddedPokemon);
 		GameMode->MarkActorAsDestroyed(this);
 		Destroy();

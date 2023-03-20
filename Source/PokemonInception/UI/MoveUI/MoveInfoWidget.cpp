@@ -44,7 +44,7 @@ void UMoveInfoWidget::SetWidgetColor(ETypes Type)
 			break;
 		case ETypes::Light: WidgetBorder->SetBrushColor(FLinearColor(0.968, 0.490, 0.873, 1));
 			break;
-		case ETypes::Dark: WidgetBorder->SetBrushColor(FLinearColor(0.062, 0.042, 0.084, 1));
+		case ETypes::Dark: WidgetBorder->SetBrushColor(FLinearColor(0.156, 0.113, 0.081, 1));
 			break;
 		case ETypes::Dragon: WidgetBorder->SetBrushColor(FLinearColor(0.523, 0.092, 0.515, 1));
 			break;

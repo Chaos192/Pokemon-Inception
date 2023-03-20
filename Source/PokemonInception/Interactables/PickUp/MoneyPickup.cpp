@@ -36,7 +36,7 @@ void AMoneyPickup::Interact(APlayerController* Controller)
 		Hud->OnScreenMessage("You can't get more money!");
 	}
 
-	Hud->OnScreenMessage("You got " + FString::FromInt(money) + "$!");
+	Hud->ShowPickupMessage("You got " + FString::FromInt(money) + "$!", nullptr);
 	PlayerController->Money += money;
 	GameMode->MarkActorAsDestroyed(this);
 	Destroy();
