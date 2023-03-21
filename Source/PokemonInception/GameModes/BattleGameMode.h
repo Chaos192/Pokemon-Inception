@@ -149,13 +149,13 @@ public:
 	void ResetCamera();
 
 	UFUNCTION()
-	void SwitchToPlayerCamera();
+	void SwitchToPlayerCamera(float BlendTime);
 
 	UFUNCTION()
-	void SwitchToOpponentCamera();
+	void SwitchToOpponentCamera(float BlendTime);
 
 	UFUNCTION()
-	void SwitchToTrainerCamera();
+	void SwitchToTrainerCamera(float BlendTime);
 
 	UFUNCTION()
 	void ShowPokemonInMenu();
