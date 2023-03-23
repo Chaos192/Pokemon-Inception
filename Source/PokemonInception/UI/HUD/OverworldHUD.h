@@ -298,6 +298,6 @@ public:
 	void ShowPickupMessage(FString Message, UTexture2D* Image);
 
 	UFUNCTION()
-	void TogglePause(bool IsPaused);
+	void ToggleMainMenu(bool IsPaused);
 
 };

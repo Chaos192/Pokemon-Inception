@@ -11,6 +11,13 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTextSignature, FString, String);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGamePauseSignature, bool, bIsPaused);
 
+UENUM()
+enum class EPause {
+	Pause,
+	UnPause,
+	Auto
+};
+
 UCLASS(minimalapi)
 class AOverworldGameMode : public AGameModeBase
 {
@@ -18,7 +25,7 @@ class AOverworldGameMode : public AGameModeBase
 
 private:
 	UFUNCTION()
-	void TogglePause();
+	void ToggleMainMenu();
 
 	UFUNCTION()
 	void UseItem();
@@ -96,6 +103,9 @@ public:
 
 	UFUNCTION()
 	void SaveAndExit();
+
+	UFUNCTION()
+	void PauseGame(EPause PauseType);
 
 	UFUNCTION()
 	void MarkActorAsDestroyed(AActor* Actor);

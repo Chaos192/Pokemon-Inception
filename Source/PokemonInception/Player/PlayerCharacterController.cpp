@@ -30,7 +30,7 @@ bool APlayerCharacterController::bIsPartyDefeated()
 	return true;
 }
 
-void APlayerCharacterController::TogglePause()
+void APlayerCharacterController::ToggleMainMenu()
 {
 	PauseDelegate.Broadcast();
 }
@@ -263,5 +263,5 @@ void APlayerCharacterController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 	InputComponent->BindAction("Interact", IE_Pressed, this, &APlayerCharacterController::Interact);
-	InputComponent->BindAction("Menu", IE_Pressed, this, &APlayerCharacterController::TogglePause).bExecuteWhenPaused = true;
+	InputComponent->BindAction("Menu", IE_Pressed, this, &APlayerCharacterController::ToggleMainMenu).bExecuteWhenPaused = true;
 }

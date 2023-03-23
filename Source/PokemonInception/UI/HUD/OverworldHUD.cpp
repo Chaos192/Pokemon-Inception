@@ -436,7 +436,7 @@ void AOverworldHUD::ShowBuyShop()
 		
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
-		PlayerOwner->SetPause(true);
+		GameMode->PauseGame(EPause::Pause);
 	}
 }
 
@@ -463,7 +463,7 @@ void AOverworldHUD::ShowSellShop()
 
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
-		PlayerOwner->SetPause(true);
+		GameMode->PauseGame(EPause::Pause);
 	}
 }
 
@@ -480,7 +480,7 @@ void AOverworldHUD::ShowPokemonStorage()
 		PokemonStorageWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
-		PlayerOwner->SetPause(true);
+		GameMode->PauseGame(EPause::Pause);
 	}
 }
 
@@ -601,7 +601,7 @@ void AOverworldHUD::ShowMoveManager(int PokemonID)
 		MoveManagerWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
-		PlayerOwner->SetPause(true);
+		GameMode->PauseGame(EPause::Pause);
 	}
 }
 
@@ -791,7 +791,7 @@ void AOverworldHUD::ShowPickupMessage(FString Message, UTexture2D* Image)
 }
 
 
-void AOverworldHUD::TogglePause(bool IsPaused)
+void AOverworldHUD::ToggleMainMenu(bool IsPaused)
 {
 	if (IsPaused) {
 		ShowMenu();
@@ -810,10 +810,15 @@ void AOverworldHUD::Clear()
 
 void AOverworldHUD::ClearAndUnpause()
 {
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (!IsValid(GameMode)) {
+		return;
+	}
+
 	ShowInGameWidget();
 	PlayerOwner->SetInputMode(FInputModeGameOnly());
 	PlayerOwner->bShowMouseCursor = false;
-	PlayerOwner->SetPause(false);
+	GameMode->PauseGame(EPause::UnPause);
 }
 
 void AOverworldHUD::ClearPopup()

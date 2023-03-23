@@ -93,7 +93,7 @@ protected:
 
 	void Interact();
 
-	void TogglePause();
+	void ToggleMainMenu();
 
 	virtual void SetupInputComponent() override;
 };

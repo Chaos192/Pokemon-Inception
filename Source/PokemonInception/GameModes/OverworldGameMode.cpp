@@ -55,8 +55,8 @@ void AOverworldGameMode::BeginPlay()
 	
 	LoadLevelData();
 
-	PlayerController->PauseDelegate.AddDynamic(this, &AOverworldGameMode::TogglePause);
-	OnGamePaused.AddDynamic(Cast<AOverworldHUD>(PlayerController->GetHUD()), &AOverworldHUD::TogglePause);
+	PlayerController->PauseDelegate.AddDynamic(this, &AOverworldGameMode::ToggleMainMenu);
+	OnGamePaused.AddDynamic(Cast<AOverworldHUD>(PlayerController->GetHUD()), &AOverworldHUD::ToggleMainMenu);
 }
 
 void AOverworldGameMode::SaveGame()
@@ -556,15 +556,59 @@ FPokemonBaseStruct AOverworldGameMode::GetPokemonSpeciesData(FName PokemonID)
 	return *SpeciesData;
 }
 
-void AOverworldGameMode::TogglePause()
+void AOverworldGameMode::PauseGame(EPause PauseType)
 {
 	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (!IsValid(PlayerController)) {
 		return;
 	}
 
-	bIsPaused = !bIsPaused;
-	PlayerController->SetPause(bIsPaused);
+	APokemonInceptionCharacter* PlayerPawn = Cast<APokemonInceptionCharacter>(PlayerController->GetPawn());
+	if (!IsValid(PlayerPawn)) {
+		return;
+	}
+
+	switch (PauseType) {
+		case EPause::Pause: bIsPaused = true;
+			break;
+		case EPause::UnPause: bIsPaused = false;
+			break;
+		case EPause::Auto: bIsPaused = !bIsPaused;
+			break;
+	}
+
+	if (bIsPaused) {
+		PlayerPawn->CustomTimeDilation = 0;
+	}
+	else {
+		PlayerPawn->CustomTimeDilation = 1;
+	}
+
+	if (!PokemonInLevel.IsEmpty()) {
+		TArray<AActor*> Spawners;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), SpawnerClass, Spawners);
+
+		for (AActor* Spawner : Spawners) {
+			AWildPokemonSpawner* PokemonSpawner = Cast<AWildPokemonSpawner>(Spawner);
+			AWildPokemon* PokemonRef = PokemonSpawner->SpawnedPokemon;
+
+			if (PokemonRef == nullptr) {
+				continue;
+			}
+
+			if (bIsPaused) {
+				PokemonRef->CustomTimeDilation = 0;
+			}
+			else {
+				PokemonRef->CustomTimeDilation = 1;
+			}
+		}
+	}
+}
+
+void AOverworldGameMode::ToggleMainMenu()
+{
+	PauseGame(EPause::Auto);
 	OnGamePaused.Broadcast(bIsPaused);
 }
 
