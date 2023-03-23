@@ -35,13 +35,15 @@ void AOverworldGameMode::BeginPlay()
 
 		SaveData->OpponentData.Empty();
 
+		PlayerController->PlayerName = SaveData->PlayerName;
 		PlayerController->Inventory = SaveData->InventoryData;
 		PlayerController->Money = SaveData->MoneyData;
 		PlayerController->PokemonParty = SaveData->PartyData;
 		PlayerController->PokemonStorage = SaveData->StorageData;
 		PlayerController->Pokedex = SaveData->PokedexData;
 	}
-	else {
+
+	if(PlayerController->PokemonParty.IsEmpty()) {
 		FPokemonBaseStruct* PokemonStarterSpecies = PokemonDT->FindRow<FPokemonBaseStruct>(FName(*FString::FromInt(4)), "");
 		FPokemonStruct StarterPokemon;
 
@@ -66,6 +68,7 @@ void AOverworldGameMode::SaveGame()
 
 	UPlayerSaveData* SaveData = Cast<UPlayerSaveData>(UGameplayStatics::CreateSaveGameObject(UPlayerSaveData::StaticClass()));
 
+	SaveData->PlayerName = PlayerController->PlayerName;
 	SaveData->InventoryData = PlayerController->Inventory;
 	SaveData->PokedexData = PlayerController->Pokedex;
 	SaveData->MoneyData = PlayerController->Money;
@@ -114,8 +117,6 @@ void AOverworldGameMode::SaveLevelData(AWildPokemon* PokemonToIgnore)
 
 	LevelSaveData->PlayerLocation = PlayerPawn->GetActorLocation();
 	LevelSaveData->PlayerRotation = PlayerPawn->GetActorRotation();
-	LevelSaveData->PlayerCameraLocation = PlayerPawn->FollowCamera->GetComponentLocation();
-	LevelSaveData->PlayerCameraRotation = PlayerPawn->FollowCamera->GetComponentRotation();
 	LevelSaveData->ActorsToDestroy = ActorsToDestroy;
 
 	if (!PokemonInLevel.IsEmpty()) {
@@ -168,9 +169,8 @@ void AOverworldGameMode::LoadLevelData()
 			PlayerController->FullRestoreAllPokemon();
 		}
 		else {
-			PlayerPawn->SetActorLocation(LevelSaveData->PlayerLocation);
-			PlayerPawn->SetActorRotation(LevelSaveData->PlayerRotation, ETeleportType::None);
-			//PlayerOwner->FollowCamera->SetWorldLocationAndRotation(SaveData->PlayerCameraLocation, SaveData->PlayerCameraRotation);
+			PlayerPawn->ChangePositionInWorld(LevelSaveData->PlayerLocation, LevelSaveData->PlayerRotation);
+			
 		}
 
 		ActorsToDestroy = LevelSaveData->ActorsToDestroy;

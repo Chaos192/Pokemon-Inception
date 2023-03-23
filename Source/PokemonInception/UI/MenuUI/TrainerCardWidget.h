@@ -24,6 +24,9 @@ protected:
 	class UButton* Back;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UTextBlock* PlayerName;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UTextBlock* SpeciesRegistered;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
@@ -34,6 +37,8 @@ protected:
 
 public:
 	virtual void NativeOnInitialized() override;
+
+	void SetPlayerName(FString Name);
 
 	void SetRegisteredSpecies(int Num);
 

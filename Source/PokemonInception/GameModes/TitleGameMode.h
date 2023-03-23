@@ -6,13 +6,20 @@
 #include "GameFramework/GameModeBase.h"
 #include "TitleGameMode.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FErrorSignature, FString, ErrorString);
 
 UCLASS()
 class POKEMONINCEPTION_API ATitleGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+protected:
+	bool bIsNameValid(FString PlayerName);
+
 public:
+	FErrorSignature ErrorDelegate;
+	FString ErrorMessage;
+
 	UFUNCTION()
 	void StartGame();
 
@@ -21,4 +28,7 @@ public:
 
 	UFUNCTION()
 	void ResetGame();
+
+	UFUNCTION()
+	void SavePlayerName(FString PlayerName);
 };

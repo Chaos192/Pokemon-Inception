@@ -4,6 +4,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "Components/ArrowComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -15,13 +16,6 @@
 
 //////////////////////////////////////////////////////////////////////////
 // APokemonInceptionCharacter
-
-void APokemonInceptionCharacter::SetupStimulus()
-{
-	Stimulus = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("Stimulus"));
-	Stimulus->RegisterForSense(TSubclassOf<UAISense_Sight>());
-	Stimulus->RegisterWithPerceptionSystem();
-}
 
 APokemonInceptionCharacter::APokemonInceptionCharacter()
 {
@@ -61,6 +55,27 @@ APokemonInceptionCharacter::APokemonInceptionCharacter()
 
 	SetupStimulus();
 	SetTickableWhenPaused(true);
+}
+
+void APokemonInceptionCharacter::SetupStimulus()
+{
+	Stimulus = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("Stimulus"));
+	Stimulus->RegisterForSense(TSubclassOf<UAISense_Sight>());
+	Stimulus->RegisterWithPerceptionSystem();
+}
+
+void APokemonInceptionCharacter::ChangePositionInWorld(FVector Location, FRotator Rotation)
+{
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(GetController());
+	if (!IsValid(PlayerController)) {
+		return;
+	}
+
+	SetActorLocation(Location);
+	SetActorRotation(Rotation);
+
+	FRotator PlayerRotation = GetArrowComponent()->GetComponentRotation();
+	PlayerController->SetControlRotation(PlayerRotation);
 }
 
 void APokemonInceptionCharacter::Tick(float DeltaTime)

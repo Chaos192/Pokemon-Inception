@@ -402,6 +402,7 @@ void AOverworldHUD::ShowTrainerCard()
 	if (PlayerOwner && TrainerCardWidget) {
 		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(PlayerOwner);
 
+		TrainerCardWidget->SetPlayerName(Controller->PlayerName);
 		TrainerCardWidget->SetRegisteredSpecies(Controller->Pokedex.Num());
 		TrainerCardWidget->SetPokemonCaught(Controller->PokemonParty.Num() + Controller->PokemonStorage.Num());
 		TrainerCardWidget->SetMoneyObtained(Controller->Money);

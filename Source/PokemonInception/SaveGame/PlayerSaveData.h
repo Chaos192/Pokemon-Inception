@@ -17,6 +17,9 @@ class POKEMONINCEPTION_API UPlayerSaveData : public USaveGame
 
 public:
 	UPROPERTY(EditDefaultsOnly)
+	FString PlayerName;
+
+	UPROPERTY(EditDefaultsOnly)
 	TArray<FItemBaseStruct> InventoryData;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -36,5 +39,4 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FPokemonStruct> StorageData;
-
 };

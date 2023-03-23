@@ -34,6 +34,9 @@ public:
 	bool bIsRegisteredInPokedex(FName ID);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	FString PlayerName;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<FItemBaseStruct> Inventory;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)

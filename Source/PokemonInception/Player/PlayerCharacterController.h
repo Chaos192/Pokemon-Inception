@@ -68,6 +68,9 @@ public:
 	void FullRestoreAllPokemon();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	FString PlayerName;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int Money;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)

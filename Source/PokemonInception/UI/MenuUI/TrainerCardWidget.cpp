@@ -14,6 +14,11 @@ void UTrainerCardWidget::NativeOnInitialized()
 	Back->OnClicked.AddDynamic(this, &UTrainerCardWidget::OnBackClicked);
 }
 
+void UTrainerCardWidget::SetPlayerName(FString Name)
+{
+	PlayerName->SetText(FText::FromString(Name));
+}
+
 void UTrainerCardWidget::SetRegisteredSpecies(int Num)
 {
 	SpeciesRegistered->SetText(FText::FromString(FString::FromInt(Num)));

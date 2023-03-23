@@ -8,6 +8,23 @@
 #include "../SaveGame/PlayerSaveData.h"
 #include "../SaveGame/LevelSaveData.h"
 
+bool ATitleGameMode::bIsNameValid(FString PlayerName)
+{
+	if (PlayerName.Len() < 1 || PlayerName.Len() > 10) {
+		ErrorMessage = "Name must be between 1 and 10 characters!";
+		ErrorDelegate.Broadcast(ErrorMessage);
+		return false;
+	}
+	
+	if ((PlayerName[0] < 65 || PlayerName[0] > 90) && (PlayerName[0] < 97 || PlayerName[0] > 122)) {
+		ErrorMessage = "Name must begin with a letter!";
+		ErrorDelegate.Broadcast(ErrorMessage);
+		return false;
+	}
+
+	return true;
+}
+
 void ATitleGameMode::StartGame()
 {
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
@@ -15,10 +32,21 @@ void ATitleGameMode::StartGame()
 		return;
 	}
 
-	PlayerController->SetInputMode(FInputModeGameOnly());
-	PlayerController->bShowMouseCursor = false;
+	if (!UGameplayStatics::DoesSaveGameExist("PlayerSaveSlot", 0)) {
+		ATitleHUD* Hud = Cast<ATitleHUD>(PlayerController->GetHUD());
+		if (!IsValid(Hud)) {
+			return;
+		}
 
-	UGameplayStatics::OpenLevel(GetWorld(), "MainMap");
+		Hud->ShowPlayerNameInput();
+	}
+
+	else {
+		PlayerController->SetInputMode(FInputModeGameOnly());
+		PlayerController->bShowMouseCursor = false;
+
+		UGameplayStatics::OpenLevel(GetWorld(), "MainMap");
+	}
 }
 
 void ATitleGameMode::QuitGame()
@@ -37,4 +65,25 @@ void ATitleGameMode::ResetGame()
 	if (UGameplayStatics::DoesSaveGameExist("PlayerSaveSlot", 0)) {
 		UGameplayStatics::DeleteGameInSlot("PlayerSaveSlot", 0);
 	}
+}
+
+void ATitleGameMode::SavePlayerName(FString PlayerName)
+{
+	if (!bIsNameValid(PlayerName)) {
+		return;
+	}
+
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (!IsValid(PlayerController)) {
+		return;
+	}
+
+	UPlayerSaveData* SaveData = Cast<UPlayerSaveData>(UGameplayStatics::CreateSaveGameObject(UPlayerSaveData::StaticClass()));
+	SaveData->PlayerName = PlayerName;
+	UGameplayStatics::SaveGameToSlot(SaveData, "PlayerSaveSlot", 0);
+
+	PlayerController->SetInputMode(FInputModeGameOnly());
+	PlayerController->bShowMouseCursor = false;
+
+	UGameplayStatics::OpenLevel(GetWorld(), "MainMap");
 }

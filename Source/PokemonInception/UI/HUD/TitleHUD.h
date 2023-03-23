@@ -6,6 +6,7 @@
 #include "GameFramework/HUD.h"
 #include "../TitleUI/ControllsWidget.h"
 #include "../TitleUI/TitleWidget.h"
+#include "../TitleUI/PlayerNameWidget.h"
 #include "TitleHUD.generated.h"
 
 
@@ -21,11 +22,17 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UControlsWidget> ControlsWidgetClass;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPlayerNameWidget> PlayerNameWidgetClass;
+
 	UPROPERTY()
 	class UTitleWidget* TitleWidget;
 
 	UPROPERTY()
 	class UControlsWidget* ControlsWidget;
+
+	UPROPERTY()
+	class UPlayerNameWidget* PlayerNameWidget;
 
 	virtual void BeginPlay()override;
 
@@ -35,4 +42,7 @@ public:
 
 	UFUNCTION()
 	void ShowControlls();
+
+	UFUNCTION()
+	void ShowPlayerNameInput();
 };

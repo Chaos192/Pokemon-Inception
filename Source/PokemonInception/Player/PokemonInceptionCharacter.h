@@ -26,6 +26,8 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	void ChangePositionInWorld(FVector Location, FRotator Rotation);
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Input)
 	float TurnRateGamepad;
 

@@ -33,6 +33,7 @@ void ABattleGameMode::BeginPlay()
 	if (UGameplayStatics::DoesSaveGameExist("PlayerSaveSlot", 0)) {
 		SaveData = Cast<UPlayerSaveData>(UGameplayStatics::LoadGameFromSlot("PlayerSaveSlot", 0));
 
+		PlayerController->PlayerName = SaveData->PlayerName;
 		PlayerController->Inventory = SaveData->InventoryData;
 		PlayerController->Pokedex = SaveData->PokedexData;
 		PlayerController->Money = SaveData->MoneyData;
@@ -1216,6 +1217,7 @@ void ABattleGameMode::ExitBattleMap()
 
 	UPlayerSaveData* SaveData = Cast<UPlayerSaveData>(UGameplayStatics::CreateSaveGameObject(UPlayerSaveData::StaticClass()));
 
+	SaveData->PlayerName = PlayerController->PlayerName;
 	SaveData->InventoryData = PlayerController->Inventory;
 	SaveData->PokedexData = PlayerController->Pokedex;
 	SaveData->MoneyData = PlayerController->Money;

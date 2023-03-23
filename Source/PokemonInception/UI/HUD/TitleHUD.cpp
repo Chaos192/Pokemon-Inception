@@ -21,6 +21,7 @@ void ATitleHUD::BeginPlay()
 
 	TitleWidget = CreateWidget<UTitleWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TitleWidgetClass);
 	ControlsWidget = CreateWidget<UControlsWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ControlsWidgetClass);
+	PlayerNameWidget = CreateWidget<UPlayerNameWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PlayerNameWidgetClass);
 
 	TitleWidget->PlayClicked.AddDynamic(GameMode, &ATitleGameMode::StartGame);
 	TitleWidget->ControllsClicked.AddDynamic(this, &ATitleHUD::ShowControlls);
@@ -28,6 +29,9 @@ void ATitleHUD::BeginPlay()
 	TitleWidget->ResetClicked.AddDynamic(GameMode, &ATitleGameMode::ResetGame);
 
 	ControlsWidget->BackClicked.AddDynamic(this, &ATitleHUD::ShowTitle);
+
+	PlayerNameWidget->PlayClicked.AddDynamic(GameMode, &ATitleGameMode::SavePlayerName);
+	GameMode->ErrorDelegate.AddDynamic(PlayerNameWidget, &UPlayerNameWidget::SetErrorText);
 
 	ShowTitle();
 }
@@ -47,5 +51,14 @@ void ATitleHUD::ShowControlls()
 
 	if (PlayerOwner && ControlsWidget) {
 		ControlsWidget->AddToViewport();
+	}
+}
+
+void ATitleHUD::ShowPlayerNameInput()
+{
+	TitleWidget->RemoveFromViewport();
+
+	if (PlayerOwner && PlayerNameWidget) {
+		PlayerNameWidget->AddToViewport();
 	}
 }
