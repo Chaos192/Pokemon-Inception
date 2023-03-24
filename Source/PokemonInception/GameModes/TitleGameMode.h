@@ -27,7 +27,7 @@ public:
 	void QuitGame();
 
 	UFUNCTION()
-	void ResetGame();
+	void ResetGame(int PlaceHolder);
 
 	UFUNCTION()
 	void SavePlayerName(FString PlayerName);

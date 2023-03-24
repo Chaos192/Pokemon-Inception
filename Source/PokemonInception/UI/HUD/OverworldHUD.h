@@ -33,6 +33,9 @@ class POKEMONINCEPTION_API AOverworldHUD : public AHUD
 	GENERATED_BODY()
 
 protected:
+	FString SelectedPokemonLocation;
+
+	FVector2D MousePossition;
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UMenuWidget> MenuWidgetClass;
@@ -110,6 +113,9 @@ protected:
 	TSubclassOf<UStorageOperationPopup> StorageOperationPopupClass;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPopupSelectionWidget> ReleaseConfirmPopupClass;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UMoveManagerWidget> MoveManagerWidgetClass;
 	
 	UPROPERTY(EditAnywhere)
@@ -174,6 +180,9 @@ protected:
 
 	UPROPERTY()
 	class UStorageOperationPopup* StorageOperationPopupWidget;
+
+	UPROPERTY()
+	class UPopupSelectionWidget* ReleaseConfirmPopup;
 
 	UPROPERTY()
 	class UMoveManagerWidget* MoveManagerWidget;
@@ -272,6 +281,9 @@ public:
 
 	UFUNCTION()
 	void ShowDepositPopup(int PokemonID);
+
+	UFUNCTION()
+	void ShowReleaseConfirmPopup(int PokemonID);
 
 	UFUNCTION()
 	void ShowMoveManager(int PokemonID);

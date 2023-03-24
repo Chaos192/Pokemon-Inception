@@ -56,8 +56,18 @@ void ATitleGameMode::QuitGame()
 	}
 }
 
-void ATitleGameMode::ResetGame()
+void ATitleGameMode::ResetGame(int PlaceHolder)
 {
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (!IsValid(PlayerController)) {
+		return;
+	}
+
+	ATitleHUD* Hud = Cast<ATitleHUD>(PlayerController->GetHUD());
+	if (!IsValid(Hud)) {
+		return;
+	}
+
 	if (UGameplayStatics::DoesSaveGameExist("WorldSaveSlot", 0)) {
 		UGameplayStatics::DeleteGameInSlot("WorldSaveSlot", 0);
 	}
@@ -65,6 +75,8 @@ void ATitleGameMode::ResetGame()
 	if (UGameplayStatics::DoesSaveGameExist("PlayerSaveSlot", 0)) {
 		UGameplayStatics::DeleteGameInSlot("PlayerSaveSlot", 0);
 	}
+
+	Hud->ShowTitle();
 }
 
 void ATitleGameMode::SavePlayerName(FString PlayerName)

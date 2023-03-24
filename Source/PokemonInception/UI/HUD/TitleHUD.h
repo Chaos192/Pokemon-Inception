@@ -7,6 +7,7 @@
 #include "../TitleUI/ControllsWidget.h"
 #include "../TitleUI/TitleWidget.h"
 #include "../TitleUI/PlayerNameWidget.h"
+#include "../PopupUI/PopupSelectionWidget.h"
 #include "TitleHUD.generated.h"
 
 
@@ -25,6 +26,9 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UPlayerNameWidget> PlayerNameWidgetClass;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPopupSelectionWidget> ResetProgressPopupClass;
+
 	UPROPERTY()
 	class UTitleWidget* TitleWidget;
 
@@ -34,9 +38,14 @@ protected:
 	UPROPERTY()
 	class UPlayerNameWidget* PlayerNameWidget;
 
+	UPROPERTY()
+	class UPopupSelectionWidget* ResetProgressPopup;
+
 	virtual void BeginPlay()override;
 
 public:
+	void Clear();
+
 	UFUNCTION()
 	void ShowTitle();
 
@@ -45,4 +54,7 @@ public:
 
 	UFUNCTION()
 	void ShowPlayerNameInput();
+
+	UFUNCTION()
+	void ShowResetProgressPopup();
 };

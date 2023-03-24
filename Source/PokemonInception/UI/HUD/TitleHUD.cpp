@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 
 
 void ATitleHUD::BeginPlay()
@@ -22,13 +23,17 @@ void ATitleHUD::BeginPlay()
 	TitleWidget = CreateWidget<UTitleWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TitleWidgetClass);
 	ControlsWidget = CreateWidget<UControlsWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ControlsWidgetClass);
 	PlayerNameWidget = CreateWidget<UPlayerNameWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PlayerNameWidgetClass);
+	ResetProgressPopup = CreateWidget<UPopupSelectionWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ResetProgressPopupClass);
 
 	TitleWidget->PlayClicked.AddDynamic(GameMode, &ATitleGameMode::StartGame);
 	TitleWidget->ControllsClicked.AddDynamic(this, &ATitleHUD::ShowControlls);
 	TitleWidget->QuitClicked.AddDynamic(GameMode, &ATitleGameMode::QuitGame);
-	TitleWidget->ResetClicked.AddDynamic(GameMode, &ATitleGameMode::ResetGame);
+	TitleWidget->ResetClicked.AddDynamic(this, &ATitleHUD::ShowResetProgressPopup);
 
 	ControlsWidget->BackClicked.AddDynamic(this, &ATitleHUD::ShowTitle);
+
+	ResetProgressPopup->ActionClicked.AddDynamic(GameMode, &ATitleGameMode::ResetGame);
+	ResetProgressPopup->CancelClicked.AddDynamic(this, &ATitleHUD::ShowTitle);
 
 	PlayerNameWidget->PlayClicked.AddDynamic(GameMode, &ATitleGameMode::SavePlayerName);
 	GameMode->ErrorDelegate.AddDynamic(PlayerNameWidget, &UPlayerNameWidget::SetErrorText);
@@ -36,9 +41,14 @@ void ATitleHUD::BeginPlay()
 	ShowTitle();
 }
 
+void ATitleHUD::Clear()
+{
+	UWidgetLayoutLibrary::RemoveAllWidgets(this);
+}
+
 void ATitleHUD::ShowTitle()
 {
-	ControlsWidget->RemoveFromViewport();
+	Clear();
 
 	if (PlayerOwner && TitleWidget) {
 		TitleWidget->AddToViewport();
@@ -47,7 +57,7 @@ void ATitleHUD::ShowTitle()
 
 void ATitleHUD::ShowControlls()
 {
-	TitleWidget->RemoveFromViewport();
+	Clear();
 
 	if (PlayerOwner && ControlsWidget) {
 		ControlsWidget->AddToViewport();
@@ -56,9 +66,16 @@ void ATitleHUD::ShowControlls()
 
 void ATitleHUD::ShowPlayerNameInput()
 {
-	TitleWidget->RemoveFromViewport();
+	Clear();
 
 	if (PlayerOwner && PlayerNameWidget) {
 		PlayerNameWidget->AddToViewport();
+	}
+}
+
+void ATitleHUD::ShowResetProgressPopup()
+{
+	if (PlayerOwner && ResetProgressPopup) {
+		ResetProgressPopup->AddToViewport();
 	}
 }

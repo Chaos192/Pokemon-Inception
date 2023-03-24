@@ -54,6 +54,7 @@ void AOverworldHUD::BeginPlay()
 	ItemShopInfoWidget = CreateWidget<UItemShopInfoWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ItemShopInfoWidgetClass);
 
 	StorageOperationPopupWidget = CreateWidget<UStorageOperationPopup>(UGameplayStatics::GetGameInstance(GetWorld()), StorageOperationPopupClass);
+	ReleaseConfirmPopup = CreateWidget<UPopupSelectionWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ReleaseConfirmPopupClass);
 	MoveInfoWidget = CreateWidget<UMoveInfoWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveInfoWidgetClass);
 	MoveManagerOperationWidget = CreateWidget<UPopupSelectionWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveManagerOperationWidgetClass);
 
@@ -94,7 +95,9 @@ void AOverworldHUD::BeginPlay()
 
 	MoveSelectionPopupWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ClearMovePopup);
 
+	StorageOperationPopupWidget->ActionClicked.AddDynamic(this, &AOverworldHUD::ShowReleaseConfirmPopup);
 	StorageOperationPopupWidget->CancelClicked.AddDynamic(this, &AOverworldHUD::ClearPopup);
+	ReleaseConfirmPopup->CancelClicked.AddDynamic(this, &AOverworldHUD::ClearPopup);
 
 	MoveManagerOperationWidget->CancelClicked.AddDynamic(this, &AOverworldHUD::ClearPopup);
 
@@ -306,6 +309,7 @@ void AOverworldHUD::ShowItemShopInfo(int ItemID)
 	if (!IsValid(GameMode)) {
 		return;
 	}
+	GameMode->SelectedItemID = ItemID;
 
 	ItemShopInfoWidget->OperationClicked.RemoveAll(GameMode);
 
@@ -426,7 +430,11 @@ void AOverworldHUD::ShowBuyShop()
 		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(PlayerOwner);
 
 		ShopWidget->ClearShop();
-		ShopWidget->ClearShopInfo();
+
+		if (GameMode->ShopMode == "Sell") {
+			ShopWidget->ClearShopInfo();
+		}
+		
 		ShopWidget->ShowMoney("Money: " + FString::FromInt(Controller->Money) + "$");
 		GameMode->InitBuyShop();
 
@@ -454,6 +462,7 @@ void AOverworldHUD::ShowSellShop()
 
 		ShopWidget->ClearShop();
 		ShopWidget->ClearShopInfo();
+		
 		ShopWidget->ShowMoney("Money: " + FString::FromInt(Controller->Money) + "$");
 		GameMode->InitSellShop();
 
@@ -486,7 +495,7 @@ void AOverworldHUD::ShowPokemonStorage()
 
 void AOverworldHUD::ShowWithdrawPopup(int PokemonID)
 {
-	if (StorageOperationPopupWidget->IsInViewport()) {
+	if (StorageOperationPopupWidget->IsInViewport() || ReleaseConfirmPopup->IsInViewport()) {
 		return;
 	}
 
@@ -494,7 +503,6 @@ void AOverworldHUD::ShowWithdrawPopup(int PokemonID)
 		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(PlayerOwner);
 
 		StorageOperationPopupWidget->OperationClicked.RemoveAll(Controller);
-		StorageOperationPopupWidget->ActionClicked.RemoveAll(Controller);
 
 		FVector2D ScreenSize;
 		GEngine->GameViewport->GetViewportSize(ScreenSize);
@@ -509,23 +517,25 @@ void AOverworldHUD::ShowWithdrawPopup(int PokemonID)
 
 		MouseX *= XDiference;
 		MouseY *= YDiference;
+		MousePossition = FVector2D(MouseX, MouseY);
 
 		StorageOperationPopupWidget->SetId(PokemonID);
 		StorageOperationPopupWidget->SetOperationText(FText::FromString("Withdraw"));
 
 		StorageOperationPopupWidget->OperationClicked.AddDynamic(Controller, &APlayerCharacterController::MovePokemonToParty);
-		StorageOperationPopupWidget->ActionClicked.AddDynamic(Controller, &APlayerCharacterController::ReleasePokemonFromStorage);
 
 		StorageOperationPopupWidget->AddToViewport();
 		StorageOperationPopupWidget->SetPositionInViewport(FVector2D(MouseX, MouseY), false);
 		Controller->bShowMouseCursor = true;
 		Controller->SetInputMode(FInputModeUIOnly());
+
+		SelectedPokemonLocation = "Storage";
 	}
 }
 
 void AOverworldHUD::ShowDepositPopup(int PokemonID)
 {
-	if (StorageOperationPopupWidget->IsInViewport()) {
+	if (StorageOperationPopupWidget->IsInViewport() || ReleaseConfirmPopup->IsInViewport()) {
 		return;
 	}
 
@@ -533,7 +543,6 @@ void AOverworldHUD::ShowDepositPopup(int PokemonID)
 		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(PlayerOwner);
 
 		StorageOperationPopupWidget->OperationClicked.RemoveAll(Controller);
-		StorageOperationPopupWidget->ActionClicked.RemoveAll(Controller);
 
 		FVector2D ScreenSize;
 		GEngine->GameViewport->GetViewportSize(ScreenSize);
@@ -548,15 +557,42 @@ void AOverworldHUD::ShowDepositPopup(int PokemonID)
 
 		MouseX *= XDiference;
 		MouseY *= YDiference;
+		MousePossition = FVector2D(MouseX, MouseY);
 
 		StorageOperationPopupWidget->SetId(PokemonID);
 		StorageOperationPopupWidget->SetOperationText(FText::FromString("Deposit"));
 
 		StorageOperationPopupWidget->OperationClicked.AddDynamic(Controller, &APlayerCharacterController::MovePokemonToStorage);
-		StorageOperationPopupWidget->ActionClicked.AddDynamic(Controller, &APlayerCharacterController::ReleasePokemonFromParty);
 
 		StorageOperationPopupWidget->AddToViewport();
 		StorageOperationPopupWidget->SetPositionInViewport(FVector2D(MouseX, MouseY), false);
+		Controller->bShowMouseCursor = true;
+		Controller->SetInputMode(FInputModeUIOnly());
+
+		SelectedPokemonLocation = "Party";
+	}
+}
+
+void AOverworldHUD::ShowReleaseConfirmPopup(int PokemonID)
+{
+	ClearPopup();
+
+	if (PlayerOwner && ReleaseConfirmPopup) {
+		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(PlayerOwner);
+
+		ReleaseConfirmPopup->ActionClicked.RemoveAll(Controller);
+
+		ReleaseConfirmPopup->SetId(PokemonID);
+
+		if (SelectedPokemonLocation == "Party") {
+			ReleaseConfirmPopup->ActionClicked.AddDynamic(Controller, &APlayerCharacterController::ReleasePokemonFromParty);
+		}
+		if (SelectedPokemonLocation == "Storage") {
+			ReleaseConfirmPopup->ActionClicked.AddDynamic(Controller, &APlayerCharacterController::ReleasePokemonFromStorage);
+		}
+
+		ReleaseConfirmPopup->SetPositionInViewport(MousePossition, false);
+		ReleaseConfirmPopup->AddToViewport();
 		Controller->bShowMouseCursor = true;
 		Controller->SetInputMode(FInputModeUIOnly());
 	}
@@ -826,6 +862,7 @@ void AOverworldHUD::ClearPopup()
 	UseItemWidget->RemoveFromViewport();
 	SwapPositionWidget->RemoveFromViewport();
 	StorageOperationPopupWidget->RemoveFromViewport();
+	ReleaseConfirmPopup->RemoveFromViewport();
 	MoveManagerOperationWidget->RemoveFromViewport();
 }
 
