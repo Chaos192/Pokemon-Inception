@@ -86,6 +86,7 @@ public:
 	TArray<FPokemonStruct> PokemonStorage;
 
 	FPauseSignature PauseDelegate;
+	FPauseSignature PeacefulModeDelegate;
 	FInteractableMessageSignature InteractableMessageDelegate;
 
 protected:
@@ -94,6 +95,8 @@ protected:
 	void Interact();
 
 	void ToggleMainMenu();
+
+	void TogglePeacefulMode();
 
 	virtual void SetupInputComponent() override;
 };

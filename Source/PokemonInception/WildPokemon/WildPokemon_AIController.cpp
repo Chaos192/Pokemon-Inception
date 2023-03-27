@@ -7,6 +7,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "UObject/ConstructorHelpers.h"
 #include "../Player/PokemonInceptionCharacter.h"
+#include "../GameModes/OverworldGameMode.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "BlackBoard/BB_Keys.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
@@ -50,6 +51,15 @@ UBlackboardComponent* AWildPokemon_AIController::getBlackboard() const
 
 void AWildPokemon_AIController::PlayerDetected(AActor* actor, FAIStimulus const stimulus)
 {
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (!IsValid(GameMode)) {
+		return;
+	}
+
+	if (GameMode->bIsPeacefulModeOn) {
+		return;
+	}
+
 	if (APokemonInceptionCharacter* const Player = Cast<APokemonInceptionCharacter>(actor)) {
 		getBlackboard()->SetValueAsBool(bb_keys::CanSeePlayer, stimulus.WasSuccessfullySensed());
 	}

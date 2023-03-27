@@ -56,6 +56,7 @@ void AOverworldGameMode::BeginPlay()
 	LoadLevelData();
 
 	PlayerController->PauseDelegate.AddDynamic(this, &AOverworldGameMode::ToggleMainMenu);
+	PlayerController->PeacefulModeDelegate.AddDynamic(this, &AOverworldGameMode::TogglePeacefulMode);
 	OnGamePaused.AddDynamic(Cast<AOverworldHUD>(PlayerController->GetHUD()), &AOverworldHUD::ToggleMainMenu);
 }
 
@@ -610,6 +611,23 @@ void AOverworldGameMode::ToggleMainMenu()
 {
 	PauseGame(EPause::Auto);
 	OnGamePaused.Broadcast(bIsPaused);
+}
+
+void AOverworldGameMode::TogglePeacefulMode()
+{
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	if (!IsValid(Hud)) {
+		return;
+	}
+
+	bIsPeacefulModeOn = !bIsPeacefulModeOn;
+
+	if (bIsPeacefulModeOn) {
+		Hud->OnScreenMessage("Peaceful Mode is enabled");
+	}
+	else {
+		Hud->OnScreenMessage("Peaceful Mode is disabled");
+	}
 }
 
 void AOverworldGameMode::UseItem()

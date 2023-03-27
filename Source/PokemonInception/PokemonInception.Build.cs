@@ -14,7 +14,7 @@ public class PokemonInception : ModuleRules
 			"Engine", 
 			"InputCore", 
 			"UMG",
-			"HeadMountedDisplay", 
+			"Niagara", 
 			"AIModule", 
 			"GameplayTasks", 
 			"NavigationSystem" ,

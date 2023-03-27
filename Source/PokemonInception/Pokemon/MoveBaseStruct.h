@@ -37,6 +37,11 @@ struct FMoveBaseStruct : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsLocked;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	class UNiagaraSystem* Particle = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	class USoundBase* Sound = nullptr;
 
 	bool bHasMaxPP() {
 		if (CurrPowerPoints == PowerPoints) {

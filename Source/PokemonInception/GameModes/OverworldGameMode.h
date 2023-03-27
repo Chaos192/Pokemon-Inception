@@ -28,6 +28,9 @@ private:
 	void ToggleMainMenu();
 
 	UFUNCTION()
+	void TogglePeacefulMode();
+
+	UFUNCTION()
 	void UseItem();
 
 	UFUNCTION()
@@ -73,6 +76,8 @@ public:
 	bool bHasSelectedItem;
 	bool bHasSelectedEther;
 	bool bIsSwappingPosition;
+
+	bool bIsPeacefulModeOn = false;
 
 	UPROPERTY()
 	TArray<AWildPokemon*> PokemonInLevel;

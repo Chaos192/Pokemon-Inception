@@ -35,6 +35,11 @@ void APlayerCharacterController::ToggleMainMenu()
 	PauseDelegate.Broadcast();
 }
 
+void APlayerCharacterController::TogglePeacefulMode()
+{
+	PeacefulModeDelegate.Broadcast();
+}
+
 bool APlayerCharacterController::bCanRemoveFromParty(int PokemonID)
 {
 	if (PokemonParty.Num() == 1) {
@@ -263,5 +268,6 @@ void APlayerCharacterController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 	InputComponent->BindAction("Interact", IE_Pressed, this, &APlayerCharacterController::Interact);
+	InputComponent->BindAction("PeacefulMode", IE_Pressed, this, &APlayerCharacterController::TogglePeacefulMode);
 	InputComponent->BindAction("Menu", IE_Pressed, this, &APlayerCharacterController::ToggleMainMenu).bExecuteWhenPaused = true;
 }

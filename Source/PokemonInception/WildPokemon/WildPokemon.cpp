@@ -55,6 +55,10 @@ void AWildPokemon::Collide(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		return;
 	}
 
+	if (GameMode->bIsPeacefulModeOn) {
+		return;
+	}
+
 	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(OtherActor);
 	if (!IsValid(Player)) {
 		return;

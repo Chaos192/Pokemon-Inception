@@ -23,6 +23,12 @@ enum class EAction {
 	SwitchOut
 };
 
+UENUM()
+enum class EBattler {
+	Player,
+	Opponent
+};
+
 UCLASS()
 class POKEMONINCEPTION_API ABattleGameMode : public AGameModeBase
 {
@@ -67,11 +73,13 @@ private:
 	int SelectedPokemonID;
 	int SelectedItemID;
 
-	UFUNCTION()
-	void UseMove(int MoveId, FString AttackerContextString);
+	int OpponentSelectedMoveID;
 
 	UFUNCTION()
-	void MoveOutcome(FString MoveMessage, FString CameraContextString);
+	void UseMove(int MoveId, EBattler MoveCaster);
+
+	UFUNCTION()
+	void MoveOutcome(FString MoveMessage, EBattler MoveCaster, EBattler Target);
 
 	UFUNCTION()
 	void UseItem();
@@ -158,6 +166,9 @@ public:
 	void SwitchToTrainerCamera(float BlendTime);
 
 	UFUNCTION()
+	void ShowMoveSplash(EBattler MoveCaster, EBattler Target);
+
+	UFUNCTION()
 	void ShowPokemonInMenu();
 
 	UFUNCTION()
@@ -181,7 +192,7 @@ public:
 	UFUNCTION()
 	void ShowPokemonMoves();
 
-	FString GetMoveEffectiveness(int MoveID);
+	FString GetMoveEffectiveness(ETypes MoveType);
 
 	UFUNCTION()
 	FPokemonStruct GetCurrentOpponentStruct();
