@@ -814,9 +814,9 @@ void ABattleGameMode::EndTurn()
 
 	FTimerHandle EndTurnTimer;
 
-	SelectedItemID = 0;
-	SelectedMoveID = 0;
-	SelectedPokemonID = 0;
+	//SelectedItemID = 0;
+	//SelectedMoveID = 0;
+	//SelectedPokemonID = 0;
 
 	if (bDoesPlayerHaveToSwitch == true && bHasBattleEnded == false) {
 		GetWorldTimerManager().SetTimer(EndTurnTimer, Hud, &ABattleHUD::ShowPokemon, CurrentBattleTime, false);
@@ -941,10 +941,12 @@ void ABattleGameMode::ShowMoveSplash(EBattler MoveCaster, EBattler Target)
 		if (Move.Sound) {
 			UGameplayStatics::PlaySound2D(GetWorld(), Move.Sound);
 		}
+
+		GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "Your Pokemon used " + Move.Name.ToString());
 	}
 			
 	if (MoveCaster == EBattler::Opponent) {
-		FMoveBaseStruct Move = OpponentTeam[OpponentPokemonId].Moves[SelectedMoveID];
+		FMoveBaseStruct Move = OpponentTeam[OpponentPokemonId].Moves[OpponentSelectedMoveID];
 
 		if (Move.Particle) {
 			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), Move.Particle, PokemonTarget->GetActorLocation());
@@ -953,6 +955,8 @@ void ABattleGameMode::ShowMoveSplash(EBattler MoveCaster, EBattler Target)
 		if (Move.Sound) {
 			UGameplayStatics::PlaySound2D(GetWorld(), Move.Sound);
 		}
+
+		GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "Opponent Pokemon used " + Move.Name.ToString());
 	}
 }
 
