@@ -35,6 +35,7 @@ void ABattleHUD::BeginPlay()
 	BagWidget = CreateWidget<UBagWidget>(UGameplayStatics::GetGameInstance(GetWorld()), BagWidgetClass);
 	ItemInfoWidget = CreateWidget<UItemInfoWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ItemInfoWidgetClass);
 	TextBoxWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TextBoxWidgetClass);
+	ButtonBlocker = CreateWidget<UUserWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ButtonBlockerClass);
 
 	BattleStartWidget->FightClicked.AddDynamic(this, &ABattleHUD::ShowFightWidget);
 	BattleStartWidget->PokemonClicked.AddDynamic(this, &ABattleHUD::ShowPokemon);
@@ -104,6 +105,8 @@ void ABattleHUD::ClearPopup()
 	SwitchOutWidget->RemoveFromViewport();
 	UseItemWidget->RemoveFromViewport();
 	MoveInfoWidget->RemoveFromViewport();
+
+	ButtonBlocker->RemoveFromViewport();
 }
 
 void ABattleHUD::ClearMovePopup()
@@ -273,6 +276,7 @@ void ABattleHUD::ShowSwitchOutPopup(int PokemonId)
 	if (SwitchOutWidget->IsInViewport() == true) {
 		return;
 	}
+	ButtonBlocker->AddToViewport();
 
 	if (PlayerOwner && SwitchOutWidget) {
 		FVector2D ScreenSize;
@@ -301,6 +305,7 @@ void ABattleHUD::ShowUseItemPopup(int PokemonId)
 	if (UseItemWidget->IsInViewport() == true) {
 		return;
 	}
+	ButtonBlocker->AddToViewport();
 
 	if (PlayerOwner && UseItemWidget) {
 		FVector2D ScreenSize;

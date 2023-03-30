@@ -124,6 +124,9 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UPopupSelectionWidget> MoveManagerOperationWidgetClass;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> ButtonBlockerClass;
+
 	UPROPERTY()
 	class UMenuWidget* MenuWidget;
 
@@ -192,6 +195,9 @@ protected:
 
 	UPROPERTY()
 	class UPopupSelectionWidget* MoveManagerOperationWidget;
+
+	UPROPERTY()
+	class UUserWidget* ButtonBlocker;
 
 	virtual void BeginPlay()override;
 	

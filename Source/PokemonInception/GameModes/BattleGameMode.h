@@ -79,7 +79,7 @@ private:
 	void UseMove(int MoveId, EBattler MoveCaster);
 
 	UFUNCTION()
-	void MoveOutcome(FString MoveMessage, EBattler MoveCaster, EBattler Target);
+	void MoveOutcome(FString MoveMessage, EBattler MoveCaster, EBattler Target, bool bHasMoveSucceeded);
 
 	UFUNCTION()
 	void UseItem();

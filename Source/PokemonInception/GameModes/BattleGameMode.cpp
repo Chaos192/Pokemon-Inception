@@ -191,6 +191,7 @@ void ABattleGameMode::UseMove(int MoveId, EBattler MoveCaster)
 	EBattler Target = EBattler::Player;;
 
 	bool bIsStruggling = false;
+	bool bIsMoveSuccessful = false;
 
 	if (MoveCaster == EBattler::Player) {
 		Attacker = PlayerController->PokemonParty[PlayerPokemonId];
@@ -260,8 +261,8 @@ void ABattleGameMode::UseMove(int MoveId, EBattler MoveCaster)
 		}
 
 		//Move effectiveness
+		float EffectivenessMultiplier = 1;
 		if (MoveId != -1) {
-			float EffectivenessMultiplier = 1;
 			FTypeStruct* MovetTypeStruct = TypesDT->FindRow<FTypeStruct>(FName(FTypeStruct::ToString(AttackMove->MoveType)), "");
 
 			if (MovetTypeStruct->SuperEffectiveAgainst.Contains(Opponent.SpeciesData.Type1)) {
@@ -285,9 +286,8 @@ void ABattleGameMode::UseMove(int MoveId, EBattler MoveCaster)
 					EffectivenessMultiplier *= 0;
 				}
 			}
-
-			Damage *= EffectMultiplier;
 		}
+		Damage *= EffectivenessMultiplier;
 
 		if (MoveCaster == EBattler::Player) {
 			OpponentTeam[OpponentPokemonId].RecieveDamage(Damage);
@@ -315,11 +315,30 @@ void ABattleGameMode::UseMove(int MoveId, EBattler MoveCaster)
 			Target = EBattler::Player;
 		}
 
-		if (bIsStruggling) {
-			MoveMessage = Attacker.SpeciesData.Name.ToString() + " used Struggle and dealt " + FString::FromInt(Damage) + " damage, but also hurt itself badly!";
+		MoveMessage = Attacker.SpeciesData.Name.ToString() + " used " + AttackMove->Name.ToString() + ". ";
+
+		if (Damage == 0) {
+			MoveMessage += "It had no effect! ";
 		}
+
 		else {
-			MoveMessage = Attacker.SpeciesData.Name.ToString() + " used " + AttackMove->Name.ToString() + " and dealt " + FString::FromInt(Damage) + " damage!";
+			bIsMoveSuccessful = true;
+			MoveMessage += "It dealt " + FString::FromInt(Damage) + " damage! ";
+
+			if (EffectivenessMultiplier > 1) {
+				MoveMessage += "It's super effective! ";
+			}
+			else if (EffectivenessMultiplier < 1 && EffectivenessMultiplier > 0) {
+				MoveMessage += "It's not very effective! ";
+			}
+		}
+
+		if (CriticalHitChance <= 5) {
+			MoveMessage += "A critical hit! ";
+		}
+
+		if (bIsStruggling) {
+			MoveMessage += Attacker.SpeciesData.Name.ToString() + " hurt itself badly! ";
 		}
 	}
 
@@ -328,7 +347,6 @@ void ABattleGameMode::UseMove(int MoveId, EBattler MoveCaster)
 		FStatusMoveStruct* StatusMove = StatusMovesDT->FindRow<FStatusMoveStruct>(Attacker.Moves[MoveId].MoveID, "");
 
 		MoveMessage = Attacker.SpeciesData.Name.ToString() + " used " + StatusMove->Name.ToString() + ", but it failed!";
-		bool bIsMoveSuccessful = false;
 
 		for (EEffect Effect : StatusMove->MoveEffects) {
 			switch (StatusMove->Target) {
@@ -383,10 +401,10 @@ void ABattleGameMode::UseMove(int MoveId, EBattler MoveCaster)
 		MoveMessage = "Opponent " + MoveMessage;
 	}
 	
-	MoveOutcome(MoveMessage, MoveCaster, Target);
+	MoveOutcome(MoveMessage, MoveCaster, Target, bIsMoveSuccessful);
 }
 
-void ABattleGameMode::MoveOutcome(FString MoveMessage, EBattler MoveCaster, EBattler Target)
+void ABattleGameMode::MoveOutcome(FString MoveMessage, EBattler MoveCaster, EBattler Target, bool bHasMoveSucceeded)
 {
 	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (!IsValid(PlayerController)) {
@@ -423,8 +441,10 @@ void ABattleGameMode::MoveOutcome(FString MoveMessage, EBattler MoveCaster, EBat
 		GetWorldTimerManager().SetTimer(CameraSwitchTimer, CameraTimerDelegate, CurrentBattleTime, false);
 	}
 
-	MoveSplashDelegate.BindUFunction(this, FName("ShowMoveSplash"), MoveCaster, Target);
-	GetWorldTimerManager().SetTimer(MoveSplashTimer, MoveSplashDelegate, CurrentBattleTime + 0.3, false);
+	if (bHasMoveSucceeded) {
+		MoveSplashDelegate.BindUFunction(this, FName("ShowMoveSplash"), MoveCaster, Target);
+		GetWorldTimerManager().SetTimer(MoveSplashTimer, MoveSplashDelegate, CurrentBattleTime + 0.3, false);
+	}
 	
 	CurrentBattleTime += 2;
 
@@ -902,6 +922,7 @@ void ABattleGameMode::ShowMoveSplash(EBattler MoveCaster, EBattler Target)
 		return;
 	}
 
+	FMoveBaseStruct* Move = nullptr;
 	AActor* PokemonTarget = nullptr;
 
 	if (Target == EBattler::Player) {
@@ -912,31 +933,38 @@ void ABattleGameMode::ShowMoveSplash(EBattler MoveCaster, EBattler Target)
 	}
 
 	if (MoveCaster == EBattler::Player) {
-		FMoveBaseStruct Move = PlayerController->PokemonParty[PlayerPokemonId].Moves[SelectedMoveID];
+		if (SelectedMoveID != -1) {
+			Move = &PlayerController->PokemonParty[PlayerPokemonId].Moves[SelectedMoveID];
+		}
+		else {
+			Move = AttackMovesDT->FindRow<FAttackMoveStruct>(FName(*FString("Struggle")), "");
+		}
+		
 
-		if (Move.Particle) {
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), Move.Particle, PokemonTarget->GetActorLocation());
+		if (Move->Particle) {
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), Move->Particle, PokemonTarget->GetActorLocation());
 		}
 
-		if (Move.Sound) {
-			UGameplayStatics::PlaySound2D(GetWorld(), Move.Sound);
+		if (Move->Sound) {
+			UGameplayStatics::PlaySound2D(GetWorld(), Move->Sound);
 		}
-
-		GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "Your Pokemon used " + Move.Name.ToString());
 	}
 			
 	if (MoveCaster == EBattler::Opponent) {
-		FMoveBaseStruct Move = OpponentTeam[OpponentPokemonId].Moves[OpponentSelectedMoveID];
-
-		if (Move.Particle) {
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), Move.Particle, PokemonTarget->GetActorLocation());
+		if (OpponentSelectedMoveID != -1) {
+			Move = &OpponentTeam[OpponentPokemonId].Moves[OpponentSelectedMoveID];
+		}
+		else {
+			Move = AttackMovesDT->FindRow<FAttackMoveStruct>(FName(*FString("Struggle")), "");
 		}
 
-		if (Move.Sound) {
-			UGameplayStatics::PlaySound2D(GetWorld(), Move.Sound);
+		if (Move->Particle) {
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), Move->Particle, PokemonTarget->GetActorLocation());
 		}
 
-		GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "Opponent Pokemon used " + Move.Name.ToString());
+		if (Move->Sound) {
+			UGameplayStatics::PlaySound2D(GetWorld(), Move->Sound);
+		}
 	}
 }
 

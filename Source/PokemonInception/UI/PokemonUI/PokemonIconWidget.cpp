@@ -39,6 +39,13 @@ void UPokemonIconWidget::SetPokemonHP(int CurrHP, int MaxHP)
 
 	float HpPercent = float(CurrHP) / float(MaxHP);
 	HPBar->SetPercent(HpPercent);
+
+	if (HpPercent < 0.5) {
+		HPBar->SetFillColorAndOpacity(FLinearColor(1, 1, 0, 1));
+	}
+	if (HpPercent < 0.15) {
+		HPBar->SetFillColorAndOpacity(FLinearColor(1, 0, 0, 1));
+	}
 }
 
 void UPokemonIconWidget::SetPokemon(int InPokemonID)

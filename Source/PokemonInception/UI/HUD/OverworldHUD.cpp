@@ -33,6 +33,7 @@ void AOverworldHUD::BeginPlay()
 	OnScreenMessageWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), OnScreenMessageWidgetClass);
 	AreaMessageWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), AreaMessageWidgetClass);
 	InGameWidget = CreateWidget<UInGameWidget>(UGameplayStatics::GetGameInstance(GetWorld()), InGameWidgetClass);
+	ButtonBlocker = CreateWidget<UUserWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ButtonBlockerClass);
 
 	MenuWidget = CreateWidget<UMenuWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MenuWidgetClass);
 	PokedexWidget = CreateWidget<UPokedexWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokedexWidgetClass);
@@ -107,6 +108,7 @@ void AOverworldHUD::BeginPlay()
 void AOverworldHUD::ShowInGameWidget()
 {
 	Clear();
+	ShopWidget->ClearShopInfo();
 
 	if (PlayerOwner && InGameWidget) {
 		InGameWidget->AddToViewport();
@@ -197,6 +199,7 @@ void AOverworldHUD::ShowSwapPositionPopup(int PokemonId)
 	if (SwapPositionWidget->IsInViewport() == true) {
 		return;
 	}
+	ButtonBlocker->AddToViewport();
 
 	if (PlayerOwner && SwapPositionWidget) {
 		FVector2D ScreenSize;
@@ -343,6 +346,7 @@ void AOverworldHUD::ShowUseItemPopup(int PokemonId)
 	if (UseItemWidget->IsInViewport() == true) {
 		return;
 	}
+	ButtonBlocker->AddToViewport();
 
 	if (PlayerOwner && UseItemWidget) {
 		FVector2D ScreenSize;
@@ -498,6 +502,7 @@ void AOverworldHUD::ShowWithdrawPopup(int PokemonID)
 	if (StorageOperationPopupWidget->IsInViewport() || ReleaseConfirmPopup->IsInViewport()) {
 		return;
 	}
+	ButtonBlocker->AddToViewport();
 
 	if (PlayerOwner && StorageOperationPopupWidget) {
 		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(PlayerOwner);
@@ -538,6 +543,7 @@ void AOverworldHUD::ShowDepositPopup(int PokemonID)
 	if (StorageOperationPopupWidget->IsInViewport() || ReleaseConfirmPopup->IsInViewport()) {
 		return;
 	}
+	ButtonBlocker->AddToViewport();
 
 	if (PlayerOwner && StorageOperationPopupWidget) {
 		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(PlayerOwner);
@@ -576,6 +582,7 @@ void AOverworldHUD::ShowDepositPopup(int PokemonID)
 void AOverworldHUD::ShowReleaseConfirmPopup(int PokemonID)
 {
 	ClearPopup();
+	ButtonBlocker->AddToViewport();
 
 	if (PlayerOwner && ReleaseConfirmPopup) {
 		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(PlayerOwner);
@@ -679,6 +686,7 @@ void AOverworldHUD::ShowLearnPopup(int MoveID)
 	if (MoveManagerOperationWidget->IsInViewport()) {
 		return;
 	}
+	ButtonBlocker->AddToViewport();
 
 	if (PlayerOwner && MoveManagerOperationWidget) {
 		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(PlayerOwner);
@@ -716,6 +724,7 @@ void AOverworldHUD::ShowForgetPopup(int MoveID)
 	if (MoveManagerOperationWidget->IsInViewport()) {
 		return;
 	}
+	ButtonBlocker->AddToViewport();
 
 	if (PlayerOwner && MoveManagerOperationWidget) {
 		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(PlayerOwner);
@@ -864,6 +873,8 @@ void AOverworldHUD::ClearPopup()
 	StorageOperationPopupWidget->RemoveFromViewport();
 	ReleaseConfirmPopup->RemoveFromViewport();
 	MoveManagerOperationWidget->RemoveFromViewport();
+
+	ButtonBlocker->RemoveFromViewport();
 }
 
 void AOverworldHUD::ClearMovePopup()

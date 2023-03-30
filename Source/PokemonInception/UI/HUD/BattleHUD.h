@@ -80,6 +80,9 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UTextBoxWidget> TextBoxWidgetClass;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> ButtonBlockerClass;
+
 	UPROPERTY()
 	class UBattleStartWidget* BattleStartWidget;
 
@@ -118,6 +121,9 @@ protected:
 
 	UPROPERTY()
 	class UTextBoxWidget* TextBoxWidget;
+
+	UPROPERTY()
+	class UUserWidget* ButtonBlocker;
 
 	virtual void BeginPlay() override;
 	
