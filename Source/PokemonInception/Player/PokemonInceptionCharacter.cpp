@@ -74,8 +74,8 @@ void APokemonInceptionCharacter::ChangePositionInWorld(FVector Location, FRotato
 	SetActorLocation(Location);
 	SetActorRotation(Rotation);
 
-	FRotator PlayerRotation = GetArrowComponent()->GetComponentRotation();
-	PlayerController->SetControlRotation(PlayerRotation);
+	//FRotator PlayerRotation = GetArrowComponent()->GetComponentRotation();
+	PlayerController->SetControlRotation(Rotation);
 }
 
 void APokemonInceptionCharacter::Tick(float DeltaTime)

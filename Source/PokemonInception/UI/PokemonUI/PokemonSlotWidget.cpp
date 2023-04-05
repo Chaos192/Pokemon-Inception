@@ -35,6 +35,9 @@ void UPokemonSlotWidget::SetPokemonHP(int CurrHP, int MaxHP)
 	float HpPercent = float(CurrHP) / float(MaxHP);
 	HPBar->SetPercent(HpPercent);
 
+	if (HpPercent <= 1) {
+		HPBar->SetFillColorAndOpacity(FLinearColor(0, 1, 0, 1));
+	}
 	if (HpPercent < 0.5) {
 		HPBar->SetFillColorAndOpacity(FLinearColor(1, 1, 0, 1));
 	}

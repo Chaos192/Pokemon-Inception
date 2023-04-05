@@ -333,7 +333,7 @@ void ABattleGameMode::UseMove(int MoveId, EBattler MoveCaster)
 			}
 		}
 
-		if (CriticalHitChance <= 5) {
+		if (CriticalHitChance <= 5 && Damage > 0) {
 			MoveMessage += "A critical hit! ";
 		}
 
@@ -859,7 +859,7 @@ void ABattleGameMode::BattleEnd()
 
 		PlayerController->Money += Money;
 
-		Hud->ShowText("You won! You recieved " + FString::FromInt(Money) + " money!");
+		Hud->ShowText("You won! You recieved " + FString::FromInt(Money) + "$!");
 	}
 
 	else if (bIsBattleVictory == false) {
@@ -869,7 +869,7 @@ void ABattleGameMode::BattleEnd()
 
 		PlayerController->Money -= Money;
 
-		Hud->ShowText("You don't have any Pokemon that can fight! You lost " + FString::FromInt(Money) + " money!");
+		Hud->ShowText("You don't have any Pokemon that can fight! You lost " + FString::FromInt(Money) + "$!");
 	}
 
 	GetWorldTimerManager().SetTimer(ExitTimer, this, &ABattleGameMode::ExitBattleMap, CurrentBattleTime, false);
