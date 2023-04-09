@@ -3,13 +3,21 @@
 
 #include "StaticOverworldPokemon.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Kismet/GameplayStatics.h"
 
-
-AStaticOverworldPokemon::AStaticOverworldPokemon()
+void AStaticOverworldPokemon::PlayCry()
 {
-	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
-	SetRootComponent(Mesh);
+	if (Cry != nullptr) {
+		UGameplayStatics::PlaySound2D(GetWorld(), Cry);
+	}
 }
 
+void AStaticOverworldPokemon::Roar()
+{
+	if (RoarAnimMontage != nullptr) { 
+		PlayAnimMontage(RoarAnimMontage, 1);
+	}
 
-
+	FTimerHandle CryTimer;
+	GetWorldTimerManager().SetTimer(CryTimer, this, &AStaticOverworldPokemon::PlayCry, 0.4, false);
+}

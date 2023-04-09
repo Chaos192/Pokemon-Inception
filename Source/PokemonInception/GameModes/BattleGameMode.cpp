@@ -89,11 +89,12 @@ void ABattleGameMode::PlacePlayerPokemon()
 	}
 
 	FRotator Rotation;
-	FVector Position = FVector(-350, -270, 115);
+	FVector Position = FVector(-350, -270, 157);
 
 	PlayerPokemonActor = GetWorld()->SpawnActor<AStaticOverworldPokemon>(PlayerController->PokemonParty[PlayerPokemonId].SpeciesData.PokemonActor, Position, Rotation);
 
 	SwitchToPlayerCamera(0.5);
+	PlayerPokemonActor->Roar();
 	Hud->ShowText("You sent out " + PlayerController->PokemonParty[PlayerPokemonId].SpeciesData.Name.ToString() + "!");
 }
 
@@ -112,7 +113,7 @@ void ABattleGameMode::PlaceOpponentPokemon()
 	OpponentPokemonId = GetCurrentOpponent();
 
 	FRotator Rotation = FRotator(0, 180, 0);
-	FVector Position = FVector(-350, 440, 115);
+	FVector Position = FVector(-350, 440, 157);
 
 	OpponentPokemonActor = GetWorld()->SpawnActor<AStaticOverworldPokemon>(OpponentTeam[OpponentPokemonId].SpeciesData.PokemonActor, Position, Rotation);
 
@@ -126,6 +127,7 @@ void ABattleGameMode::PlaceOpponentPokemon()
 	}
 
 	SwitchToOpponentCamera(0.5);
+	OpponentPokemonActor->Roar();
 	Hud->ShowText(OpponentMessage);
 }
 

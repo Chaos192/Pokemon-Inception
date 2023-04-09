@@ -3,17 +3,25 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "GameFramework/Character.h"
 #include "StaticOverworldPokemon.generated.h"
 
 UCLASS()
-class POKEMONINCEPTION_API AStaticOverworldPokemon : public AActor
+class POKEMONINCEPTION_API AStaticOverworldPokemon : public ACharacter
 {
 	GENERATED_BODY()
 	
-public:	
-	AStaticOverworldPokemon();
-
+private:
 	UPROPERTY(EditDefaultsOnly)
-	class USkeletalMeshComponent* Mesh = nullptr;
+	UAnimMontage* RoarAnimMontage = nullptr;
+
+	UFUNCTION()
+	void PlayCry();
+
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	class USoundBase* Cry = nullptr;
+
+public:
+	void Roar();
 };

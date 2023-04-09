@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "../Pokemon/StaticOverworldPokemon.h"
 #include "../Pokemon/PokemonBaseStruct.h"
 #include "../Pokemon/PokemonStruct.h"
 #include "../Pokemon/StaticOverworldPokemon.h"
@@ -11,7 +11,7 @@
 
 
 UCLASS()
-class POKEMONINCEPTION_API AWildPokemon : public ACharacter
+class POKEMONINCEPTION_API AWildPokemon : public AStaticOverworldPokemon
 {
 	GENERATED_BODY()
 
