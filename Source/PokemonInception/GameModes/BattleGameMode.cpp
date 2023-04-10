@@ -925,12 +925,15 @@ void ABattleGameMode::ShowMoveSplash(EBattler MoveCaster, EBattler Target)
 	}
 
 	FMoveBaseStruct* Move = nullptr;
-	AActor* PokemonTarget = nullptr;
+	AStaticOverworldPokemon* PokemonCaster = nullptr;
+	AStaticOverworldPokemon* PokemonTarget = nullptr;
 
 	if (Target == EBattler::Player) {
+		PokemonCaster = OpponentPokemonActor;
 		PokemonTarget = PlayerPokemonActor;
 	}
 	else if (Target == EBattler::Opponent) {
+		PokemonCaster = PlayerPokemonActor;
 		PokemonTarget = OpponentPokemonActor;
 	}
 
@@ -941,7 +944,6 @@ void ABattleGameMode::ShowMoveSplash(EBattler MoveCaster, EBattler Target)
 		else {
 			Move = AttackMovesDT->FindRow<FAttackMoveStruct>(FName(*FString("Struggle")), "");
 		}
-		
 
 		if (Move->Particle) {
 			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), Move->Particle, PokemonTarget->GetActorLocation());
@@ -967,6 +969,14 @@ void ABattleGameMode::ShowMoveSplash(EBattler MoveCaster, EBattler Target)
 		if (Move->Sound) {
 			UGameplayStatics::PlaySound2D(GetWorld(), Move->Sound);
 		}
+	}
+
+	if (Move->MoveStructType == "Attack") {
+		PokemonCaster->Attack();
+		PokemonTarget->GetDamaged();
+	}
+	else if (Move->MoveStructType == "Status") {
+		PokemonCaster->Roar();
 	}
 }
 

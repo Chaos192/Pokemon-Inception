@@ -21,3 +21,20 @@ void AStaticOverworldPokemon::Roar()
 	FTimerHandle CryTimer;
 	GetWorldTimerManager().SetTimer(CryTimer, this, &AStaticOverworldPokemon::PlayCry, 0.4, false);
 }
+
+void AStaticOverworldPokemon::Attack()
+{
+	if (AttackAnimMontage != nullptr) {
+		PlayAnimMontage(AttackAnimMontage, 1);
+	}
+
+	FTimerHandle CryTimer;
+	GetWorldTimerManager().SetTimer(CryTimer, this, &AStaticOverworldPokemon::PlayCry, 0.4, false);
+}
+
+void AStaticOverworldPokemon::GetDamaged()
+{
+	if (DamageAnimMontage != nullptr) {
+		PlayAnimMontage(DamageAnimMontage, 1);
+	}
+}

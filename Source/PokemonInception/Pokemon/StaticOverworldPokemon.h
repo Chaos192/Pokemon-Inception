@@ -15,6 +15,12 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	UAnimMontage* RoarAnimMontage = nullptr;
 
+	UPROPERTY(EditDefaultsOnly)
+	UAnimMontage* AttackAnimMontage = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+	UAnimMontage* DamageAnimMontage = nullptr;
+
 	UFUNCTION()
 	void PlayCry();
 
@@ -24,4 +30,8 @@ protected:
 
 public:
 	void Roar();
+	
+	void Attack();
+
+	void GetDamaged();
 };
