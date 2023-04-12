@@ -13,7 +13,7 @@ struct FBallBaseStruct : public FItemBaseStruct
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int CatchMultiplier;
+	float CatchMultiplier;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class ABallActor> BallActor;
