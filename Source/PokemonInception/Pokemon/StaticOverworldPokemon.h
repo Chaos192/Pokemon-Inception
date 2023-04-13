@@ -29,9 +29,10 @@ protected:
 	class USoundBase* Cry = nullptr;
 
 public:
-	void Roar();
-	
-	void Attack();
+	UPROPERTY()
+	ACameraActor* Camera;
 
+	void Roar();
+	void Attack();
 	void GetDamaged();
 };

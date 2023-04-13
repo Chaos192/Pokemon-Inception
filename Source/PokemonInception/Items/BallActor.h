@@ -16,4 +16,12 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	class UStaticMeshComponent* Mesh = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* BallClick = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UNiagaraSystem* BallSparkle = nullptr;
+
+	void CatchSuccess();
 };

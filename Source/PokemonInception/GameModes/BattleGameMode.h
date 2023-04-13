@@ -154,16 +154,7 @@ public:
 	bool bHasSelectedEther;
 
 	UFUNCTION()
-	void ResetCamera();
-
-	UFUNCTION()
-	void SwitchToPlayerCamera(float BlendTime);
-
-	UFUNCTION()
-	void SwitchToOpponentCamera(float BlendTime);
-
-	UFUNCTION()
-	void SwitchToTrainerCamera(float BlendTime);
+	void SwitchCamera(ACameraActor* Camera, float BlendTime);
 
 	UFUNCTION()
 	void ShowMoveSplash(EBattler MoveCaster, EBattler Target);
@@ -199,6 +190,8 @@ public:
 
 	UFUNCTION()
 	int GetPlayerPokemonId();
+
+	ACameraActor* GetSceneCamera();
 
 	UFUNCTION()
 	bool HasPlayerRanOutOfPP();
