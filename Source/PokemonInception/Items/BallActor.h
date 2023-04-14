@@ -21,7 +21,14 @@ public:
 	class USoundBase* BallClick = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* BallBreak = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
 	class UNiagaraSystem* BallSparkle = nullptr;
 
+	UPROPERTY(EditDefaultsOnly)
+	class UNiagaraSystem* BallFail = nullptr;
+
 	void CatchSuccess();
+	void CatchFail();
 };

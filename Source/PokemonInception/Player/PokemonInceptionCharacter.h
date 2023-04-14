@@ -17,12 +17,17 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
+	UPROPERTY(EditDefaultsOnly)
+	UAnimMontage* ThrowAnimMontage = nullptr;
+
 	class UAIPerceptionStimuliSourceComponent* Stimulus;
 
 	void SetupStimulus();
 
 public:
 	APokemonInceptionCharacter();
+
+	void Throw();
 
 	virtual void Tick(float DeltaTime) override;
 

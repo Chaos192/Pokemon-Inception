@@ -89,7 +89,7 @@ void ABattleGameMode::PlacePlayerPokemon()
 	}
 
 	FRotator Rotation;
-	FVector Position = FVector(-350, -270, 157);
+	FVector Position = FVector(-350, -300, 208);
 
 	PlayerPokemonActor = GetWorld()->SpawnActor<AStaticOverworldPokemon>(PlayerController->PokemonParty[PlayerPokemonId].SpeciesData.PokemonActor, Position, Rotation);
 	PlayerPokemonActor->Camera = PlayerCamera;
@@ -114,7 +114,7 @@ void ABattleGameMode::PlaceOpponentPokemon()
 	OpponentPokemonId = GetCurrentOpponent();
 
 	FRotator Rotation = FRotator(0, 180, 0);
-	FVector Position = FVector(-350, 440, 157);
+	FVector Position = FVector(-350, 400, 208);
 
 	OpponentPokemonActor = GetWorld()->SpawnActor<AStaticOverworldPokemon>(OpponentTeam[OpponentPokemonId].SpeciesData.PokemonActor, Position, Rotation);
 	OpponentPokemonActor->Camera = OpponentCamera;
@@ -141,7 +141,7 @@ void ABattleGameMode::PlaceOpponentTrainer()
 	}
 
 	FRotator Rotation = FRotator(0, 270, 0);
-	FVector Position = FVector(-340, 800, 190);
+	FVector Position = FVector(-350, 800, 200);
 
 	TrainerActor = GetWorld()->SpawnActor<ATrainer>(TrainerClass, Position, Rotation);
 
@@ -576,7 +576,7 @@ void ABattleGameMode::UseBall()
 	OpponentPokemonActor->Destroy();
 
 	FRotator Rotation = FRotator(0, 180, 0);
-	FVector Position = FVector(-350, 440, 120);
+	FVector Position = FVector(-350, 400, 125);
 
 	ThrownBallActor = GetWorld()->SpawnActor<ABallActor>(Ball->BallActor, Position, Rotation);
 
@@ -641,10 +641,10 @@ void ABattleGameMode::CatchFail()
 		return;
 	}
 
-	ThrownBallActor->Destroy();
+	ThrownBallActor->CatchFail();
 
 	FRotator Rotation = FRotator(0, 180, 0);
-	FVector Position = FVector(-350, 440, 115);
+	FVector Position = FVector(-350, 400, 208);
 
 	OpponentPokemonActor = GetWorld()->SpawnActor<AStaticOverworldPokemon>(OpponentTeam[OpponentPokemonId].SpeciesData.PokemonActor, Position, Rotation);
 	Hud->ShowText(OpponentTeam[OpponentPokemonId].SpeciesData.Name.ToString() + " got out!");

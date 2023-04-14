@@ -13,8 +13,13 @@ class POKEMONINCEPTION_API ATrainer : public ANPCBase
 {
 	GENERATED_BODY()
 	
+private:
+	UPROPERTY(EditDefaultsOnly)
+	UAnimMontage* ThrowAnimMontage = nullptr;
+
 public:
 	ATrainer();
+	void Throw();
 
 	UFUNCTION()
 	virtual void Interact(APlayerController* PlayerController) override;

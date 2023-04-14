@@ -11,6 +11,13 @@ ATrainer::ATrainer()
 	Name = "Trainer";
 }
 
+void ATrainer::Throw()
+{
+	if (ThrowAnimMontage) {
+		PlayAnimMontage(ThrowAnimMontage, 1);
+	}
+}
+
 void ATrainer::Interact(APlayerController* PlayerController)
 {
 	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());

@@ -57,6 +57,13 @@ APokemonInceptionCharacter::APokemonInceptionCharacter()
 	SetTickableWhenPaused(true);
 }
 
+void APokemonInceptionCharacter::Throw()
+{
+	if (ThrowAnimMontage) {
+		PlayAnimMontage(ThrowAnimMontage, 1);
+	}
+}
+
 void APokemonInceptionCharacter::SetupStimulus()
 {
 	Stimulus = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("Stimulus"));
