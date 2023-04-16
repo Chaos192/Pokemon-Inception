@@ -151,6 +151,18 @@ struct FPokemonStruct
 		return bHasLearnedMove;
 	}
 
+	FString GetLatestMoveName() {
+		FMoveBaseStruct LatestMove;
+
+		for (FMoveBaseStruct i : Moves) {
+			if (!i.bIsLocked) {
+				LatestMove = i;
+			}
+		}
+
+		return LatestMove.Name.ToString();
+	}
+
 	bool GainExp(int GainedExp) {
 		if (Level == 100) {
 			return false;

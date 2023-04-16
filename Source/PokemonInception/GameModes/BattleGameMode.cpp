@@ -54,12 +54,16 @@ void ABattleGameMode::BeginPlay()
 			SceneCamera = CameraActor;
 			continue;
 		}
-		if (CameraActor->ActorHasTag(FName("Player"))) {
-			PlayerCamera = CameraActor;
+		if (CameraActor->ActorHasTag(FName("PlayerPokemon"))) {
+			PlayerPokemonCamera = CameraActor;
 			continue;
 		}
 		if (CameraActor->ActorHasTag(FName("Opponent"))) {
 			OpponentCamera = CameraActor;
+			continue;
+		}
+		if (CameraActor->ActorHasTag(FName("Player"))) {
+			PlayerCamera = CameraActor;
 			continue;
 		}
 		if (CameraActor->ActorHasTag(FName("Trainer"))) {
@@ -88,14 +92,27 @@ void ABattleGameMode::PlacePlayerPokemon()
 		return;
 	}
 
+	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(PlayerController->GetPawn());
+	if (!IsValid(Player)) {
+		return;
+	}
+
+	FTimerHandle ComeOutTimer;
+	FTimerDelegate ComeOutDelegate;
+
 	FRotator Rotation;
-	FVector Position = FVector(-350, -300, 208);
+	FVector Position = FVector(-350, -300, 153);
 
 	PlayerPokemonActor = GetWorld()->SpawnActor<AStaticOverworldPokemon>(PlayerController->PokemonParty[PlayerPokemonId].SpeciesData.PokemonActor, Position, Rotation);
-	PlayerPokemonActor->Camera = PlayerCamera;
+	PlayerPokemonActor->Hide(true);
+	Player->Throw();
 
-	SwitchCamera(PlayerCamera, 0.5);
-	PlayerPokemonActor->Roar();
+	SwitchCamera(PlayerCamera, 0);
+	SwitchCamera(PlayerPokemonCamera, 0.5);
+
+	ComeOutDelegate.BindUFunction(PlayerPokemonActor, FName("ComeOut"), 0.05);
+	GetWorldTimerManager().SetTimer(ComeOutTimer, ComeOutDelegate, 1, false);
+	
 	Hud->ShowText("You sent out " + PlayerController->PokemonParty[PlayerPokemonId].SpeciesData.Name.ToString() + "!");
 }
 
@@ -113,23 +130,31 @@ void ABattleGameMode::PlaceOpponentPokemon()
 
 	OpponentPokemonId = GetCurrentOpponent();
 
+	FTimerHandle ComeOutTimer;
+	FTimerDelegate ComeOutDelegate;
+
 	FRotator Rotation = FRotator(0, 180, 0);
-	FVector Position = FVector(-350, 400, 208);
-
-	OpponentPokemonActor = GetWorld()->SpawnActor<AStaticOverworldPokemon>(OpponentTeam[OpponentPokemonId].SpeciesData.PokemonActor, Position, Rotation);
-	OpponentPokemonActor->Camera = OpponentCamera;
-
+	FVector Position = FVector(-350, 400, 153);
 	FString OpponentMessage;
 
+	OpponentPokemonActor = GetWorld()->SpawnActor<AStaticOverworldPokemon>(OpponentTeam[OpponentPokemonId].SpeciesData.PokemonActor, Position, Rotation);
+
+	SwitchCamera(TrainerCamera, 0);
+	SwitchCamera(OpponentCamera, 0.5);
+
 	if (bIsOpponentTrainer) {
+		TrainerActor->Throw();
+		OpponentPokemonActor->Hide(true);
+
+		ComeOutDelegate.BindUFunction(OpponentPokemonActor, FName("ComeOut"), 0.05);
+		GetWorldTimerManager().SetTimer(ComeOutTimer, ComeOutDelegate, 1, false);;
 		OpponentMessage = "Trainer sent out " + OpponentTeam[OpponentPokemonId].SpeciesData.Name.ToString() + "!";
 	}
 	else {
+		OpponentPokemonActor->Roar();
 		OpponentMessage = "A wild " + OpponentTeam[OpponentPokemonId].SpeciesData.Name.ToString() + " appeared!";
 	}
 
-	SwitchCamera(OpponentCamera, 0.5);
-	OpponentPokemonActor->Roar();
 	Hud->ShowText(OpponentMessage);
 }
 
@@ -421,36 +446,28 @@ void ABattleGameMode::MoveOutcome(FString MoveMessage, EBattler MoveCaster, EBat
 	}
 
 	FTimerHandle CameraSwitchTimer;
-	FTimerHandle MoveSplashTimer;
 	FTimerHandle MoveMessageTimer;
 	FTimerHandle PlayerFaintTimer;
 	FTimerHandle OpponentFaintTimer;
+	FTimerHandle OpponentFaintAftermathTimer;
 	FTimerHandle BattleEndTimer;
 	FTimerHandle OpponentSwitchTimer;
 	FTimerHandle TurnEndTimer;
 
 	FTimerDelegate MoveMessageDelegate;
 	FTimerDelegate CameraTimerDelegate;
-	FTimerDelegate MoveSplashDelegate;
 
 	MoveMessageDelegate.BindUFunction(Hud, FName("ShowText"), MoveMessage);
 	GetWorldTimerManager().SetTimer(MoveMessageTimer, MoveMessageDelegate, CurrentBattleTime, false);
 
-	if (Target == EBattler::Player) {
-		CameraTimerDelegate.BindUFunction(this, FName("SwitchCamera"), OpponentCamera, 0);
-		GetWorldTimerManager().SetTimer(CameraSwitchTimer, CameraTimerDelegate, CurrentBattleTime, false);
-	}
-	else if (Target == EBattler::Opponent) {
-		CameraTimerDelegate.BindUFunction(this, FName("SwitchCamera"), PlayerCamera, 0);
-		GetWorldTimerManager().SetTimer(CameraSwitchTimer, CameraTimerDelegate, CurrentBattleTime, false);
-	}
-
 	if (bHasMoveSucceeded) {
-		MoveSplashDelegate.BindUFunction(this, FName("ShowMoveSplash"), MoveCaster, Target);
-		GetWorldTimerManager().SetTimer(MoveSplashTimer, MoveSplashDelegate, CurrentBattleTime + 0.3, false);
+		ShowMoveSplash(MoveCaster, Target);
 	}
-	
-	CurrentBattleTime += 2;
+	else {
+		CameraTimerDelegate.BindUFunction(this, FName("SwitchCamera"), SceneCamera, 0);
+		GetWorldTimerManager().SetTimer(CameraSwitchTimer, CameraTimerDelegate, CurrentBattleTime, false);
+		CurrentBattleTime += 2;
+	}
 
 	if (PlayerController->PokemonParty[PlayerPokemonId].bIsFainted == true) {
 		GetWorldTimerManager().SetTimer(PlayerFaintTimer, this, &ABattleGameMode::PlayerFaints, CurrentBattleTime, false);
@@ -471,6 +488,9 @@ void ABattleGameMode::MoveOutcome(FString MoveMessage, EBattler MoveCaster, EBat
 	if (OpponentTeam[OpponentPokemonId].bIsFainted == true && PlayerController->bIsPartyDefeated() == false) {
 		GetWorldTimerManager().SetTimer(OpponentFaintTimer, this, &ABattleGameMode::OpponentFaints, CurrentBattleTime, false);
 		CurrentBattleTime += 2;
+
+		GetWorldTimerManager().SetTimer(OpponentFaintAftermathTimer, this, &ABattleGameMode::OpponentFaintsAftermath, CurrentBattleTime, false);
+		CurrentBattleTime += 2;
 		bHasTurnEnded = true;
 
 		if (bIsOpponentDefeated() == true) {
@@ -480,11 +500,8 @@ void ABattleGameMode::MoveOutcome(FString MoveMessage, EBattler MoveCaster, EBat
 			
 		}
 		else {
-			FTimerDelegate SwitchOpponent;
-			SwitchOpponent.BindUFunction(this, FName("PlaceOpponentPokemon"), OpponentPokemonId);
-
-			GetWorldTimerManager().SetTimer(OpponentSwitchTimer, SwitchOpponent, CurrentBattleTime, false);
-			CurrentBattleTime += 2;
+			GetWorldTimerManager().SetTimer(OpponentSwitchTimer, this, &ABattleGameMode::PlaceOpponentPokemon, CurrentBattleTime, false);
+			CurrentBattleTime += 3.5;
 		}
 	}
 }
@@ -644,7 +661,7 @@ void ABattleGameMode::CatchFail()
 	ThrownBallActor->CatchFail();
 
 	FRotator Rotation = FRotator(0, 180, 0);
-	FVector Position = FVector(-350, 400, 208);
+	FVector Position = FVector(-350, 400, 153);
 
 	OpponentPokemonActor = GetWorld()->SpawnActor<AStaticOverworldPokemon>(OpponentTeam[OpponentPokemonId].SpeciesData.PokemonActor, Position, Rotation);
 	Hud->ShowText(OpponentTeam[OpponentPokemonId].SpeciesData.Name.ToString() + " got out!");
@@ -664,25 +681,48 @@ void ABattleGameMode::OpponentFaints()
 
 	SwitchCamera(OpponentCamera, 0.5);
 
-	OpponentPokemonActor->Destroy();
+	OpponentPokemonActor->Faint(1, bIsOpponentTrainer);
 
-	int Exp = OpponentTeam[OpponentPokemonId].Level * OpponentTeam[OpponentPokemonId].SpeciesData.BaseExp / 7;
+	EXPGained = OpponentTeam[OpponentPokemonId].Level * OpponentTeam[OpponentPokemonId].SpeciesData.BaseExp / 7;
 
 	if (bIsOpponentTrainer) {
-		Exp *= 1.5;
+		EXPGained *= 1.5;
 	}
 
-	FString DefeatMessage = "The opponent " + OpponentTeam[OpponentPokemonId].SpeciesData.Name.ToString() + " was defeated! ";
-
-	if(!PlayerController->PokemonParty[PlayerPokemonId].bIsFainted){
-		if (PlayerController->PokemonParty[PlayerPokemonId].GainExp(Exp) == true) {
-			PlayerController->PokemonParty[PlayerPokemonId].CheckForNewMoves();
-		}
-
-		DefeatMessage += PlayerController->PokemonParty[PlayerPokemonId].SpeciesData.Name.ToString() + " recieved " + FString::FromInt(Exp) + " Exp!";
-	}
+	FString DefeatMessage = "The opponent " + OpponentTeam[OpponentPokemonId].SpeciesData.Name.ToString() + " was defeated!";
 
 	Hud->ShowText(DefeatMessage);
+}
+
+void ABattleGameMode::OpponentFaintsAftermath()
+{
+	ABattleHUD* Hud = Cast<ABattleHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	if (!IsValid(Hud)) {
+		return;
+	}
+
+	ABattleController* PlayerController = Cast<ABattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (!IsValid(PlayerController)) {
+		return;
+	}
+
+	SwitchCamera(SceneCamera, 0);
+
+	if (!PlayerController->PokemonParty[PlayerPokemonId].bIsFainted) {
+		FString Message = PlayerController->PokemonParty[PlayerPokemonId].SpeciesData.Name.ToString() + " recieved " +
+			FString::FromInt(EXPGained) + " Exp! ";
+
+		if (PlayerController->PokemonParty[PlayerPokemonId].GainExp(EXPGained)) {
+			Message += PlayerController->PokemonParty[PlayerPokemonId].SpeciesData.Name.ToString() + " grew to level " +
+				FString::FromInt(PlayerController->PokemonParty[PlayerPokemonId].Level) + "! ";
+
+			if (PlayerController->PokemonParty[PlayerPokemonId].CheckForNewMoves()) {
+				Message += "It can now use " + PlayerController->PokemonParty[PlayerPokemonId].GetLatestMoveName() + "!";
+			}
+		}
+
+		Hud->ShowText(Message);
+	}
 }
 
 void ABattleGameMode::PlayerFaints()
@@ -697,9 +737,9 @@ void ABattleGameMode::PlayerFaints()
 		return;
 	}
 
-	SwitchCamera(PlayerCamera, 0);
+	SwitchCamera(PlayerPokemonCamera, 0);
 
-	PlayerPokemonActor->Destroy();
+	PlayerPokemonActor->Faint(1, true);
 
 	Hud->ShowText(PlayerController->PokemonParty[PlayerPokemonId].SpeciesData.Name.ToString() + " was defeated!");
 }
@@ -744,11 +784,12 @@ void ABattleGameMode::BattleStart()
 		GetWorldTimerManager().SetTimer(TrainerTimer, this, &ABattleGameMode::PlaceOpponentTrainer, CurrentBattleTime, false);
 		CurrentBattleTime += 3;
 	}
+
 	GetWorldTimerManager().SetTimer(SendOutOpponentTimer, this, &ABattleGameMode::PlaceOpponentPokemon, CurrentBattleTime, false);
-	CurrentBattleTime += 2;
+	CurrentBattleTime += 3.5;
 
 	GetWorldTimerManager().SetTimer(SendOutPlayerTimer, this, &ABattleGameMode::PlacePlayerPokemon, CurrentBattleTime, false);
-	CurrentBattleTime += 2;
+	CurrentBattleTime += 3.5;
 
 	GetWorldTimerManager().SetTimer(StartTimer, Hud, &ABattleHUD::ShowBattleStartWidget, CurrentBattleTime, false);
 }
@@ -787,7 +828,7 @@ void ABattleGameMode::BattleTurn(EAction PlayerAction)
 		PlayerController->PokemonParty[PlayerPokemonId].ClearEffects();
 		PlayerPokemonId = SelectedPokemonID;
 		PlacePlayerPokemon();
-		CurrentBattleTime += 2;
+		CurrentBattleTime += 3.5;
 
 		if (!bDoesPlayerHaveToSwitch) {
 			UseMove(OpponentSelectedMoveID, EBattler::Opponent);
@@ -886,7 +927,7 @@ void ABattleGameMode::SwitchCamera(ACameraActor* Camera, float BlendTime)
 	if (!IsValid(PlayerController)) {
 		return;
 	}
-
+	
 	PlayerController->SetViewTargetWithBlend(Camera, BlendTime, EViewTargetBlendFunction::VTBlend_Linear);
 }
 
@@ -898,14 +939,27 @@ void ABattleGameMode::ShowMoveSplash(EBattler MoveCaster, EBattler Target)
 	}
 
 	FMoveBaseStruct* Move = nullptr;
+	ACameraActor* CameraRef = nullptr;
 	AStaticOverworldPokemon* PokemonCaster = nullptr;
 	AStaticOverworldPokemon* PokemonTarget = nullptr;
 
+	FTimerHandle CasterTimer;
+	FTimerHandle SwitchToCasterTimer;
+	FTimerHandle SwitchToTargetTimer;
+	FTimerHandle SplashTimer;
+
+	FTimerDelegate CasterDelegate;
+	FTimerDelegate SwitchToCasterDelegate;
+	FTimerDelegate SwitchToTargetDelegate;
+	FTimerDelegate SplashDelegate;
+
 	if (Target == EBattler::Player) {
 		PokemonTarget = PlayerPokemonActor;
+		CameraRef = PlayerPokemonCamera;
 	}
 	else if (Target == EBattler::Opponent) {
 		PokemonTarget = OpponentPokemonActor;
+		CameraRef = OpponentCamera;
 	}
 
 	if (MoveCaster == EBattler::Player) {
@@ -916,16 +970,10 @@ void ABattleGameMode::ShowMoveSplash(EBattler MoveCaster, EBattler Target)
 		}
 		else {
 			Move = AttackMovesDT->FindRow<FAttackMoveStruct>(FName(*FString("Struggle")), "");
-		}
+		}	
 
-		if (Move->Particle) {
-			SwitchCamera(PokemonTarget->Camera, 0.5);
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), Move->Particle, PokemonTarget->GetActorLocation());
-		}
-
-		if (Move->Sound) {
-			UGameplayStatics::PlaySound2D(GetWorld(), Move->Sound);
-		}
+		SwitchToCasterDelegate.BindUFunction(this, FName("SwitchCamera"), PlayerPokemonCamera, 0);
+		GetWorldTimerManager().SetTimer(SwitchToCasterTimer, SwitchToCasterDelegate, CurrentBattleTime, false);
 	}
 			
 	if (MoveCaster == EBattler::Opponent) {
@@ -938,23 +986,21 @@ void ABattleGameMode::ShowMoveSplash(EBattler MoveCaster, EBattler Target)
 			Move = AttackMovesDT->FindRow<FAttackMoveStruct>(FName(*FString("Struggle")), "");
 		}
 
-		if (Move->Particle) {
-			SwitchCamera(PokemonTarget->Camera, 0.5);
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), Move->Particle, PokemonTarget->GetActorLocation());
-		}
+		SwitchToCasterDelegate.BindUFunction(this, FName("SwitchCamera"), OpponentCamera, 0);
+		GetWorldTimerManager().SetTimer(SwitchToCasterTimer, SwitchToCasterDelegate, CurrentBattleTime, false);
+	}
+	
+	CasterDelegate.BindUFunction(PokemonCaster, FName("CastMove"), *Move);
+	GetWorldTimerManager().SetTimer(CasterTimer, CasterDelegate, CurrentBattleTime, false);
+	CurrentBattleTime += 1;
 
-		if (Move->Sound) {
-			UGameplayStatics::PlaySound2D(GetWorld(), Move->Sound);
-		}
-	}
+	SwitchToTargetDelegate.BindUFunction(this, FName("SwitchCamera"), CameraRef, float(0.4));
+	GetWorldTimerManager().SetTimer(SwitchToTargetTimer, SwitchToTargetDelegate, CurrentBattleTime, false);
+	CurrentBattleTime += 0.4;
 
-	if (Move->MoveStructType == "Attack") {
-		PokemonCaster->Attack();
-		PokemonTarget->GetDamaged();
-	}
-	else {
-		PokemonCaster->Roar();
-	}
+	SplashDelegate.BindUFunction(PokemonTarget, FName("GetSplashed"), *Move);
+	GetWorldTimerManager().SetTimer(SplashTimer, SplashDelegate, CurrentBattleTime, false);
+	CurrentBattleTime += 1.75;
 }
 
 void ABattleGameMode::SelectMove(int MoveId)

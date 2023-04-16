@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "MoveBaseStruct.h"
 #include "StaticOverworldPokemon.generated.h"
 
 UCLASS()
@@ -28,11 +29,36 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class USoundBase* Cry = nullptr;
 
-public:
-	UPROPERTY()
-	ACameraActor* Camera;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	class USoundBase* BallOpenSound = nullptr;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	class USoundBase* BallRetrieveSound = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UNiagaraSystem* BallOpen = nullptr;
+
+	FTimerHandle ChangeSizeTimer;
+	FTimerDelegate ChangeSizeDelegate;
+
+public:
 	void Roar();
 	void Attack();
 	void GetDamaged();
+	void Hide(bool bIsHidden);
+
+	UFUNCTION()
+	void ComeOut(float Scale);
+
+	UFUNCTION()
+	void ShowBallOpen();
+
+	UFUNCTION()
+	void CastMove(FMoveBaseStruct Move);
+
+	UFUNCTION()
+	void GetSplashed(FMoveBaseStruct Move);
+
+	UFUNCTION()
+	void Faint(float Scale, bool bIsTrainerPokemon);
 };

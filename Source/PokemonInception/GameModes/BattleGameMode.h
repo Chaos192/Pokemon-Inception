@@ -36,6 +36,7 @@ class POKEMONINCEPTION_API ABattleGameMode : public AGameModeBase
 
 private:
 	float CurrentBattleTime = 0;
+	int EXPGained = 0;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ATrainer> TrainerClass;
@@ -97,6 +98,9 @@ private:
 	void OpponentFaints();
 
 	UFUNCTION()
+	void OpponentFaintsAftermath();
+
+	UFUNCTION()
 	void PlayerFaints();
 
 	UFUNCTION()
@@ -124,8 +128,9 @@ protected:
 	TSubclassOf<ACameraActor> CameraClass;
 
 	ACameraActor* SceneCamera;
-	ACameraActor* PlayerCamera;
+	ACameraActor* PlayerPokemonCamera;
 	ACameraActor* OpponentCamera;
+	ACameraActor* PlayerCamera;
 	ACameraActor* TrainerCamera;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -201,7 +206,6 @@ public:
 
 	UFUNCTION()
 	void Run();
-
 
 	FItemSlotSignature ItemSlotDelegate;
 	FPokemonSlotSignature PokemonSlotDelegate;
