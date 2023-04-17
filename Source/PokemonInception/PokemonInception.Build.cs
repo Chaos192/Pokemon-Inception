@@ -20,7 +20,9 @@ public class PokemonInception : ModuleRules
 			"NavigationSystem" ,
 			"UMG",
 			"Slate",
-			"SlateCore"
+			"SlateCore",
+			"LevelSequence",
+			"MovieScene"
 		});
 	}
 }

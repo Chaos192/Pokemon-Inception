@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "Engine/DataTable.h"
 #include "../UI/WidgetDelegates.h"
+//#include "LevelSequence.h"
 #include "OverworldGameMode.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTextSignature, FString, String);
@@ -43,6 +44,9 @@ private:
 
 	UPROPERTY()
 	class ULevelSaveData* LevelSaveData;
+
+	/*UPROPERTY()
+	class ULevelSequence* EncounterSequence;*/
 
 protected:
 	virtual void BeginPlay() override;
