@@ -13,6 +13,15 @@
 
 void APlayerCharacterController::Interact()
 {
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
+	if (!IsValid(GameMode)) {
+		return;
+	}
+
+	if (GameMode->bIsGamePaused()) {
+		return;
+	}
+
 	if (!IsValid(FoundInteractable)) {
 		return;
 	}
@@ -37,6 +46,15 @@ void APlayerCharacterController::ToggleMainMenu()
 
 void APlayerCharacterController::TogglePeacefulMode()
 {
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
+	if (!IsValid(GameMode)) {
+		return;
+	}
+
+	if (GameMode->bIsGamePaused()) {
+		return;
+	}
+
 	PeacefulModeDelegate.Broadcast();
 }
 

@@ -414,6 +414,7 @@ void AOverworldHUD::ShowTrainerCard()
 		TrainerCardWidget->SetRegisteredSpecies(Controller->Pokedex.Num());
 		TrainerCardWidget->SetPokemonCaught(Controller->PokemonParty.Num() + Controller->PokemonStorage.Num());
 		TrainerCardWidget->SetMoneyObtained(Controller->Money);
+		TrainerCardWidget->SetTrainersDefeated(Controller->TrainersDefeated);
 
 		TrainerCardWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;

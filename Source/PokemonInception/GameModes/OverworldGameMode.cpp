@@ -41,9 +41,21 @@ void AOverworldGameMode::BeginPlay()
 		PlayerController->PokemonParty = SaveData->PartyData;
 		PlayerController->PokemonStorage = SaveData->StorageData;
 		PlayerController->Pokedex = SaveData->PokedexData;
+		PlayerController->TrainersDefeated = SaveData->TrainersDefeated;
 	}
 
-	if(PlayerController->PokemonParty.IsEmpty()) {
+	TArray<AActor*> Trainers;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), TrainerClass, Trainers);
+	
+	for (AActor* i : Trainers) {
+		ATrainer* Trainer = Cast<ATrainer>(i);
+
+		if (PlayerController->TrainersDefeated > Trainer->DefeatedTrainersRequiredToChallange) {
+			Trainer->bHasBeenDefeated = true;
+		}
+	}
+
+	if (PlayerController->PokemonParty.IsEmpty()) {
 		FPokemonBaseStruct* PokemonStarterSpecies = PokemonDT->FindRow<FPokemonBaseStruct>(FName(*FString::FromInt(4)), "");
 		FPokemonStruct StarterPokemon;
 
@@ -52,12 +64,22 @@ void AOverworldGameMode::BeginPlay()
 
 		PlayerController->ObtainPokemon(StarterPokemon);
 	}
-	
+
 	LoadLevelData();
+
+	if (BGM) {
+		UGameplayStatics::PlaySound2D(GetWorld(), BGM);
+	}
 
 	PlayerController->PauseDelegate.AddDynamic(this, &AOverworldGameMode::ToggleMainMenu);
 	PlayerController->PeacefulModeDelegate.AddDynamic(this, &AOverworldGameMode::TogglePeacefulMode);
 	OnGamePaused.AddDynamic(Cast<AOverworldHUD>(PlayerController->GetHUD()), &AOverworldHUD::ToggleMainMenu);
+
+	FLatentActionInfo LatentInfo;
+	UGameplayStatics::LoadStreamLevel(this, FName("BattleMap"), false, true, LatentInfo);
+
+	ALevelSequenceActor* SequenceActor;
+	SequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(GetWorld(), EncounterSequence, FMovieSceneSequencePlaybackSettings(), SequenceActor);
 }
 
 void AOverworldGameMode::SaveGame()
@@ -75,6 +97,7 @@ void AOverworldGameMode::SaveGame()
 	SaveData->MoneyData = PlayerController->Money;
 	SaveData->PartyData = PlayerController->PokemonParty;
 	SaveData->StorageData = PlayerController->PokemonStorage;
+	SaveData->TrainersDefeated = PlayerController->TrainersDefeated;
 
 	UGameplayStatics::SaveGameToSlot(SaveData, "PlayerSaveSlot", 0);
 }
@@ -84,7 +107,7 @@ void AOverworldGameMode::MarkActorAsDestroyed(AActor* Actor)
 	ActorsToDestroy.Add(Actor);
 }
 
-void AOverworldGameMode::InitiateBattle(TArray<FPokemonStruct> OpponentTeam, bool bIsOpponentTrainer)
+void AOverworldGameMode::InitiateBattle(TArray<FPokemonStruct> OpponentTeam, bool bIsOpponentTrainer, bool bHasDefeatedTrainerBefore)
 {
 	UPlayerSaveData* SaveData = Cast<UPlayerSaveData>(UGameplayStatics::CreateSaveGameObject(UPlayerSaveData::StaticClass()));
 
@@ -93,6 +116,7 @@ void AOverworldGameMode::InitiateBattle(TArray<FPokemonStruct> OpponentTeam, boo
 
 		SaveData->OpponentData = OpponentTeam;
 		SaveData->bIsOpponentTrainer = bIsOpponentTrainer;
+		SaveData->bHasDefeatedTrainerBefore = bHasDefeatedTrainerBefore;
 	}
 
 	UGameplayStatics::SaveGameToSlot(SaveData, "PlayerSaveSlot", 0);
@@ -112,7 +136,7 @@ void AOverworldGameMode::SaveLevelData(AWildPokemon* PokemonToIgnore)
 		return;
 	}
 
-	LevelSaveData = Cast<ULevelSaveData>(UGameplayStatics::CreateSaveGameObject(ULevelSaveData::StaticClass()));
+	ULevelSaveData* LevelSaveData = Cast<ULevelSaveData>(UGameplayStatics::CreateSaveGameObject(ULevelSaveData::StaticClass()));
 
 	LevelSaveData->PokemonSpawners.Empty();
 
@@ -161,7 +185,7 @@ void AOverworldGameMode::LoadLevelData()
 		return;
 	}
 
-	LevelSaveData = Cast<ULevelSaveData>(UGameplayStatics::CreateSaveGameObject(ULevelSaveData::StaticClass()));
+	ULevelSaveData* LevelSaveData = Cast<ULevelSaveData>(UGameplayStatics::CreateSaveGameObject(ULevelSaveData::StaticClass()));
 
 	if (UGameplayStatics::DoesSaveGameExist("WorldSaveSlot", 0)) {
 		LevelSaveData = Cast<ULevelSaveData>(UGameplayStatics::LoadGameFromSlot("WorldSaveSlot", 0));
@@ -580,9 +604,11 @@ void AOverworldGameMode::PauseGame(EPause PauseType)
 
 	if (bIsPaused) {
 		PlayerPawn->CustomTimeDilation = 0;
+		PlayerController->SetInputMode(FInputModeUIOnly());
 	}
 	else {
 		PlayerPawn->CustomTimeDilation = 1;
+		PlayerController->SetInputMode(FInputModeGameOnly());
 	}
 
 	if (!PokemonInLevel.IsEmpty()) {
@@ -604,6 +630,18 @@ void AOverworldGameMode::PauseGame(EPause PauseType)
 				PokemonRef->CustomTimeDilation = 1;
 			}
 		}
+	}
+}
+
+bool AOverworldGameMode::bIsGamePaused()
+{
+	return bIsPaused;
+}
+
+void AOverworldGameMode::PlayEncounterSequence()
+{
+	if (SequencePlayer && EncounterSequence){
+		SequencePlayer->Play();
 	}
 }
 

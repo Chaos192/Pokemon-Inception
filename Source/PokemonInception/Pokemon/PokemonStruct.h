@@ -282,6 +282,15 @@ struct FPokemonStruct
 		return Speed;
 	}
 
+	bool bIsHighLevel(int DefeatedTrainers) {
+		float i = float(Level) / float(DefeatedTrainers + 1);
+		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Blue, FString::SanitizeFloat(i));
+		if (i <= 10.0f) {
+			return false;
+		}
+		return true;
+	}
+
 	bool AddEffect(EEffect Effect) {
 		if (Effects.Contains(Effect) == true) {
 			return false;

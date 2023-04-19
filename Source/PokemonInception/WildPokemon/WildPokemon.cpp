@@ -5,6 +5,7 @@
 #include "../Player/PokemonInceptionCharacter.h"
 #include "../Player/PlayerCharacterController.h"
 #include "../GameModes/OverworldGameMode.h"
+#include "../UI/HUD/OverworldHUD.h"
 #include "Components/CapsuleComponent.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -64,11 +65,29 @@ void AWildPokemon::Collide(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		return;
 	}
 
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (!IsValid(PlayerController)) {
+		return;
+	}
+
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(PlayerController->GetHUD());
+	if (!IsValid(Hud)) {
+		return;
+	}
+
+	FTimerHandle BattleStartTimer;
+	FTimerDelegate BattleStartDelegate;
+
 	TArray<FPokemonStruct> Opponent;
 	Opponent.Add(Pokemon);
 
+	GameMode->PauseGame(EPause::Pause);
 	GameMode->SaveGame();
 	GameMode->SaveLevelData(this);
-	GameMode->InitiateBattle(Opponent, false);
+	GameMode->PlayEncounterSequence();
+	Hud->Clear();
+
+	BattleStartDelegate.BindUFunction(GameMode, FName("InitiateBattle"), Opponent, false, true);
+	GetWorldTimerManager().SetTimer(BattleStartTimer, BattleStartDelegate, 1.5, false);
 }
 

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/TimelineComponent.h"
 #include "GameFramework/Character.h"
 #include "../Items/ItemBaseStruct.h"
 #include "PokemonInceptionCharacter.generated.h"
@@ -27,9 +28,9 @@ private:
 public:
 	APokemonInceptionCharacter();
 
-	void Throw();
-
 	virtual void Tick(float DeltaTime) override;
+
+	void Throw();
 
 	void ChangePositionInWorld(FVector Location, FRotator Rotation);
 
@@ -43,6 +44,8 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 protected:
+	virtual void BeginPlay() override;
+
 	void CheckForInteractables();
 
 	void MoveForward(float Value);

@@ -15,24 +15,6 @@ class POKEMONINCEPTION_API ABattleController : public APlayerController
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION()
-	bool bIsPartyDefeated();
-
-	UFUNCTION()
-	bool bCanObtainMorePokemon();
-
-	UFUNCTION()
-	int GetLeadPokemon();
-
-	UFUNCTION()
-	void ObtainPokemon(FPokemonStruct Pokemon);
-
-	UFUNCTION()
-	void RegisterToPokedex(FPokemonBaseStruct Species);
-
-	UFUNCTION()
-	bool bIsRegisteredInPokedex(FName ID);
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	FString PlayerName;
 
@@ -51,4 +33,24 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int Money;
 
+	UPROPERTY(VisibleAnywhere)
+	int TrainersDefeated;
+
+	UFUNCTION()
+	bool bIsPartyDefeated();
+
+	UFUNCTION()
+	bool bCanObtainMorePokemon();
+
+	UFUNCTION()
+	int GetLeadPokemon();
+
+	UFUNCTION()
+	void ObtainPokemon(FPokemonStruct Pokemon);
+
+	UFUNCTION()
+	void RegisterToPokedex(FPokemonBaseStruct Species);
+
+	UFUNCTION()
+	bool bIsRegisteredInPokedex(FName ID);
 };

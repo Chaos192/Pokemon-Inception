@@ -35,8 +35,14 @@ public:
 	bool bIsOpponentTrainer;
 
 	UPROPERTY(EditDefaultsOnly)
+	bool bHasDefeatedTrainerBefore;
+
+	UPROPERTY(EditDefaultsOnly)
 	TArray<FPokemonStruct> PartyData;
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FPokemonStruct> StorageData;
+
+	UPROPERTY(EditDefaultsOnly)
+	int TrainersDefeated;
 };

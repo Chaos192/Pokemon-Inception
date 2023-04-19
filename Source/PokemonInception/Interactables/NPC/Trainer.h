@@ -29,4 +29,10 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TArray<int> PokemonLevels;
+
+	UPROPERTY(EditAnywhere)
+	int DefeatedTrainersRequiredToChallange = 0;
+
+	UPROPERTY(VisibleAnywhere)
+	bool bHasBeenDefeated = false;
 };

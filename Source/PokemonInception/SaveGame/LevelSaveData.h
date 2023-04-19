@@ -6,6 +6,7 @@
 #include "GameFramework/SaveGame.h"
 #include "../WildPokemon/WildPokemon.h"
 #include "../Pokemon/PokemonStruct.h"
+#include "../Interactables/NPC/Trainer.h"
 #include "LevelSaveData.generated.h"
 
 USTRUCT()

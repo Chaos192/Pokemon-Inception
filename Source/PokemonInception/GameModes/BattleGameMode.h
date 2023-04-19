@@ -42,7 +42,11 @@ private:
 	TSubclassOf<ATrainer> TrainerClass;
 	ATrainer* TrainerActor = nullptr;
 
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* BGM = nullptr;
+
 	bool bIsOpponentTrainer;
+	bool bHasDefeatedTrainerBefore;
 
 	bool bHasBattleEnded = false;
 	bool bIsBattleVictory = false;
@@ -61,6 +65,12 @@ private:
 
 	ABallActor* ThrownBallActor = nullptr;
 
+	int SelectedMoveID;
+	int SelectedPokemonID;
+	int SelectedItemID;
+
+	int OpponentSelectedMoveID;
+
 	UFUNCTION()
 	void PlacePlayerPokemon();
 
@@ -69,12 +79,6 @@ private:
 
 	UFUNCTION()
 	void PlaceOpponentTrainer();
-
-	int SelectedMoveID;
-	int SelectedPokemonID;
-	int SelectedItemID;
-
-	int OpponentSelectedMoveID;
 
 	UFUNCTION()
 	void UseMove(int MoveId, EBattler MoveCaster);

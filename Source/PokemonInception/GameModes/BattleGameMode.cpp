@@ -40,8 +40,10 @@ void ABattleGameMode::BeginPlay()
 		PlayerController->Money = SaveData->MoneyData;
 		PlayerController->PokemonParty = SaveData->PartyData;
 		PlayerController->PokemonStorage = SaveData->StorageData;
+		PlayerController->TrainersDefeated = SaveData->TrainersDefeated;
 		OpponentTeam = SaveData->OpponentData;
 		bIsOpponentTrainer = SaveData->bIsOpponentTrainer;
+		bHasDefeatedTrainerBefore = SaveData->bHasDefeatedTrainerBefore;
 	}
 
 	TArray<AActor*> CamerasInLevel;
@@ -74,6 +76,10 @@ void ABattleGameMode::BeginPlay()
 
 	SwitchCamera(SceneCamera, 0);
 	BattleStart();
+
+	if (BGM) {
+		UGameplayStatics::PlaySound2D(GetWorld(), BGM);
+	}
 }
 
 void ABattleGameMode::PlacePlayerPokemon()
@@ -113,7 +119,7 @@ void ABattleGameMode::PlacePlayerPokemon()
 	ComeOutDelegate.BindUFunction(PlayerPokemonActor, FName("ComeOut"), 0.05);
 	GetWorldTimerManager().SetTimer(ComeOutTimer, ComeOutDelegate, 1, false);
 	
-	Hud->ShowText("You sent out " + PlayerController->PokemonParty[PlayerPokemonId].SpeciesData.Name.ToString() + "!");
+	Hud->ShowText(PlayerController->PlayerName + " sent out " + PlayerController->PokemonParty[PlayerPokemonId].SpeciesData.Name.ToString() + "!");
 }
 
 void ABattleGameMode::PlaceOpponentPokemon()
@@ -152,7 +158,13 @@ void ABattleGameMode::PlaceOpponentPokemon()
 	}
 	else {
 		OpponentPokemonActor->Roar();
-		OpponentMessage = "A wild " + OpponentTeam[OpponentPokemonId].SpeciesData.Name.ToString() + " appeared!";
+
+		if (OpponentTeam[OpponentPokemonId].bIsHighLevel(PlayerController->TrainersDefeated)) {
+			OpponentMessage = "A very strong-looking wild " + OpponentTeam[OpponentPokemonId].SpeciesData.Name.ToString() + " appeared!";
+		}
+		else {
+			OpponentMessage = "A wild " + OpponentTeam[OpponentPokemonId].SpeciesData.Name.ToString() + " appeared!";
+		}
 	}
 
 	Hud->ShowText(OpponentMessage);
@@ -518,7 +530,7 @@ void ABattleGameMode::UseItem()
 		return;
 	}
 
-	FString ItemMessage = "You used a " + PlayerController->Inventory[SelectedItemID].Name.ToString() + ", ";
+	FString ItemMessage = PlayerController->PlayerName + " used a " + PlayerController->Inventory[SelectedItemID].Name.ToString() + ", ";
 
 	if (PlayerController->Inventory[SelectedItemID].ItemStructType == "Potion") {
 		if (PlayerController->PokemonParty[SelectedPokemonID].bIsFainted == true || PlayerController->PokemonParty[SelectedPokemonID].bIsFullHp() == true) {
@@ -590,7 +602,7 @@ void ABattleGameMode::UseBall()
 
 	FBallBaseStruct* Ball = BallsDT->FindRow<FBallBaseStruct>(PlayerController->Inventory[SelectedItemID].ItemID, "");
 
-	OpponentPokemonActor->Destroy();
+	OpponentPokemonActor->Hide(true);
 
 	FRotator Rotation = FRotator(0, 180, 0);
 	FVector Position = FVector(-350, 400, 125);
@@ -598,7 +610,7 @@ void ABattleGameMode::UseBall()
 	ThrownBallActor = GetWorld()->SpawnActor<ABallActor>(Ball->BallActor, Position, Rotation);
 
 	SwitchCamera(OpponentCamera, 0.5);
-	FString BallMessage = "You threw a " + PlayerController->Inventory[SelectedItemID].Name.ToString() + "...";
+	FString BallMessage = PlayerController->PlayerName + " threw a " + PlayerController->Inventory[SelectedItemID].Name.ToString() + "...";
 	Hud->ShowText(BallMessage);
 	CurrentBattleTime += 2;
 
@@ -642,7 +654,7 @@ void ABattleGameMode::CatchSuccess()
 	}
 
 	PlayerController->ObtainPokemon(OpponentTeam[OpponentPokemonId]);
-	Hud->ShowText("You caught " + OpponentTeam[OpponentPokemonId].SpeciesData.Name.ToString() + "!");
+	Hud->ShowText(PlayerController->PlayerName + " caught " + OpponentTeam[OpponentPokemonId].SpeciesData.Name.ToString() + "!");
 	ThrownBallActor->CatchSuccess();
 }
 
@@ -659,11 +671,8 @@ void ABattleGameMode::CatchFail()
 	}
 
 	ThrownBallActor->CatchFail();
-
-	FRotator Rotation = FRotator(0, 180, 0);
-	FVector Position = FVector(-350, 400, 153);
-
-	OpponentPokemonActor = GetWorld()->SpawnActor<AStaticOverworldPokemon>(OpponentTeam[OpponentPokemonId].SpeciesData.PokemonActor, Position, Rotation);
+	OpponentPokemonActor->Hide(false);
+	
 	Hud->ShowText(OpponentTeam[OpponentPokemonId].SpeciesData.Name.ToString() + " got out!");
 }
 
@@ -708,8 +717,17 @@ void ABattleGameMode::OpponentFaintsAftermath()
 
 	SwitchCamera(SceneCamera, 0);
 
-	if (!PlayerController->PokemonParty[PlayerPokemonId].bIsFainted) {
-		FString Message = PlayerController->PokemonParty[PlayerPokemonId].SpeciesData.Name.ToString() + " recieved " +
+	if (PlayerController->PokemonParty[PlayerPokemonId].bIsFainted) {
+		return;
+	}
+
+	FString Message;
+
+	if (PlayerController->PokemonParty[PlayerPokemonId].Level == 100) {
+		Message = PlayerController->PokemonParty[PlayerPokemonId].SpeciesData.Name.ToString() + " can't gain more Exp, it has reached its full potential!";
+	}
+	else {
+		Message = PlayerController->PokemonParty[PlayerPokemonId].SpeciesData.Name.ToString() + " recieved " +
 			FString::FromInt(EXPGained) + " Exp! ";
 
 		if (PlayerController->PokemonParty[PlayerPokemonId].GainExp(EXPGained)) {
@@ -720,9 +738,9 @@ void ABattleGameMode::OpponentFaintsAftermath()
 				Message += "It can now use " + PlayerController->PokemonParty[PlayerPokemonId].GetLatestMoveName() + "!";
 			}
 		}
-
-		Hud->ShowText(Message);
 	}
+	
+	Hud->ShowText(Message);
 }
 
 void ABattleGameMode::PlayerFaints()
@@ -899,13 +917,17 @@ void ABattleGameMode::BattleEnd()
 	}
 
 	if (bIsBattleVictory == true) {
+		if (!bHasDefeatedTrainerBefore) {
+			PlayerController->TrainersDefeated += 1;
+		}
+		
 		if ((PlayerController->Money + Money) > 1000000) {
 			Money = 1000000 - PlayerController->Money;
 		}
 
 		PlayerController->Money += Money;
 
-		Hud->ShowText("You won! You recieved " + FString::FromInt(Money) + "$!");
+		Hud->ShowText(PlayerController->PlayerName + " won! " + PlayerController->PlayerName + " recieved " + FString::FromInt(Money) + "$!");
 	}
 
 	else if (bIsBattleVictory == false) {
@@ -915,7 +937,8 @@ void ABattleGameMode::BattleEnd()
 
 		PlayerController->Money -= Money;
 
-		Hud->ShowText("You don't have any Pokemon that can fight! You lost " + FString::FromInt(Money) + "$!");
+		Hud->ShowText(PlayerController->PlayerName + " doesn't have any Pokemon that can fight! " + PlayerController->PlayerName
+			+ " lost " + FString::FromInt(Money) + "$!");
 	}
 
 	GetWorldTimerManager().SetTimer(ExitTimer, this, &ABattleGameMode::ExitBattleMap, CurrentBattleTime, false);
@@ -1043,14 +1066,19 @@ void ABattleGameMode::SelectItem(int InId)
 	if (PlayerController->Inventory[InId].ItemStructType == "Ball") {
 		FTimerHandle ShowTurnStartTimer;
 
-		if (!PlayerController->bCanObtainMorePokemon()) {
-			Hud->ShowText("You can't catch more pokemon!");
-			GetWorldTimerManager().SetTimer(ShowTurnStartTimer, Hud, &ABattleHUD::ShowBattleStartWidget, 1.5, false);
+		if (bIsOpponentTrainer) {
+			Hud->ShowText("You can't catch other people's pokemon!");
+			GetWorldTimerManager().SetTimer(ShowTurnStartTimer, Hud, &ABattleHUD::ShowBattleStartWidget, 2, false);
 		}
 
-		else if (bIsOpponentTrainer) {
-			Hud->ShowText("You can't catch other people's pokemon!");
-			GetWorldTimerManager().SetTimer(ShowTurnStartTimer, Hud, &ABattleHUD::ShowBattleStartWidget, 1.5, false);
+		else if (!PlayerController->bCanObtainMorePokemon()) {
+			Hud->ShowText("You can't catch more pokemon!");
+			GetWorldTimerManager().SetTimer(ShowTurnStartTimer, Hud, &ABattleHUD::ShowBattleStartWidget, 2, false);
+		}
+
+		else if (OpponentTeam[OpponentPokemonId].bIsHighLevel(PlayerController->TrainersDefeated)) {
+			Hud->ShowText("This pokemon is too strong for you to catch!");
+			GetWorldTimerManager().SetTimer(ShowTurnStartTimer, Hud, &ABattleHUD::ShowBattleStartWidget, 2, false);
 		}
 
 		else {
@@ -1321,6 +1349,8 @@ void ABattleGameMode::ExitBattleMap()
 	SaveData->MoneyData = PlayerController->Money;
 	SaveData->PartyData = PlayerController->PokemonParty;
 	SaveData->StorageData = PlayerController->PokemonStorage;
+	SaveData->bIsOpponentTrainer = bIsOpponentTrainer;
+	SaveData->TrainersDefeated = PlayerController->TrainersDefeated;
 
 	UGameplayStatics::SaveGameToSlot(SaveData, "PlayerSaveSlot", 0);
 

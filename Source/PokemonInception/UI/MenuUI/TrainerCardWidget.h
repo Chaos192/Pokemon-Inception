@@ -35,6 +35,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UTextBlock* MoneyObtained;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UTextBlock* TrainersDefeated;
+
 public:
 	virtual void NativeOnInitialized() override;
 
@@ -45,6 +48,8 @@ public:
 	void SetPokemonCaught(int Num);
 
 	void SetMoneyObtained(int Num);
+
+	void SetTrainersDefeated(int Num);
 
 	FButtonClicked BackClicked;
 };

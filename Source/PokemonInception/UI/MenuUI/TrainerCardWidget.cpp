@@ -33,3 +33,8 @@ void UTrainerCardWidget::SetMoneyObtained(int Num)
 {
 	MoneyObtained->SetText(FText::FromString(FString::FromInt(Num)));
 }
+
+void UTrainerCardWidget::SetTrainersDefeated(int Num)
+{
+	TrainersDefeated->SetText(FText::FromString(FString::FromInt(Num)));
+}

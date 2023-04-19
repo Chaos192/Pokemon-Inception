@@ -6,7 +6,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "Engine/DataTable.h"
 #include "../UI/WidgetDelegates.h"
-//#include "LevelSequence.h"
+#include "LevelSequence.h"
+#include "LevelSequencePlayer.h"
 #include "OverworldGameMode.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTextSignature, FString, String);
@@ -25,6 +26,20 @@ class AOverworldGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 private:
+	bool bIsPaused = false;
+
+	UPROPERTY()
+	TArray<AActor*> ActorsToDestroy;
+
+	UPROPERTY()
+	ULevelSequencePlayer* SequencePlayer = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+	ULevelSequence* EncounterSequence = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* BGM = nullptr;
+
 	UFUNCTION()
 	void ToggleMainMenu();
 
@@ -37,22 +52,14 @@ private:
 	UFUNCTION()
 	void SwapPositionWith(int NewPositionId);
 
-	bool bIsPaused = false;
-
-	UPROPERTY()
-	TArray<AActor*> ActorsToDestroy;
-
-	UPROPERTY()
-	class ULevelSaveData* LevelSaveData;
-
-	/*UPROPERTY()
-	class ULevelSequence* EncounterSequence;*/
-
 protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class AWildPokemonSpawner> SpawnerClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class ATrainer> TrainerClass;
 
 	UPROPERTY(EditDefaultsOnly)
 	class UDataTable* BallsDT;
@@ -102,7 +109,7 @@ public:
 	void SaveGame();
 
 	UFUNCTION()
-	void InitiateBattle(TArray<FPokemonStruct> OpponentTeam, bool bIsOpponentTrainer);
+	void InitiateBattle(TArray<FPokemonStruct> OpponentTeam, bool bIsOpponentTrainer, bool bHasDefeatedTrainerBefore);
 
 	UFUNCTION()
 	void SaveLevelData(AWildPokemon* PokemonToIgnore);
@@ -115,6 +122,9 @@ public:
 
 	UFUNCTION()
 	void PauseGame(EPause PauseType);
+	bool bIsGamePaused();
+
+	void PlayEncounterSequence();
 
 	UFUNCTION()
 	void MarkActorAsDestroyed(AActor* Actor);

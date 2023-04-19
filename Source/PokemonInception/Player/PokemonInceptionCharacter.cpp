@@ -13,6 +13,7 @@
 #include "PlayerCharacterController.h"
 #include "../UI/HUD/OverworldHUD.h"
 #include "../Interactables/InteractableInterface.h"
+#include "../GameModes/OverworldGameMode.h"
 
 //////////////////////////////////////////////////////////////////////////
 // APokemonInceptionCharacter
@@ -57,6 +58,17 @@ APokemonInceptionCharacter::APokemonInceptionCharacter()
 	SetTickableWhenPaused(true);
 }
 
+void APokemonInceptionCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void APokemonInceptionCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	CheckForInteractables();
+}
+
 void APokemonInceptionCharacter::Throw()
 {
 	if (ThrowAnimMontage) {
@@ -81,14 +93,7 @@ void APokemonInceptionCharacter::ChangePositionInWorld(FVector Location, FRotato
 	SetActorLocation(Location);
 	SetActorRotation(Rotation);
 
-	//FRotator PlayerRotation = GetArrowComponent()->GetComponentRotation();
 	PlayerController->SetControlRotation(Rotation);
-}
-
-void APokemonInceptionCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-	CheckForInteractables();
 }
 
 //////////////////////////////////////////////////////////////////////////

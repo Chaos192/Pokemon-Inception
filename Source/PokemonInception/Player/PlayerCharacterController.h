@@ -18,6 +18,27 @@ class POKEMONINCEPTION_API APlayerCharacterController : public APlayerController
 	GENERATED_BODY()
 	
 public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	FString PlayerName;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	int Money;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TArray<FItemBaseStruct> Inventory;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TArray<FPokemonBaseStruct> Pokedex;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TArray<FPokemonStruct> PokemonParty;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TArray<FPokemonStruct> PokemonStorage;
+
+	UPROPERTY(VisibleAnywhere)
+	int TrainersDefeated;
+
 	bool bIsPartyDefeated();
 
 	bool bCanRemoveFromParty(int PokemonID);
@@ -66,24 +87,6 @@ public:
 
 	UFUNCTION()
 	void FullRestoreAllPokemon();
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	FString PlayerName;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	int Money;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	TArray<FItemBaseStruct> Inventory;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	TArray<FPokemonBaseStruct> Pokedex;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	TArray<FPokemonStruct> PokemonParty;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	TArray<FPokemonStruct> PokemonStorage;
 
 	FPauseSignature PauseDelegate;
 	FPauseSignature PeacefulModeDelegate;
