@@ -33,6 +33,8 @@ public:
 	void Throw();
 
 	void ChangePositionInWorld(FVector Location, FRotator Rotation);
+	FVector GetCameraLocation();
+	FRotator GetCameraRotation();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Input)
 	float TurnRateGamepad;

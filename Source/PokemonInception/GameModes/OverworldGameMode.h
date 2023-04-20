@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "Camera/CameraActor.h"
 #include "Engine/DataTable.h"
 #include "../UI/WidgetDelegates.h"
 #include "LevelSequence.h"
@@ -60,6 +61,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class ATrainer> TrainerClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ACameraActor> CameraClass;
 
 	UPROPERTY(EditDefaultsOnly)
 	class UDataTable* BallsDT;

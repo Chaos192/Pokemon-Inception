@@ -10,6 +10,7 @@
 #include "../MenuUI/PokemonWidget.h"
 #include "../MenuUI/BagWidget.h"
 #include "../MenuUI/TrainerCardWidget.h"
+#include "../MenuUI/SettingsWidget.h"
 #include "../MenuUI/ShopWidget.h"
 #include "../MenuUI/PokemonStorageWidget.h"
 #include "../MenuUI/MoveManagerWidget.h"
@@ -69,6 +70,9 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UTrainerCardWidget> TrainerCardWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<USettingsWidget> SettingsWidgetClass;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UShopWidget> ShopWidgetClass;
@@ -176,6 +180,9 @@ protected:
 	class UTrainerCardWidget* TrainerCardWidget;
 
 	UPROPERTY()
+	class USettingsWidget* SettingsWidget;
+
+	UPROPERTY()
 	class UShopWidget* ShopWidget;
 
 	UPROPERTY()
@@ -272,6 +279,9 @@ public:
 
 	UFUNCTION()
 	void ShowTrainerCard();
+
+	UFUNCTION()
+	void ShowSettings();
 
 	UFUNCTION()
 	void ShowBuyShop();

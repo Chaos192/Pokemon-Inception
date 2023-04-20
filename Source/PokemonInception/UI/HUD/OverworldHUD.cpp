@@ -4,11 +4,12 @@
 #include "OverworldHUD.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/Engine.h"
 #include "GameFramework/PlayerController.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "../../GameModes/OverworldGameMode.h"
-#include "Engine/Engine.h"
+#include "../../GameModes/PokemonInceptionGameInstance.h"
 #include "../../Player/PokemonInceptionCharacter.h"
 #include "../../Player/PlayerCharacterController.h"
 #include "../../Pokemon/AttackMoveStruct.h"
@@ -29,6 +30,11 @@ void AOverworldHUD::BeginPlay()
 		return;
 	}
 
+	UPokemonInceptionGameInstance* GameInstance = Cast<UPokemonInceptionGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (!IsValid(GameInstance)) {
+		return;
+	}
+
 	TextBoxWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TextBoxWidgetClass);
 	OnScreenMessageWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), OnScreenMessageWidgetClass);
 	AreaMessageWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), AreaMessageWidgetClass);
@@ -40,6 +46,7 @@ void AOverworldHUD::BeginPlay()
 	PokemonWidget = CreateWidget<UPokemonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonWidgetClass);
 	BagWidget = CreateWidget<UBagWidget>(UGameplayStatics::GetGameInstance(GetWorld()), BagWidgetClass);
 	TrainerCardWidget = CreateWidget<UTrainerCardWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TrainerCardWidgetClass);
+	SettingsWidget = CreateWidget<USettingsWidget>(UGameplayStatics::GetGameInstance(GetWorld()), SettingsWidgetClass);
 	PokemonStorageWidget = CreateWidget<UPokemonStorageWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonStorageWidgetClass);
 	MoveManagerWidget = CreateWidget<UMoveManagerWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveManagerWidgetClass);
 	ShopWidget = CreateWidget<UShopWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ShopWidgetClass);
@@ -73,15 +80,19 @@ void AOverworldHUD::BeginPlay()
 	MenuWidget->PokemonClicked.AddDynamic(this, &AOverworldHUD::ShowPokemon);
 	MenuWidget->BagClicked.AddDynamic(this, &AOverworldHUD::ShowBag);
 	MenuWidget->TrainerCardClicked.AddDynamic(this, &AOverworldHUD::ShowTrainerCard);
+	MenuWidget->SettingsClicked.AddDynamic(this, &AOverworldHUD::ShowSettings);
 	MenuWidget->SaveClicked.AddDynamic(GameMode, &AOverworldGameMode::SaveAndExit);
 
 	PokedexWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ShowMenu);
 	PokemonWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ShowMenu);
 	BagWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ShowMenu);
 	TrainerCardWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ShowMenu);
+	SettingsWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ShowMenu);
 	ShopWidget->ExitClicked.AddDynamic(this, &AOverworldHUD::ClearAndUnpause);
 	PokemonStorageWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ClearAndUnpause);
 	MoveManagerWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ClearAndUnpause);
+
+	SettingsWidget->GraphicsQualityChanged.AddDynamic(GameInstance, &UPokemonInceptionGameInstance::ChangeScalability);
 
 	ShopWidget->BuyModeClicked.AddDynamic(this, &AOverworldHUD::ShowBuyShop);
 	ShopWidget->SellModeClicked.AddDynamic(this, &AOverworldHUD::ShowSellShop);
@@ -417,6 +428,19 @@ void AOverworldHUD::ShowTrainerCard()
 		TrainerCardWidget->SetTrainersDefeated(Controller->TrainersDefeated);
 
 		TrainerCardWidget->AddToViewport();
+		PlayerOwner->bShowMouseCursor = true;
+		PlayerOwner->SetInputMode(FInputModeUIOnly());
+	}
+}
+
+void AOverworldHUD::ShowSettings()
+{
+	Clear();
+
+	if (PlayerOwner && SettingsWidget) {
+		APlayerCharacterController* Controller = Cast<APlayerCharacterController>(PlayerOwner);
+
+		SettingsWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = true;
 		PlayerOwner->SetInputMode(FInputModeUIOnly());
 	}

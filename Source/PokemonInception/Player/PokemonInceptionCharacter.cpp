@@ -96,6 +96,16 @@ void APokemonInceptionCharacter::ChangePositionInWorld(FVector Location, FRotato
 	PlayerController->SetControlRotation(Rotation);
 }
 
+FVector APokemonInceptionCharacter::GetCameraLocation()
+{
+	return FollowCamera->GetComponentLocation();
+}
+
+FRotator APokemonInceptionCharacter::GetCameraRotation()
+{
+	return FollowCamera->GetComponentRotation();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 

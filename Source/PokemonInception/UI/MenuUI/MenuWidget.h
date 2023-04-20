@@ -28,6 +28,9 @@ private:
 	void OnTrainerCardClicked();
 
 	UFUNCTION()
+	void OnSettingsClicked();
+
+	UFUNCTION()
 	void OnSaveClicked();
 
 protected:
@@ -44,6 +47,9 @@ protected:
 	class UButton* TrainerCard;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UButton* Settings;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* Save;
 
 	void NativeOnInitialized() override;
@@ -53,5 +59,6 @@ public:
 	FButtonClicked PokemonClicked;
 	FButtonClicked BagClicked;
 	FButtonClicked TrainerCardClicked;
+	FButtonClicked SettingsClicked;
 	FButtonClicked SaveClicked;
 };

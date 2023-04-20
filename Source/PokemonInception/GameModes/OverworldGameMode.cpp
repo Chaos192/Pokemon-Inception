@@ -640,8 +640,27 @@ bool AOverworldGameMode::bIsGamePaused()
 
 void AOverworldGameMode::PlayEncounterSequence()
 {
-	if (SequencePlayer && EncounterSequence){
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (!IsValid(PlayerController)) {
+		return;
+	}
+
+	APokemonInceptionCharacter* PlayerPawn = Cast<APokemonInceptionCharacter>(PlayerController->GetPawn());
+	if (!IsValid(PlayerPawn)) {
+		return;
+	}
+
+	if (SequencePlayer && EncounterSequence){	
 		SequencePlayer->Play();
+
+		TArray<AActor*> CameraActorsToFind;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), CameraClass, CameraActorsToFind);
+
+		for (AActor* CameraActor : CameraActorsToFind) {
+			GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, "Camera change possition");
+			CameraActor->SetActorLocation(PlayerPawn->GetCameraLocation());
+			CameraActor->SetActorRotation(PlayerPawn->GetCameraRotation());
+		}
 	}
 }
 
