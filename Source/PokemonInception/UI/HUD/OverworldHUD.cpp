@@ -9,7 +9,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "../../GameModes/OverworldGameMode.h"
-#include "../../GameModes/PokemonInceptionGameInstance.h"
+#include "../../Settings/PokemonInceptionGameInstance.h"
 #include "../../Player/PokemonInceptionCharacter.h"
 #include "../../Player/PlayerCharacterController.h"
 #include "../../Pokemon/AttackMoveStruct.h"
@@ -93,6 +93,8 @@ void AOverworldHUD::BeginPlay()
 	MoveManagerWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ClearAndUnpause);
 
 	SettingsWidget->GraphicsQualityChanged.AddDynamic(GameInstance, &UPokemonInceptionGameInstance::ChangeScalability);
+	SettingsWidget->SEVolumeChanged.AddDynamic(GameInstance, &UPokemonInceptionGameInstance::ChangeSEVolume);
+	SettingsWidget->BGMVolumeChanged.AddDynamic(GameInstance, &UPokemonInceptionGameInstance::ChangeBGMVolume);
 
 	ShopWidget->BuyModeClicked.AddDynamic(this, &AOverworldHUD::ShowBuyShop);
 	ShopWidget->SellModeClicked.AddDynamic(this, &AOverworldHUD::ShowSellShop);

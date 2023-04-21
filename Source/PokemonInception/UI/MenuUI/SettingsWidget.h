@@ -50,6 +50,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class USlider* BGMVolumeSlider;
 
+	virtual void NativeConstruct() override;
 
 public:
 	virtual void NativeOnInitialized() override;

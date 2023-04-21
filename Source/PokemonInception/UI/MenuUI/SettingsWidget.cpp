@@ -2,6 +2,8 @@
 
 
 #include "SettingsWidget.h"
+#include "Kismet/GameplayStatics.h"
+#include "../../Settings/PokemonInceptionGameInstance.h"
 
 void USettingsWidget::OnBackClicked()
 {
@@ -16,19 +18,28 @@ void USettingsWidget::OnSaveSettingsClicked()
 void USettingsWidget::OnGraphicsQualityChanged(float InValue)
 {
 	GraphicsQualityChanged.Broadcast(InValue);
-	GEngine->AddOnScreenDebugMessage(10, 1, FColor::Yellow, "Graphics Quality: " + FString::SanitizeFloat(InValue));
 }
 
 void USettingsWidget::OnSEVolumeChanged(float InValue)
 {
 	SEVolumeChanged.Broadcast(InValue);
-	GEngine->AddOnScreenDebugMessage(10, 1, FColor::Yellow, "SE Volume: " + FString::SanitizeFloat(InValue));
 }
 
 void USettingsWidget::OnBGMVolumeChanged(float InValue)
 {
 	BGMVolumeChanged.Broadcast(InValue);
-	GEngine->AddOnScreenDebugMessage(10, 1, FColor::Yellow, "BGM Volume: " + FString::SanitizeFloat(InValue));
+}
+
+void USettingsWidget::NativeConstruct()
+{
+	UPokemonInceptionGameInstance* GameInstance = Cast<UPokemonInceptionGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (!IsValid(GameInstance)) {
+		return;
+	}
+
+	GraphicsQualitySlider->SetValue(GameInstance->GetGraphicsQuality());
+	SEVolumeSlider->SetValue(GameInstance->GetSEVolume());
+	BGMVolumeSlider->SetValue(GameInstance->GetBGMVolume());
 }
 
 void USettingsWidget::NativeOnInitialized()

@@ -6,6 +6,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "Camera/CameraComponent.h"
+#include "../Settings/PokemonInceptionGameInstance.h"
 #include "../Player/PokemonInceptionCharacter.h"
 #include "../Player/PlayerCharacterController.h"
 #include "../UI/HUD/OverworldHUD.h"
@@ -18,6 +19,7 @@
 #include "../WildPokemon/WildPokemonSpawner.h"
 #include "../WildPokemon/WildPokemon.h"
 
+#include "GameFramework/GameUserSettings.h"
 
 void AOverworldGameMode::BeginPlay()
 {
@@ -80,6 +82,16 @@ void AOverworldGameMode::BeginPlay()
 
 	ALevelSequenceActor* SequenceActor;
 	SequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(GetWorld(), EncounterSequence, FMovieSceneSequencePlaybackSettings(), SequenceActor);
+
+	/*USoundClass* BGMClass = GameInstance->GetBGMSoundClass();
+	if (!IsValid(BGMClass)) {
+		return;
+	}
+
+	BGMClass->Properties.Volume = 0.01f;*/
+	//GEngine->GetGameUserSettings()->SetShadingQuality(4);
+	//GameSettings->SetOverallScalabilityLevel(4);
+	//GameSettings->SaveSettings();
 }
 
 void AOverworldGameMode::SaveGame()
