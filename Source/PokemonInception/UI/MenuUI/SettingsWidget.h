@@ -23,9 +23,6 @@ private:
 	void OnBackClicked();
 
 	UFUNCTION()
-	void OnSaveSettingsClicked();
-
-	UFUNCTION()
 	void OnGraphicsQualityChanged(float InValue);
 
 	UFUNCTION()
@@ -37,9 +34,6 @@ private:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* Back;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* SaveSettings;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class USlider* GraphicsQualitySlider;
@@ -56,7 +50,6 @@ public:
 	virtual void NativeOnInitialized() override;
 
 	FButtonClicked BackClicked;
-	FButtonClicked SaveSettingsClicked;
 
 	FValueUpdatedSignature GraphicsQualityChanged;
 	FValueUpdatedSignature SEVolumeChanged;

@@ -14,6 +14,19 @@ class POKEMONINCEPTION_API AStaticOverworldPokemon : public ACharacter
 	
 private:
 	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* BallOpenSound = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* BallRetrieveSound = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UNiagaraSystem* BallOpen = nullptr;
+
+	FTimerHandle ChangeSizeTimer;
+	FTimerDelegate ChangeSizeDelegate;
+
+protected:
+	UPROPERTY(EditDefaultsOnly)
 	UAnimMontage* RoarAnimMontage = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -22,24 +35,8 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	UAnimMontage* DamageAnimMontage = nullptr;
 
-	UFUNCTION()
-	void PlayCry();
-
-protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	class USoundBase* Cry = nullptr;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	class USoundBase* BallOpenSound = nullptr;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	class USoundBase* BallRetrieveSound = nullptr;
-
 	UPROPERTY(EditDefaultsOnly)
-	class UNiagaraSystem* BallOpen = nullptr;
-
-	FTimerHandle ChangeSizeTimer;
-	FTimerDelegate ChangeSizeDelegate;
+	UAnimMontage* FaintAnimMontage = nullptr;
 
 public:
 	void Roar();

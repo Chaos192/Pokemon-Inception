@@ -19,6 +19,7 @@ AWildPokemon::AWildPokemon()
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AWildPokemon::Collide);
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
 }
 
 void AWildPokemon::Tick(float DeltaTime)

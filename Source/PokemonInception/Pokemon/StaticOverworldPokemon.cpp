@@ -6,21 +6,12 @@
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraFunctionLibrary.h"
 
-void AStaticOverworldPokemon::PlayCry()
-{
-	if (Cry != nullptr) {
-		UGameplayStatics::PlaySound2D(GetWorld(), Cry);
-	}
-}
 
 void AStaticOverworldPokemon::Roar()
 {
 	if (RoarAnimMontage != nullptr) { 
 		PlayAnimMontage(RoarAnimMontage, 1);
 	}
-
-	FTimerHandle CryTimer;
-	GetWorldTimerManager().SetTimer(CryTimer, this, &AStaticOverworldPokemon::PlayCry, 0.4, false);
 }
 
 void AStaticOverworldPokemon::Attack()
@@ -99,17 +90,16 @@ void AStaticOverworldPokemon::GetSplashed(FMoveBaseStruct Move)
 
 void AStaticOverworldPokemon::Faint(float Scale, bool bIsTrainerPokemon)
 {
-	if (Scale == 1) {
-		GetDamaged();
+	if (Scale == 1 && FaintAnimMontage) {
+		PlayAnimMontage(FaintAnimMontage, 1);
 	}
 
-	if (Scale <= 0.02 && Cry != nullptr) {
+	if (Scale <= 0.02) {
 		if (bIsTrainerPokemon && BallRetrieveSound) {
 			ShowBallOpen();
 			UGameplayStatics::PlaySound2D(GetWorld(), BallRetrieveSound, 1);
 		}
 
-		UGameplayStatics::PlaySound2D(GetWorld(), Cry, 1, 0.75);
 		Destroy();
 		return;
 	}

@@ -2,6 +2,8 @@
 
 
 #include "FindRandomLocation.h"
+#include "../WildPokemon.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Runtime/NavigationSystem/Public/NavigationSystem.h"
 #include "../WildPokemon_AIController.h"
@@ -17,6 +19,11 @@ EBTNodeResult::Type UFindRandomLocation::ExecuteTask(UBehaviorTreeComponent& own
 {
 	auto const Controller = Cast<AWildPokemon_AIController>(ownerComp.GetAIOwner());
 	auto const NPC = Controller->GetPawn();
+
+	AWildPokemon* PossesedPokemon = Cast<AWildPokemon>(Controller->GetPawn());
+	if (IsValid(PossesedPokemon)) {
+		PossesedPokemon->GetCharacterMovement()->MaxWalkSpeed = PossesedPokemon->NormalSpeed;
+	}
 
 	FVector const Origin = NPC->GetActorLocation();
 	FNavLocation Location;

@@ -15,16 +15,16 @@ class POKEMONINCEPTION_API AWildPokemonSpawner : public AActor
 public:	
 	AWildPokemonSpawner();
 
+	UPROPERTY()
+	class AWildPokemon* SpawnedPokemon = nullptr;
+
 	virtual void Tick(float DeltaTime) override;
-
-	UFUNCTION()
-	void ClearPokemonReference(AActor* Pokemon);
-
-	void Generate();
+	virtual void Generate();
 
 	void ManualGenerate(FWildPokemonData SaveData);
 
-	class AWildPokemon* SpawnedPokemon = nullptr;
+	UFUNCTION()
+	void ClearPokemonReference(AActor* Pokemon);
 
 protected:
 	UPROPERTY(EditAnywhere)
@@ -33,6 +33,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	int MaxLevel = 1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+private:
+	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<class AWildPokemon>> PokemonToSpawn;
 };

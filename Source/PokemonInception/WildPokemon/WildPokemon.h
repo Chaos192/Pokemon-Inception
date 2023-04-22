@@ -18,13 +18,19 @@ class POKEMONINCEPTION_API AWildPokemon : public AStaticOverworldPokemon
 public:
 	AWildPokemon();
 
+	UPROPERTY()
+	FPokemonStruct Pokemon;
+
+	UPROPERTY(EditDefaultsOnly)
+	int NormalSpeed = 100;
+
+	UPROPERTY(EditDefaultsOnly)
+	int RunningSpeed = 200;
+
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
 	void InitPokemon(UDataTable* PokemonDatatable, int Level, TArray<UDataTable*> MoveTables);
-
-	UPROPERTY()
-	FPokemonStruct Pokemon;
 
 private:
 	UPROPERTY(EditDefaultsOnly)

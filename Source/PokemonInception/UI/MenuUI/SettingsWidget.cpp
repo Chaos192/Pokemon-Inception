@@ -10,11 +10,6 @@ void USettingsWidget::OnBackClicked()
 	BackClicked.Broadcast();
 }
 
-void USettingsWidget::OnSaveSettingsClicked()
-{
-	SaveSettingsClicked.Broadcast();
-}
-
 void USettingsWidget::OnGraphicsQualityChanged(float InValue)
 {
 	GraphicsQualityChanged.Broadcast(InValue);
@@ -46,7 +41,6 @@ void USettingsWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 	Back->OnClicked.AddDynamic(this, &USettingsWidget::OnBackClicked);
-	SaveSettings->OnClicked.AddDynamic(this, &USettingsWidget::OnSaveSettingsClicked);
 
 	GraphicsQualitySlider->OnValueChanged.AddDynamic(this, &USettingsWidget::OnGraphicsQualityChanged);
 	SEVolumeSlider->OnValueChanged.AddDynamic(this, &USettingsWidget::OnSEVolumeChanged);

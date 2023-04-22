@@ -20,10 +20,10 @@ protected:
 	int GraphicsQualityValue = 1;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	float SEVolume = 1.0f;
+	float SEVolume = 2.0f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	float BGMVolume = 1.0f;
+	float BGMVolume = 2.0f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	USoundClass* SEClass;

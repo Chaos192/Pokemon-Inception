@@ -51,10 +51,6 @@ void AWildPokemonSpawner::Generate()
 	FRotator Rotation;
 	Rotation.Yaw = (FMath::RandRange(0, 360));
 
-	if (!IsValid(PokemonToSpawn[Index])) {
-		return;
-	}
-
 	SpawnedPokemon = GetWorld()->SpawnActor<AWildPokemon>(PokemonToSpawn[Index], GetActorLocation(), Rotation);
 
 	if (IsValid(SpawnedPokemon)) {
