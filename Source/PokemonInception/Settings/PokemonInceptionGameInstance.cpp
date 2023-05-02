@@ -4,14 +4,9 @@
 #include "Sound/SoundClass.h"
 
 
-UPokemonInceptionGameInstance::UPokemonInceptionGameInstance()
-{
-	GameSettings = GEngine->GetGameUserSettings();
-}
-
 void UPokemonInceptionGameInstance::ChangeScalability(float NewValue)
 {
-	if (!IsValid(GameSettings)) {
+	/*if (!IsValid(GameSettings)) {
 		return;
 	}
 
@@ -21,7 +16,7 @@ void UPokemonInceptionGameInstance::ChangeScalability(float NewValue)
 	if (GraphicsQualityValue != GameSettings->GetTextureQuality()) {
 		GameSettings->SetTextureQuality(GraphicsQualityValue);
 		GameSettings->SaveSettings();
-	}
+	}*/
 }
 
 void UPokemonInceptionGameInstance::ChangeSEVolume(float NewValue)

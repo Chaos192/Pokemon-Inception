@@ -2,6 +2,7 @@
 
 
 #include "PokemonPickup.h"
+#include "Components/BoxComponent.h"
 #include "../../Player/PlayerCharacterController.h"
 #include "../../GameModes/OverworldGameMode.h"
 #include "../../UI/HUD/OverworldHUD.h"
@@ -9,6 +10,8 @@
 APokemonPickup::APokemonPickup()
 {
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	Box = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
+	Box->SetupAttachment(Mesh);
 
 	Name = "Pokemon Pickup";
 }

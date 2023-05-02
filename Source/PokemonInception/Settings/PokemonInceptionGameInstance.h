@@ -32,8 +32,6 @@ protected:
 	USoundClass* BGMClass;
 
 public:
-	UPokemonInceptionGameInstance();
-
 	UFUNCTION()
 	void ChangeScalability(float NewValue);
 

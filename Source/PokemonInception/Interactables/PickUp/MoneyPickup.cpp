@@ -3,6 +3,7 @@
 
 #include "MoneyPickup.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/BoxComponent.h"
 #include "../../Player/PlayerCharacterController.h"
 #include "../../GameModes/OverworldGameMode.h"
 #include "../../UI/HUD/OverworldHUD.h"
@@ -10,6 +11,8 @@
 AMoneyPickup::AMoneyPickup()
 {
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	Box = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
+	Box->SetupAttachment(Mesh);
 
 	Name = "Money Pickup";
 	money = 100;
