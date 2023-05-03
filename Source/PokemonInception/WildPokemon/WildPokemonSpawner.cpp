@@ -58,6 +58,7 @@ void AWildPokemonSpawner::Generate()
 		SpawnedPokemon->OnDestroyed.AddDynamic(this, &AWildPokemonSpawner::ClearPokemonReference);
 
 		GameMode->PokemonInLevel.Add(SpawnedPokemon);
+		PrimaryActorTick.bCanEverTick = false;
 	}
 }
 
@@ -73,6 +74,7 @@ void AWildPokemonSpawner::ClearPokemonReference(AActor* Pokemon)
 	}
 
 	SpawnedPokemon = nullptr;
+	PrimaryActorTick.bCanEverTick = true;
 }
 
 void AWildPokemonSpawner::ManualGenerate(FWildPokemonData SaveData)
