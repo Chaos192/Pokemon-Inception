@@ -30,9 +30,6 @@ private:
 	bool bIsPaused = false;
 
 	UPROPERTY()
-	TArray<AActor*> ActorsToDestroy;
-
-	UPROPERTY()
 	ULevelSequencePlayer* SequencePlayer = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)

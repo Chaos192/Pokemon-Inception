@@ -8,6 +8,30 @@
 #include "Trainer.generated.h"
 
 
+USTRUCT()
+struct FTrainerPokemonData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	FName PokemonID;
+
+	UPROPERTY(EditAnywhere)
+	int PokemonLevel;
+
+	UPROPERTY(EditAnywhere)
+	FName Move1 = "None";
+
+	UPROPERTY(EditAnywhere)
+	FName Move2 = "None";
+
+	UPROPERTY(EditAnywhere)
+	FName Move3 = "None";
+
+	UPROPERTY(EditAnywhere)
+	FName Move4 = "None";
+};
+
 UCLASS()
 class POKEMONINCEPTION_API ATrainer : public ANPCBase
 {
@@ -17,18 +41,21 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	UAnimMontage* ThrowAnimMontage = nullptr;
 
+protected:
+	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere)
+	TArray<FTrainerPokemonData> TrainerTeamData;
+
+	UPROPERTY()
+	TArray<FPokemonStruct> TrainerTeam;
+
 public:
 	ATrainer();
 	void Throw();
 
 	UFUNCTION()
 	virtual void Interact(APlayerController* PlayerController) override;
-
-	UPROPERTY(EditAnywhere)
-	TArray<FName> PokemonIDs;
-
-	UPROPERTY(EditAnywhere)
-	TArray<int> PokemonLevels;
 
 	UPROPERTY(EditAnywhere)
 	int DefeatedTrainersRequiredToChallange = 0;

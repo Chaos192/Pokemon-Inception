@@ -12,6 +12,32 @@ ATrainer::ATrainer()
 	Name = "Trainer";
 }
 
+void ATrainer::BeginPlay()
+{
+	Super::BeginPlay();
+
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
+	if (!IsValid(GameMode)) {
+		return;
+	}
+
+	for (int i = 0; i < TrainerTeamData.Num(); i++) {
+		FPokemonStruct AddedPokemon;
+		TArray<FName> Moveset;
+		Moveset.Add(TrainerTeamData[i].Move1);
+		Moveset.Add(TrainerTeamData[i].Move2);
+		Moveset.Add(TrainerTeamData[i].Move3);
+		Moveset.Add(TrainerTeamData[i].Move4);
+
+		FPokemonBaseStruct* PokemonSpecies = GameMode->PokemonDT->FindRow<FPokemonBaseStruct>(TrainerTeamData[i].PokemonID, "");
+
+		AddedPokemon.Init(TrainerTeamData[i].PokemonLevel, *PokemonSpecies);
+		AddedPokemon.InitMovesCustom(Moveset, GameMode->GetMoveDT());
+
+		TrainerTeam.Add(AddedPokemon);
+	}
+}
+
 void ATrainer::Throw()
 {
 	if (ThrowAnimMontage) {
@@ -43,17 +69,6 @@ void ATrainer::Interact(APlayerController* PlayerController)
 
 	FTimerHandle BattleStartTimer;
 	FTimerDelegate BattleStartDelegate;
-
-	TArray<FPokemonStruct> TrainerTeam;
-
-	for (int i = 0; i < PokemonIDs.Num(); i++) {
-		FPokemonBaseStruct* PokemonSpecies = GameMode->PokemonDT->FindRow<FPokemonBaseStruct>(PokemonIDs[i], "");
-		FPokemonStruct AddedPokemon;
-		AddedPokemon.Init(PokemonLevels[i], *PokemonSpecies);
-		AddedPokemon.InitMoves(GameMode->GetMoveDT());
-
-		TrainerTeam.Add(AddedPokemon);
-	}
 
 	GameMode->PauseGame(EPause::Pause);
 	GameMode->SaveGame();

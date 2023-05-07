@@ -43,5 +43,5 @@ public:
 	FRotator PlayerRotation;
 
 	UPROPERTY(EditDefaultsOnly)
-	TArray<AActor*> ActorsToDestroy;
+	TArray<FName> PickUpsToDestroy;
 };

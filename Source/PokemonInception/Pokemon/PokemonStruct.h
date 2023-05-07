@@ -118,6 +118,28 @@ struct FPokemonStruct
 		InitCurrentMoves(LearnedMoves);
 	}
 
+	void InitMovesCustom(TArray<FName> CustomMoves, TArray<UDataTable*> MoveTables) {
+		int LearnedMoves = 0;
+
+		for (FName Move : CustomMoves) {
+			FMoveBaseStruct* MoveRef = nullptr;
+
+			for (UDataTable* DataTable : MoveTables) {
+				MoveRef = DataTable->FindRow<FMoveBaseStruct>(Move, "");
+
+				if (MoveRef) {
+					FMoveBaseStruct AddedMove = *MoveRef;
+					AddedMove.bIsLocked = false;
+					LearnedMoves++;
+
+					Moves.Add(AddedMove);
+				}
+			}
+		}
+
+		InitCurrentMoves(LearnedMoves);
+	}
+
 	void InitCurrentMoves(int LearnedMoves) {
 		for (int i = LearnedMoves - 4; i < LearnedMoves; i++) {
 			if (i < 0) {

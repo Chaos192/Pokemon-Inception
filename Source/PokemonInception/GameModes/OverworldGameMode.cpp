@@ -10,6 +10,7 @@
 #include "../Player/PokemonInceptionCharacter.h"
 #include "../Player/PlayerCharacterController.h"
 #include "../UI/HUD/OverworldHUD.h"
+#include "../Interactables/PickUp/PickupBase.h"
 #include "../Items/ExpCandyBaseStruct.h"
 #include "../Items/EtherBaseStruct.h"
 #include "../Items/PotionBaseStruct.h"
@@ -82,16 +83,6 @@ void AOverworldGameMode::BeginPlay()
 
 	ALevelSequenceActor* SequenceActor;
 	SequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(GetWorld(), EncounterSequence, FMovieSceneSequencePlaybackSettings(), SequenceActor);
-
-	/*USoundClass* BGMClass = GameInstance->GetBGMSoundClass();
-	if (!IsValid(BGMClass)) {
-		return;
-	}
-
-	BGMClass->Properties.Volume = 0.01f;*/
-	//GEngine->GetGameUserSettings()->SetShadingQuality(4);
-	//GameSettings->SetOverallScalabilityLevel(4);
-	//GameSettings->SaveSettings();
 }
 
 void AOverworldGameMode::SaveGame()
@@ -116,7 +107,17 @@ void AOverworldGameMode::SaveGame()
 
 void AOverworldGameMode::MarkActorAsDestroyed(AActor* Actor)
 {
-	ActorsToDestroy.Add(Actor);
+	ULevelSaveData* LevelSaveData = Cast<ULevelSaveData>(UGameplayStatics::CreateSaveGameObject(ULevelSaveData::StaticClass()));
+
+	if (UGameplayStatics::DoesSaveGameExist("WorldSaveSlot", 0)) {
+		LevelSaveData = Cast<ULevelSaveData>(UGameplayStatics::LoadGameFromSlot("WorldSaveSlot", 0));
+	}
+
+	APickupBase* PickUp = Cast<APickupBase>(Actor);
+	LevelSaveData->PickUpsToDestroy.Add(PickUp->ID);
+
+	GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "Marked PickUp #" + PickUp->ID.ToString() + " as destroyed");
+	UGameplayStatics::SaveGameToSlot(LevelSaveData, "WorldSaveSlot", 0);
 }
 
 void AOverworldGameMode::InitiateBattle(TArray<FPokemonStruct> OpponentTeam, bool bIsOpponentTrainer, bool bHasDefeatedTrainerBefore)
@@ -150,11 +151,15 @@ void AOverworldGameMode::SaveLevelData(AWildPokemon* PokemonToIgnore)
 
 	ULevelSaveData* LevelSaveData = Cast<ULevelSaveData>(UGameplayStatics::CreateSaveGameObject(ULevelSaveData::StaticClass()));
 
+	if (!UGameplayStatics::DoesSaveGameExist("WorldSaveSlot", 0)) {
+		return;
+	}
+	LevelSaveData = Cast<ULevelSaveData>(UGameplayStatics::LoadGameFromSlot("WorldSaveSlot", 0));
+
 	LevelSaveData->PokemonSpawners.Empty();
 
 	LevelSaveData->PlayerLocation = PlayerPawn->GetActorLocation();
 	LevelSaveData->PlayerRotation = PlayerPawn->GetActorRotation();
-	LevelSaveData->ActorsToDestroy = ActorsToDestroy;
 
 	if (!PokemonInLevel.IsEmpty()) {
 		TArray<AActor*> Spawners;
@@ -210,12 +215,24 @@ void AOverworldGameMode::LoadLevelData()
 			
 		}
 
-		ActorsToDestroy = LevelSaveData->ActorsToDestroy;
+		TArray<AActor*> PickUps;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APickupBase::StaticClass(), PickUps);
 
-		for (AActor* Actor : ActorsToDestroy) {
-			if (IsValid(Actor)) {
-				Actor->Destroy();
+		for (AActor* Actor : PickUps) {
+			APickupBase* PickUp = Cast<APickupBase>(Actor);
+
+			if (!LevelSaveData->PickUpsToDestroy.Contains(PickUp->ID)) {
+				GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "PickUp still exists, continuing");
+				continue;
 			}
+
+			if (!IsValid(PickUp)) {
+				GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "PickUp is not valid, continuing");
+				continue;
+			}
+
+			GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "Destroying PickUp #" + PickUp->ID.ToString());
+			PickUp->Destroy();
 		}
 
 		for (auto& Spawner : LevelSaveData->PokemonSpawners) {

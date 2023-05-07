@@ -23,5 +23,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	FString Name;
 
+	UPROPERTY(EditAnywhere)
+	FName ID;
+
 	virtual void Interact(APlayerController* PlayerController) override;
 };
