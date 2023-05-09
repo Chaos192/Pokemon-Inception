@@ -20,6 +20,11 @@ void USettingsWidget::OnSEVolumeChanged(float InValue)
 	SEVolumeChanged.Broadcast(InValue);
 }
 
+void USettingsWidget::OnPokemonCryVolumeChanged(float InValue)
+{
+	PokemonCryVolumeChanged.Broadcast(InValue);
+}
+
 void USettingsWidget::OnBGMVolumeChanged(float InValue)
 {
 	BGMVolumeChanged.Broadcast(InValue);
@@ -34,6 +39,7 @@ void USettingsWidget::NativeConstruct()
 
 	GraphicsQualitySlider->SetValue(GameInstance->GetGraphicsQuality());
 	SEVolumeSlider->SetValue(GameInstance->GetSEVolume());
+	PokemonCryVolumeSlider->SetValue(GameInstance->GetPokemonCryVolume());
 	BGMVolumeSlider->SetValue(GameInstance->GetBGMVolume());
 }
 
@@ -44,5 +50,6 @@ void USettingsWidget::NativeOnInitialized()
 
 	GraphicsQualitySlider->OnValueChanged.AddDynamic(this, &USettingsWidget::OnGraphicsQualityChanged);
 	SEVolumeSlider->OnValueChanged.AddDynamic(this, &USettingsWidget::OnSEVolumeChanged);
+	PokemonCryVolumeSlider->OnValueChanged.AddDynamic(this, &USettingsWidget::OnPokemonCryVolumeChanged);
 	BGMVolumeSlider->OnValueChanged.AddDynamic(this, &USettingsWidget::OnBGMVolumeChanged);
 }

@@ -31,6 +31,18 @@ void UPokemonInceptionGameInstance::ChangeSEVolume(float NewValue)
 	SEClass->Properties.Volume = SEVolume;
 }
 
+void UPokemonInceptionGameInstance::ChangePokemonCryVolume(float NewValue)
+{
+	if (!IsValid(PokemonCryClass)) {
+		return;
+	}
+
+	PokemonCryVolume = NewValue;
+	GEngine->AddOnScreenDebugMessage(10, 1, FColor::Yellow, "PokemonCry Volume: " + FString::SanitizeFloat(PokemonCryVolume));
+
+	PokemonCryClass->Properties.Volume = PokemonCryVolume;
+}
+
 void UPokemonInceptionGameInstance::ChangeBGMVolume(float NewValue)
 {
 	if (!IsValid(BGMClass)) {
@@ -51,6 +63,11 @@ int UPokemonInceptionGameInstance::GetGraphicsQuality()
 float UPokemonInceptionGameInstance::GetSEVolume()
 {
 	return SEVolume;
+}
+
+float UPokemonInceptionGameInstance::GetPokemonCryVolume()
+{
+	return PokemonCryVolume;
 }
 
 float UPokemonInceptionGameInstance::GetBGMVolume()

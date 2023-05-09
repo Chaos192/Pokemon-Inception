@@ -94,6 +94,7 @@ void AOverworldHUD::BeginPlay()
 
 	SettingsWidget->GraphicsQualityChanged.AddDynamic(GameInstance, &UPokemonInceptionGameInstance::ChangeScalability);
 	SettingsWidget->SEVolumeChanged.AddDynamic(GameInstance, &UPokemonInceptionGameInstance::ChangeSEVolume);
+	SettingsWidget->PokemonCryVolumeChanged.AddDynamic(GameInstance, &UPokemonInceptionGameInstance::ChangePokemonCryVolume);
 	SettingsWidget->BGMVolumeChanged.AddDynamic(GameInstance, &UPokemonInceptionGameInstance::ChangeBGMVolume);
 
 	ShopWidget->BuyModeClicked.AddDynamic(this, &AOverworldHUD::ShowBuyShop);

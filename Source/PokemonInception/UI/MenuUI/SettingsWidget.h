@@ -29,6 +29,9 @@ private:
 	void OnSEVolumeChanged(float InValue);
 
 	UFUNCTION()
+	void OnPokemonCryVolumeChanged(float InValue);
+
+	UFUNCTION()
 	void OnBGMVolumeChanged(float InValue);
 
 protected:
@@ -42,6 +45,9 @@ protected:
 	class USlider* SEVolumeSlider;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class USlider* PokemonCryVolumeSlider;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class USlider* BGMVolumeSlider;
 
 	virtual void NativeConstruct() override;
@@ -53,5 +59,6 @@ public:
 
 	FValueUpdatedSignature GraphicsQualityChanged;
 	FValueUpdatedSignature SEVolumeChanged;
+	FValueUpdatedSignature PokemonCryVolumeChanged;
 	FValueUpdatedSignature BGMVolumeChanged;
 };

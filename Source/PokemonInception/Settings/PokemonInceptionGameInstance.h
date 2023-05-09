@@ -20,13 +20,19 @@ protected:
 	int GraphicsQualityValue = 1;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	float SEVolume = 2.0f;
+	float SEVolume = 1.f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	float BGMVolume = 2.0f;
+	float PokemonCryVolume = 1.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	float BGMVolume = 1.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	USoundClass* SEClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	USoundClass* PokemonCryClass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	USoundClass* BGMClass;
@@ -39,6 +45,9 @@ public:
 	void ChangeSEVolume(float NewValue);
 
 	UFUNCTION()
+	void ChangePokemonCryVolume(float NewValue);
+
+	UFUNCTION()
 	void ChangeBGMVolume(float NewValue);
 
 	UFUNCTION()
@@ -46,6 +55,9 @@ public:
 
 	UFUNCTION()
 	float GetSEVolume();
+
+	UFUNCTION()
+	float GetPokemonCryVolume();
 
 	UFUNCTION()
 	float GetBGMVolume();

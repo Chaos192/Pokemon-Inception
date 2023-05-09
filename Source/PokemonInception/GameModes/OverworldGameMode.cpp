@@ -222,21 +222,42 @@ void AOverworldGameMode::LoadLevelData()
 			APickupBase* PickUp = Cast<APickupBase>(Actor);
 
 			if (!LevelSaveData->PickUpsToDestroy.Contains(PickUp->ID)) {
-				GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "PickUp still exists, continuing");
+				//GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "PickUp still exists, continuing");
 				continue;
 			}
 
 			if (!IsValid(PickUp)) {
-				GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "PickUp is not valid, continuing");
+				//GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "PickUp is not valid, continuing");
 				continue;
 			}
 
-			GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "Destroying PickUp #" + PickUp->ID.ToString());
+			//GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "Destroying PickUp #" + PickUp->ID.ToString());
 			PickUp->Destroy();
 		}
 
 		for (auto& Spawner : LevelSaveData->PokemonSpawners) {
 			Spawner.Key->ManualGenerate(Spawner.Value);
+		}
+	}
+
+	else {
+		TArray<AActor*> PickUps;
+		TArray<FName> PickUpIDs;
+
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APickupBase::StaticClass(), PickUps);
+
+		for (AActor* Actor : PickUps) {
+			APickupBase* PickUp = Cast<APickupBase>(Actor);
+			if (!IsValid(PickUp)) {
+				continue;
+			}
+
+			if (PickUpIDs.Contains(PickUp->ID)) {
+				GEngine->AddOnScreenDebugMessage(68, 20, FColor::Red, "ERROR: There are more than 1 PickUps with ID #" + PickUp->ID.ToString());
+			}
+			else {
+				PickUpIDs.Add(PickUp->ID);
+			}
 		}
 	}
 }
