@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/TimelineComponent.h"
 #include "GameFramework/Character.h"
-#include "../Items/ItemBaseStruct.h"
+#include "Perception/PawnSensingComponent.h"
 #include "PokemonInceptionCharacter.generated.h"
 
 
@@ -35,6 +35,12 @@ public:
 	void ChangePositionInWorld(FVector Location, FRotator Rotation);
 	FVector GetCameraLocation();
 	FRotator GetCameraRotation();
+
+	UFUNCTION(Blueprintcallable)
+	void MakeFootstep(USoundBase* Sound, float Volume);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class UPawnNoiseEmitterComponent* PawnNoiseEmitter;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Input)
 	float TurnRateGamepad;

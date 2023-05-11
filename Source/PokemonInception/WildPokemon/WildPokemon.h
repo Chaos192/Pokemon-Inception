@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "../Pokemon/StaticOverworldPokemon.h"
 #include "../Pokemon/PokemonBaseStruct.h"
 #include "../Pokemon/PokemonStruct.h"
 #include "../Pokemon/StaticOverworldPokemon.h"

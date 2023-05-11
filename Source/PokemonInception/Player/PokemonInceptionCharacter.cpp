@@ -5,15 +5,19 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/ArrowComponent.h"
+#include "Components/PawnNoiseEmitterComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
+#include "Perception/AISense_Hearing.h"
 #include "PlayerCharacterController.h"
 #include "../UI/HUD/OverworldHUD.h"
 #include "../Interactables/InteractableInterface.h"
 #include "../GameModes/OverworldGameMode.h"
+#include "../WildPokemon/BlackBoard/AI_Tags.h"
 
 //////////////////////////////////////////////////////////////////////////
 // APokemonInceptionCharacter
@@ -53,6 +57,8 @@ APokemonInceptionCharacter::APokemonInceptionCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+
+	PawnNoiseEmitter = CreateDefaultSubobject<UPawnNoiseEmitterComponent>(TEXT("PawnNoiseEmitterComponent"));
 
 	SetupStimulus();
 	SetTickableWhenPaused(true);
@@ -104,6 +110,14 @@ FVector APokemonInceptionCharacter::GetCameraLocation()
 FRotator APokemonInceptionCharacter::GetCameraRotation()
 {
 	return FollowCamera->GetComponentRotation();
+}
+
+void APokemonInceptionCharacter::MakeFootstep(USoundBase* Sound, float Volume)
+{
+	if (Sound){
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound, GetActorLocation(), Volume);
+		UAISense_Hearing::ReportNoiseEvent(GetWorld(), GetActorLocation(), 1, this, 1000, AI_Tags::NoiseTag);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

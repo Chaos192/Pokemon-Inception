@@ -29,11 +29,14 @@ private:
 	class UBehaviorTree* BTree;
 
 	class UBlackboardComponent* BlackBoard;
-
 	class UAISenseConfig_Sight* Sight;
+	class UAISenseConfig_Hearing* Hearing;
 
 	UFUNCTION()
 	void PlayerDetected(AActor* Actor, FAIStimulus const Stimulus);
+
+	UFUNCTION()
+	void OnUpdated(TArray<AActor*> const& UpdatedActors);
 
 	void SetupPerception();
 	

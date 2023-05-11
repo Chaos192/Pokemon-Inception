@@ -2,18 +2,20 @@
 
 
 #include "WildPokemon_AIController.h"
-#include "BehaviorTree/BehaviorTreeComponent.h" 
 #include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BehaviorTreeComponent.h" 
 #include "BehaviorTree/BlackboardComponent.h"
 #include "UObject/ConstructorHelpers.h"
 #include "../Player/PokemonInceptionCharacter.h"
 #include "../GameModes/OverworldGameMode.h"
-#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "BlackBoard/BB_Keys.h"
-#include "Runtime/Engine/Classes/Engine/World.h"
+#include "BlackBoard/AI_Tags.h"
+#include "Kismet/GameplayStatics.h"
+#include "Engine/World.h"
 #include "GameFramework/Character.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
+#include "Perception/AISenseConfig_Hearing.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 
 
@@ -65,20 +67,53 @@ void AWildPokemon_AIController::PlayerDetected(AActor* actor, FAIStimulus const 
 	}
 }
 
+void AWildPokemon_AIController::OnUpdated(TArray<AActor*> const& UpdatedActors)
+{
+	for (AActor* Actor : UpdatedActors) {
+		FActorPerceptionBlueprintInfo Info;
+		GetPerceptionComponent()->GetActorsPerception(Actor, Info);
+
+		for (int i = 0; i < Info.LastSensedStimuli.Num(); i++) {
+			FAIStimulus const Stimuli = Info.LastSensedStimuli[i];
+
+			if (Stimuli.Tag == AI_Tags::NoiseTag) {
+				getBlackboard()->SetValueAsBool(bb_keys::IsInvestigating, Stimuli.WasSuccessfullySensed());
+				getBlackboard()->SetValueAsVector(bb_keys::targetLocation, Stimuli.StimulusLocation);
+			}
+			else {
+				getBlackboard()->SetValueAsBool(bb_keys::CanSeePlayer, Stimuli.WasSuccessfullySensed());
+			}
+		}
+	}
+}
+
 void AWildPokemon_AIController::SetupPerception()
 {
 	Sight = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
-	SetPerceptionComponent(*CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("Perception Component")));
-	Sight->SightRadius = 500.0f;
-	Sight->LoseSightRadius = Sight->SightRadius + 50.0f;
-	Sight->PeripheralVisionAngleDegrees = 135.0f;
-	Sight->SetMaxAge(5.0f);
-	Sight->AutoSuccessRangeFromLastSeenLocation = 10.0f;
-	Sight->DetectionByAffiliation.bDetectEnemies = true;
-	Sight->DetectionByAffiliation.bDetectFriendlies = true;
-	Sight->DetectionByAffiliation.bDetectNeutrals = true;
+	if (Sight) {
+		SetPerceptionComponent(*CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("Perception Component")));
+		Sight->SightRadius = 500.0f;
+		Sight->LoseSightRadius = Sight->SightRadius + 50.0f;
+		Sight->PeripheralVisionAngleDegrees = 135.0f;
+		Sight->SetMaxAge(5.0f);
+		Sight->AutoSuccessRangeFromLastSeenLocation = 520.0f;
+		Sight->DetectionByAffiliation.bDetectEnemies = true;
+		Sight->DetectionByAffiliation.bDetectFriendlies = true;
+		Sight->DetectionByAffiliation.bDetectNeutrals = true;
 
-	GetPerceptionComponent()->SetDominantSense(*Sight->GetSenseImplementation());
-	GetPerceptionComponent()->OnTargetPerceptionUpdated.AddDynamic(this, &AWildPokemon_AIController::PlayerDetected);
-	GetPerceptionComponent()->ConfigureSense(*Sight);
+		GetPerceptionComponent()->SetDominantSense(*Sight->GetSenseImplementation());
+		GetPerceptionComponent()->OnTargetPerceptionUpdated.AddDynamic(this, &AWildPokemon_AIController::PlayerDetected);
+		GetPerceptionComponent()->ConfigureSense(*Sight);
+	}
+	
+	Hearing = CreateDefaultSubobject<UAISenseConfig_Hearing>(TEXT("Hearing Config"));
+	if (Hearing) {
+		Hearing->HearingRange = 1500;
+		Hearing->DetectionByAffiliation.bDetectEnemies = true;
+		Hearing->DetectionByAffiliation.bDetectFriendlies = true;
+		Hearing->DetectionByAffiliation.bDetectNeutrals = true;
+
+		GetPerceptionComponent()->OnPerceptionUpdated.AddDynamic(this, &AWildPokemon_AIController::OnUpdated);
+		GetPerceptionComponent()->ConfigureSense(*Hearing);
+	}
 }
