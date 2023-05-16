@@ -14,6 +14,7 @@
 #include "../MenuUI/ShopWidget.h"
 #include "../MenuUI/PokemonStorageWidget.h"
 #include "../MenuUI/MoveManagerWidget.h"
+#include "../MenuUI/GuideMenuWidget.h"
 #include "../PokedexUI/PokedexSlotWidget.h"
 #include "../PokedexUI/PokedexInfoWidget.h"
 #include "../ItemUI/ItemSlotWidget.h"
@@ -24,6 +25,7 @@
 #include "../PopupUI/PopupSelectionWidget.h"
 #include "../MessageUI/TextBoxWidget.h"
 #include "../MessageUI/InGameWidget.h"
+#include "../GuideUI/GuideTopicWidget.h"
 
 #include "OverworldHUD.generated.h"
 
@@ -129,6 +131,12 @@ protected:
 	TSubclassOf<UPopupSelectionWidget> MoveManagerOperationWidgetClass;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<UGuideMenuWidget> GuideMenuWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	TArray<TSubclassOf<UGuideTopicWidget>> GuideTopicWidgetClasses;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> ButtonBlockerClass;
 
 	UPROPERTY()
@@ -202,6 +210,12 @@ protected:
 
 	UPROPERTY()
 	class UPopupSelectionWidget* MoveManagerOperationWidget;
+
+	UPROPERTY()
+	class UGuideMenuWidget* GuideMenuWidget;
+
+	UPROPERTY()
+	TArray<class UGuideTopicWidget*> GuideTopicWidgets;
 
 	UPROPERTY()
 	class UUserWidget* ButtonBlocker;
@@ -312,6 +326,12 @@ public:
 
 	UFUNCTION()
 	void ShowForgetPopup(int MoveID);
+
+	UFUNCTION()
+	void ShowGuideMenu();
+
+	UFUNCTION()
+	void ShowGuideTopic(int TopicID);
 
 	UFUNCTION()
 	void OnScreenMessage(FString Message);

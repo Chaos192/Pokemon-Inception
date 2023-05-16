@@ -27,11 +27,9 @@ void UItemInfoWidget::SetID(int InItemID)
 void UItemInfoWidget::SetUseButton(bool bUsable)
 {
 	if (bUsable) {
-		Use->SetColorAndOpacity(FLinearColor(0, 0, 0, 1));
-		Use->SetBackgroundColor(FLinearColor(0.5, 0.5, 0.5, 1));
+		Use->SetRenderOpacity(1);
 	}
 	else {
-		Use->SetColorAndOpacity(FLinearColor(0, 0, 0, 0));
-		Use->SetBackgroundColor(FLinearColor(0, 0, 0, 0));
+		Use->SetRenderOpacity(0);
 	}
 }

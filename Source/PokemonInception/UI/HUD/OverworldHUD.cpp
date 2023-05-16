@@ -35,36 +35,43 @@ void AOverworldHUD::BeginPlay()
 		return;
 	}
 
-	TextBoxWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TextBoxWidgetClass);
-	OnScreenMessageWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), OnScreenMessageWidgetClass);
-	AreaMessageWidget = CreateWidget<UTextBoxWidget>(UGameplayStatics::GetGameInstance(GetWorld()), AreaMessageWidgetClass);
-	InGameWidget = CreateWidget<UInGameWidget>(UGameplayStatics::GetGameInstance(GetWorld()), InGameWidgetClass);
-	ButtonBlocker = CreateWidget<UUserWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ButtonBlockerClass);
+	TextBoxWidget = CreateWidget<UTextBoxWidget>(GameInstance, TextBoxWidgetClass);
+	OnScreenMessageWidget = CreateWidget<UTextBoxWidget>(GameInstance, OnScreenMessageWidgetClass);
+	AreaMessageWidget = CreateWidget<UTextBoxWidget>(GameInstance, AreaMessageWidgetClass);
+	InGameWidget = CreateWidget<UInGameWidget>(GameInstance, InGameWidgetClass);
+	ButtonBlocker = CreateWidget<UUserWidget>(GameInstance, ButtonBlockerClass);
 
-	MenuWidget = CreateWidget<UMenuWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MenuWidgetClass);
-	PokedexWidget = CreateWidget<UPokedexWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokedexWidgetClass);
-	PokemonWidget = CreateWidget<UPokemonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonWidgetClass);
-	BagWidget = CreateWidget<UBagWidget>(UGameplayStatics::GetGameInstance(GetWorld()), BagWidgetClass);
-	TrainerCardWidget = CreateWidget<UTrainerCardWidget>(UGameplayStatics::GetGameInstance(GetWorld()), TrainerCardWidgetClass);
-	SettingsWidget = CreateWidget<USettingsWidget>(UGameplayStatics::GetGameInstance(GetWorld()), SettingsWidgetClass);
-	PokemonStorageWidget = CreateWidget<UPokemonStorageWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonStorageWidgetClass);
-	MoveManagerWidget = CreateWidget<UMoveManagerWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveManagerWidgetClass);
-	ShopWidget = CreateWidget<UShopWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ShopWidgetClass);
+	MenuWidget = CreateWidget<UMenuWidget>(GameInstance, MenuWidgetClass);
+	PokedexWidget = CreateWidget<UPokedexWidget>(GameInstance, PokedexWidgetClass);
+	PokemonWidget = CreateWidget<UPokemonWidget>(GameInstance, PokemonWidgetClass);
+	BagWidget = CreateWidget<UBagWidget>(GameInstance, BagWidgetClass);
+	TrainerCardWidget = CreateWidget<UTrainerCardWidget>(GameInstance, TrainerCardWidgetClass);
+	SettingsWidget = CreateWidget<USettingsWidget>(GameInstance, SettingsWidgetClass);
+	PokemonStorageWidget = CreateWidget<UPokemonStorageWidget>(GameInstance, PokemonStorageWidgetClass);
+	MoveManagerWidget = CreateWidget<UMoveManagerWidget>(GameInstance, MoveManagerWidgetClass);
+	ShopWidget = CreateWidget<UShopWidget>(GameInstance, ShopWidgetClass);
+	GuideMenuWidget = CreateWidget<UGuideMenuWidget>(GameInstance, GuideMenuWidgetClass);
 
-	PokedexInfoWidget = CreateWidget<UPokedexInfoWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokedexInfoWidgetClass);
+	PokedexInfoWidget = CreateWidget<UPokedexInfoWidget>(GameInstance, PokedexInfoWidgetClass);
 	
-	PokemonSummaryWidget = CreateWidget<UPokemonSummaryWidget>(UGameplayStatics::GetGameInstance(GetWorld()), PokemonSummaryWidgetClass);
-	SwapPositionWidget = CreateWidget<UPopupSelectionWidget>(UGameplayStatics::GetGameInstance(GetWorld()), SwapPositionWidgetClass);
-	UseItemWidget = CreateWidget<UPopupSelectionWidget>(UGameplayStatics::GetGameInstance(GetWorld()), UseItemWidgetClass);
-	MoveSelectionPopupWidget = CreateWidget<UMoveSelectionPopupWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveSelectionPopupWidgetClass);
+	PokemonSummaryWidget = CreateWidget<UPokemonSummaryWidget>(GameInstance, PokemonSummaryWidgetClass);
+	SwapPositionWidget = CreateWidget<UPopupSelectionWidget>(GameInstance, SwapPositionWidgetClass);
+	UseItemWidget = CreateWidget<UPopupSelectionWidget>(GameInstance, UseItemWidgetClass);
+	MoveSelectionPopupWidget = CreateWidget<UMoveSelectionPopupWidget>(GameInstance, MoveSelectionPopupWidgetClass);
 	
-	ItemInfoWidget = CreateWidget<UItemInfoWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ItemInfoWidgetClass);
-	ItemShopInfoWidget = CreateWidget<UItemShopInfoWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ItemShopInfoWidgetClass);
+	ItemInfoWidget = CreateWidget<UItemInfoWidget>(GameInstance, ItemInfoWidgetClass);
+	ItemShopInfoWidget = CreateWidget<UItemShopInfoWidget>(GameInstance, ItemShopInfoWidgetClass);
 
-	StorageOperationPopupWidget = CreateWidget<UStorageOperationPopup>(UGameplayStatics::GetGameInstance(GetWorld()), StorageOperationPopupClass);
-	ReleaseConfirmPopup = CreateWidget<UPopupSelectionWidget>(UGameplayStatics::GetGameInstance(GetWorld()), ReleaseConfirmPopupClass);
-	MoveInfoWidget = CreateWidget<UMoveInfoWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveInfoWidgetClass);
-	MoveManagerOperationWidget = CreateWidget<UPopupSelectionWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveManagerOperationWidgetClass);
+	StorageOperationPopupWidget = CreateWidget<UStorageOperationPopup>(GameInstance, StorageOperationPopupClass);
+	ReleaseConfirmPopup = CreateWidget<UPopupSelectionWidget>(GameInstance, ReleaseConfirmPopupClass);
+	MoveInfoWidget = CreateWidget<UMoveInfoWidget>(GameInstance, MoveInfoWidgetClass);
+	MoveManagerOperationWidget = CreateWidget<UPopupSelectionWidget>(GameInstance, MoveManagerOperationWidgetClass);
+
+	for (int i = 0; i < GuideTopicWidgetClasses.Num(); i++) {
+		UGuideTopicWidget* GuideTopicWidget = CreateWidget<UGuideTopicWidget>(GameInstance, GuideTopicWidgetClasses[i]);
+		GuideTopicWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ShowGuideMenu);
+		GuideTopicWidgets.Add(GuideTopicWidget);
+	}
 
 	GameMode->ShopMessageDelegate.AddDynamic(ShopWidget, &UShopWidget::ShowMoney);
 	GameMode->ItemSlotDelegate.AddDynamic(BagWidget, &UBagWidget::AddToItemBox);
@@ -91,6 +98,7 @@ void AOverworldHUD::BeginPlay()
 	ShopWidget->ExitClicked.AddDynamic(this, &AOverworldHUD::ClearAndUnpause);
 	PokemonStorageWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ClearAndUnpause);
 	MoveManagerWidget->BackClicked.AddDynamic(this, &AOverworldHUD::ClearAndUnpause);
+	GuideMenuWidget->ExitClicked.AddDynamic(this, &AOverworldHUD::ClearAndUnpause);
 
 	SettingsWidget->GraphicsQualityChanged.AddDynamic(GameInstance, &UPokemonInceptionGameInstance::ChangeScalability);
 	SettingsWidget->SEVolumeChanged.AddDynamic(GameInstance, &UPokemonInceptionGameInstance::ChangeSEVolume);
@@ -99,6 +107,13 @@ void AOverworldHUD::BeginPlay()
 
 	ShopWidget->BuyModeClicked.AddDynamic(this, &AOverworldHUD::ShowBuyShop);
 	ShopWidget->SellModeClicked.AddDynamic(this, &AOverworldHUD::ShowSellShop);
+
+	GuideMenuWidget->IslandClicked.AddDynamic(this, &AOverworldHUD::ShowGuideTopic);
+	GuideMenuWidget->NPCsClicked.AddDynamic(this, &AOverworldHUD::ShowGuideTopic);
+	GuideMenuWidget->ItemsClicked.AddDynamic(this, &AOverworldHUD::ShowGuideTopic);
+	GuideMenuWidget->WildPokemonClicked.AddDynamic(this, &AOverworldHUD::ShowGuideTopic);
+	GuideMenuWidget->BattlesClicked.AddDynamic(this, &AOverworldHUD::ShowGuideTopic);
+	GuideMenuWidget->TypesClicked.AddDynamic(this, &AOverworldHUD::ShowGuideTopic);
 
 	ItemInfoWidget->UseClicked.AddDynamic(GameMode, &AOverworldGameMode::SelectItem);
 
@@ -782,6 +797,31 @@ void AOverworldHUD::ShowForgetPopup(int MoveID)
 		MoveManagerOperationWidget->SetPositionInViewport(FVector2D(MouseX, MouseY), false);
 		Controller->bShowMouseCursor = true;
 		Controller->SetInputMode(FInputModeUIOnly());
+	}
+}
+
+void AOverworldHUD::ShowGuideMenu()
+{
+	Clear();
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (!IsValid(GameMode)) {
+		return;
+	}
+
+	if (PlayerOwner && GuideMenuWidget) {
+		GuideMenuWidget->AddToViewport();
+		PlayerOwner->bShowMouseCursor = true;
+		PlayerOwner->SetInputMode(FInputModeUIOnly());
+		GameMode->PauseGame(EPause::Pause);
+	}
+}
+
+void AOverworldHUD::ShowGuideTopic(int TopicID)
+{
+	Clear();
+
+	if (PlayerOwner && GuideTopicWidgets[TopicID]) {
+		GuideTopicWidgets[TopicID]->AddToViewport();
 	}
 }
 

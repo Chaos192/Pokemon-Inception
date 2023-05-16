@@ -2,6 +2,7 @@
 
 
 #include "Guide.h"
+#include "../../UI/HUD/OverworldHUD.h"
 
 AGuide::AGuide()
 {
@@ -10,5 +11,10 @@ AGuide::AGuide()
 
 void AGuide::Interact(APlayerController* PlayerController)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Emerald, "It's guiding time!");
+	AOverworldHUD* Hud = Cast<AOverworldHUD>(PlayerController->GetHUD());
+	if (!IsValid(Hud)) {
+		return;
+	}
+
+	Hud->ShowGuideMenu();
 }
