@@ -14,20 +14,6 @@ class POKEMONINCEPTION_API UPokemonInceptionGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 protected:
-	UGameUserSettings* GameSettings = nullptr;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	int GraphicsQualityValue = 1;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	float SEVolume = 1.f;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	float PokemonCryVolume = 1.f;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	float BGMVolume = 1.f;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	USoundClass* SEClass;
 

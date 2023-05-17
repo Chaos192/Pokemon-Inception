@@ -157,7 +157,6 @@ void AOverworldGameMode::SaveLevelData(AWildPokemon* PokemonToIgnore)
 	LevelSaveData = Cast<ULevelSaveData>(UGameplayStatics::LoadGameFromSlot("WorldSaveSlot", 0));
 
 	LevelSaveData->PokemonSpawners.Empty();
-
 	LevelSaveData->PlayerLocation = PlayerPawn->GetActorLocation();
 	LevelSaveData->PlayerRotation = PlayerPawn->GetActorRotation();
 
@@ -212,7 +211,6 @@ void AOverworldGameMode::LoadLevelData()
 		}
 		else {
 			PlayerPawn->ChangePositionInWorld(LevelSaveData->PlayerLocation, LevelSaveData->PlayerRotation);
-			
 		}
 
 		TArray<AActor*> PickUps;
@@ -222,16 +220,13 @@ void AOverworldGameMode::LoadLevelData()
 			APickupBase* PickUp = Cast<APickupBase>(Actor);
 
 			if (!LevelSaveData->PickUpsToDestroy.Contains(PickUp->ID)) {
-				//GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "PickUp still exists, continuing");
 				continue;
 			}
 
 			if (!IsValid(PickUp)) {
-				//GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "PickUp is not valid, continuing");
 				continue;
 			}
 
-			//GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "Destroying PickUp #" + PickUp->ID.ToString());
 			PickUp->Destroy();
 		}
 
