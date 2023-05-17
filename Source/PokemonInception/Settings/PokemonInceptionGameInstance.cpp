@@ -7,7 +7,7 @@
 
 void UPokemonInceptionGameInstance::ChangeScalability(float NewValue)
 {
-	/*UUserSaveData* UserSettings = Cast<UUserSaveData>(UGameUserSettings::GetGameUserSettings());
+	UUserSaveData* UserSettings = Cast<UUserSaveData>(UGameUserSettings::GetGameUserSettings());
 	if (!IsValid(UserSettings)) {
 		GEngine->AddOnScreenDebugMessage(12, 1, FColor::Red, "ERROR!!!");
 		return;
@@ -20,12 +20,12 @@ void UPokemonInceptionGameInstance::ChangeScalability(float NewValue)
 		UserSettings->SetOverallScalabilityLevel(GraphicsQualityValue);
 		UserSettings->ApplyNonResolutionSettings();
 		UserSettings->SaveSettings();
-	}*/
+	}
 }
 
 void UPokemonInceptionGameInstance::ChangeSEVolume(float NewValue)
 {
-	/*UUserSaveData* UserSettings = Cast<UUserSaveData>(UGameUserSettings::GetGameUserSettings());
+	UUserSaveData* UserSettings = Cast<UUserSaveData>(UGameUserSettings::GetGameUserSettings());
 	if (!IsValid(UserSettings)) {
 		return;
 	}
@@ -38,12 +38,12 @@ void UPokemonInceptionGameInstance::ChangeSEVolume(float NewValue)
 
 	UserSettings->SEVolume = NewValue;
 	UserSettings->SaveSettings();
-	SEClass->Properties.Volume = NewValue;*/
+	SEClass->Properties.Volume = NewValue;
 }
 
 void UPokemonInceptionGameInstance::ChangePokemonCryVolume(float NewValue)
 {
-	/*UUserSaveData* UserSettings = Cast<UUserSaveData>(UGameUserSettings::GetGameUserSettings());
+	UUserSaveData* UserSettings = Cast<UUserSaveData>(UGameUserSettings::GetGameUserSettings());
 	if (!IsValid(UserSettings)) {
 		return;
 	}
@@ -56,7 +56,7 @@ void UPokemonInceptionGameInstance::ChangePokemonCryVolume(float NewValue)
 
 	UserSettings->PokemonCryVolume = NewValue;
 	UserSettings->SaveSettings();
-	PokemonCryClass->Properties.Volume = NewValue;*/
+	PokemonCryClass->Properties.Volume = NewValue;
 }
 
 void UPokemonInceptionGameInstance::ChangeBGMVolume(float NewValue)
@@ -79,35 +79,35 @@ void UPokemonInceptionGameInstance::ChangeBGMVolume(float NewValue)
 
 int UPokemonInceptionGameInstance::GetGraphicsQuality()
 {
-	/*UUserSaveData* UserSettings = Cast<UUserSaveData>(UGameUserSettings::GetGameUserSettings());
+	UUserSaveData* UserSettings = Cast<UUserSaveData>(UGameUserSettings::GetGameUserSettings());
 	if (!IsValid(UserSettings)) {
 		return -1;
 	}
 
-	return UserSettings->GetOverallScalabilityLevel();*/
-	return -1;
+	return UserSettings->GetOverallScalabilityLevel();
+	//return -1;
 }
 
 float UPokemonInceptionGameInstance::GetSEVolume()
 {
-	/*UUserSaveData* UserSettings = Cast<UUserSaveData>(UGameUserSettings::GetGameUserSettings());
+	UUserSaveData* UserSettings = Cast<UUserSaveData>(UGameUserSettings::GetGameUserSettings());
 	if (!IsValid(UserSettings)) {
 		return -1;
 	}
 
-	return UserSettings->SEVolume;*/
-	return -1;
+	return UserSettings->SEVolume;
+	//return -1;
 }
 
 float UPokemonInceptionGameInstance::GetPokemonCryVolume()
 {
-	/*UUserSaveData* UserSettings = Cast<UUserSaveData>(UGameUserSettings::GetGameUserSettings());
+	UUserSaveData* UserSettings = Cast<UUserSaveData>(UGameUserSettings::GetGameUserSettings());
 	if (!IsValid(UserSettings)) {
 		return -1;
 	}
 
-	return UserSettings->PokemonCryVolume;*/
-	return -1;
+	return UserSettings->PokemonCryVolume;
+	//return -1;
 }
 
 float UPokemonInceptionGameInstance::GetBGMVolume()
