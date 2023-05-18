@@ -194,8 +194,9 @@ public:
 
 	FString GetMoveEffectiveness(ETypes MoveType);
 
-	UFUNCTION()
+	bool GetbIsOpponentTrainer();
 	FPokemonStruct GetCurrentOpponentStruct();
+	TArray<FPokemonStruct> GetOpponentTeam();
 
 	UFUNCTION()
 	int GetPlayerPokemonId();

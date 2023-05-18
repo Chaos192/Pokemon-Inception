@@ -9,6 +9,7 @@
 #include "Components/WrapBox.h"
 #include "../MoveUI/MoveButtonWidget.h"
 #include "../../Pokemon/TypeStruct.h"
+#include "../../Pokemon/StatusMoveStruct.h"
 #include "PokemonSummaryWidget.generated.h"
 
 
@@ -59,7 +60,7 @@ public:
 	void SetGeneralInfo(FText Name, FName Id, FString Type, int Level, int RequiredEXP);
 
 	UFUNCTION()
-	void SetStats(FString HP, int Attack, int Defence, int Speed);
+	void SetStats(FString HP, int Attack, int Defence, int Speed, TArray<EEffect> Effects);
 
 	UFUNCTION()
 	void AddMove(UMoveButtonWidget* Move);

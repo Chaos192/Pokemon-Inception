@@ -10,6 +10,15 @@
 #include "StatusMoveStruct.h"
 #include "PokemonStruct.generated.h"
 
+
+UENUM()
+enum class EPokemonStatus {
+	Alive,
+	Fainted,
+	None
+};
+
+
 USTRUCT(BlueprintType)
 struct FPokemonStruct
 {

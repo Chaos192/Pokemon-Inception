@@ -9,21 +9,21 @@
 
 void AStaticOverworldPokemon::Roar()
 {
-	if (RoarAnimMontage != nullptr) { 
+	if (RoarAnimMontage) { 
 		PlayAnimMontage(RoarAnimMontage, 1);
 	}
 }
 
 void AStaticOverworldPokemon::Attack()
 {
-	if (AttackAnimMontage != nullptr) {
+	if (AttackAnimMontage) {
 		PlayAnimMontage(AttackAnimMontage, 1);
 	}
 }
 
 void AStaticOverworldPokemon::GetDamaged()
 {
-	if (DamageAnimMontage != nullptr) {
+	if (DamageAnimMontage) {
 		PlayAnimMontage(DamageAnimMontage, 1);
 	}
 }
@@ -58,7 +58,7 @@ void AStaticOverworldPokemon::ComeOut(float Scale)
 
 void AStaticOverworldPokemon::ShowBallOpen()
 {
-	if (BallOpen != nullptr) {
+	if (BallOpen) {
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), BallOpen, GetActorLocation());
 	}
 }

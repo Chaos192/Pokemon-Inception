@@ -7,6 +7,7 @@
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
 #include "Components/Image.h"
+#include "Components/WrapBox.h"
 #include "../../Pokemon/PokemonStruct.h"
 #include "PokemonStatusWidget.generated.h"
 
@@ -38,6 +39,18 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UImage* SpeedStatus;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UWrapBox* PokemonTeamBox;
+
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D* AlivePokemonIcon;
+
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D* FaintedPokemonIcon;
+
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D* EmptyPokemonIcon;
+
 public:
 	UFUNCTION()
 	void SetPokemonName(FText Name);
@@ -50,4 +63,7 @@ public:
 
 	UFUNCTION()
 	void SetPokemonStatus(TArray<EEffect> Effects);
+
+	void SetPokemonTeamBox(TArray<EPokemonStatus> PokemonStatuses);
+	void ClearPokemonTeamBox();
 };

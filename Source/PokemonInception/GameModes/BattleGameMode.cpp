@@ -653,6 +653,7 @@ void ABattleGameMode::CatchSuccess()
 		return;
 	}
 
+	OpponentTeam[OpponentPokemonId].ClearEffects();
 	PlayerController->ObtainPokemon(OpponentTeam[OpponentPokemonId]);
 	Hud->ShowText(PlayerController->PlayerName + " caught " + OpponentTeam[OpponentPokemonId].SpeciesData.Name.ToString() + "!");
 	ThrownBallActor->CatchSuccess();
@@ -1302,8 +1303,18 @@ FString ABattleGameMode::GetMoveEffectiveness(ETypes MoveType)
 	return "Effective";
 }
 
+bool ABattleGameMode::GetbIsOpponentTrainer()
+{
+	return bIsOpponentTrainer;
+}
+
 FPokemonStruct ABattleGameMode::GetCurrentOpponentStruct() {
 	return OpponentTeam[OpponentPokemonId];
+}
+
+TArray<FPokemonStruct> ABattleGameMode::GetOpponentTeam()
+{
+	return OpponentTeam;
 }
 
 int ABattleGameMode::GetPlayerPokemonId() {

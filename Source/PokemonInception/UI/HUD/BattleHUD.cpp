@@ -252,7 +252,7 @@ void ABattleHUD::ShowPokemonSummary(int PokemonID)
 
 		PokemonSummaryWidget->SetImage(Pokemon.SpeciesData.Image);
 		PokemonSummaryWidget->SetGeneralInfo(Pokemon.SpeciesData.Name, Pokemon.SpeciesData.PokemonID, PokemonType, Pokemon.Level, (Pokemon.RequiredExp - Pokemon.CurrExp));
-		PokemonSummaryWidget->SetStats(PokemonHP, Pokemon.Attack, Pokemon.Defence, Pokemon.Speed);
+		PokemonSummaryWidget->SetStats(PokemonHP, Pokemon.Attack, Pokemon.Defence, Pokemon.Speed, Pokemon.Effects);
 
 		for (int i = 0; i < Pokemon.CurrentMoves.Num(); i++) {
 			UMoveButtonWidget* MoveButton = CreateWidget<UMoveButtonWidget>(UGameplayStatics::GetGameInstance(GetWorld()), MoveButtonWidgetClass);
@@ -400,6 +400,23 @@ void ABattleHUD::RefreshPlayerPokemonStatus()
 	PlayerPokemonStatusWidget->SetPokemonLevel(PokemonData.Level);
 	PlayerPokemonStatusWidget->SetPokemonName(PokemonData.SpeciesData.Name);
 	PlayerPokemonStatusWidget->SetPokemonStatus(PokemonData.Effects);
+
+	TArray<EPokemonStatus> PlayerPartyStatuses;
+
+	for (int i = 0; i < Controller->PokemonParty.Num(); i++) {
+		if (!Controller->PokemonParty[i].bIsFainted) {
+			PlayerPartyStatuses.Add(EPokemonStatus::Alive);
+		}
+		else {
+			PlayerPartyStatuses.Add(EPokemonStatus::Fainted);
+		}
+	}
+
+	for (int i = 0; i < (6 - Controller->PokemonParty.Num()); i++) {
+		PlayerPartyStatuses.Add(EPokemonStatus::None);
+	}
+
+	PlayerPokemonStatusWidget->SetPokemonTeamBox(PlayerPartyStatuses);
 }
 
 void ABattleHUD::RefreshOpponentPokemonStatus()
@@ -414,6 +431,29 @@ void ABattleHUD::RefreshOpponentPokemonStatus()
 	OpponentPokemonStatusWidget->SetPokemonLevel(PokemonData.Level);
 	OpponentPokemonStatusWidget->SetPokemonName(PokemonData.SpeciesData.Name);
 	OpponentPokemonStatusWidget->SetPokemonStatus(PokemonData.Effects);
+
+	if (!GameMode->GetbIsOpponentTrainer()) {
+		OpponentPokemonStatusWidget->ClearPokemonTeamBox();
+		return;
+	}
+
+	TArray<FPokemonStruct> OpponentTeam = GameMode->GetOpponentTeam();
+	TArray<EPokemonStatus> OpponentPartyStatuses;
+
+	for (int i = 0; i < OpponentTeam.Num(); i++) {
+		if (!OpponentTeam[i].bIsFainted) {
+			OpponentPartyStatuses.Add(EPokemonStatus::Alive);
+		}
+		else {
+			OpponentPartyStatuses.Add(EPokemonStatus::Fainted);
+		}
+	}
+
+	for (int i = 0; i < (6 - OpponentTeam.Num()); i++) {
+		OpponentPartyStatuses.Add(EPokemonStatus::None);
+	}
+
+	OpponentPokemonStatusWidget->SetPokemonTeamBox(OpponentPartyStatuses);
 }
 
 void ABattleHUD::ShowBattleStartWidget()

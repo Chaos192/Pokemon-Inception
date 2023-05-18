@@ -285,7 +285,7 @@ void AOverworldHUD::ShowPokemonSummary(int PokemonID)
 
 		PokemonSummaryWidget->SetImage(Pokemon.SpeciesData.Image);
 		PokemonSummaryWidget->SetGeneralInfo(Pokemon.SpeciesData.Name, Pokemon.SpeciesData.PokemonID, PokemonType, Pokemon.Level, (Pokemon.RequiredExp - Pokemon.CurrExp));
-		PokemonSummaryWidget->SetStats(PokemonHP, Pokemon.Attack, Pokemon.Defence, Pokemon.Speed);
+		PokemonSummaryWidget->SetStats(PokemonHP, Pokemon.Attack, Pokemon.Defence, Pokemon.Speed, Pokemon.Effects);
 
 
 		for (int i = 0; i < Pokemon.CurrentMoves.Num(); i++) {
