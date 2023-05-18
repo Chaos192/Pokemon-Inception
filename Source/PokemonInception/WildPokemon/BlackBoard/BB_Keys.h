@@ -8,4 +8,5 @@ namespace bb_keys {
 	TCHAR const* const originPoint = TEXT("OriginPoint");
 	TCHAR const* const CanSeePlayer = TEXT("CanSeePlayer");
 	TCHAR const* const IsInvestigating = TEXT("IsInvestigating");
+	TCHAR const* const PlayerJustSpotted = TEXT("PlayerJustSpotted");
 }

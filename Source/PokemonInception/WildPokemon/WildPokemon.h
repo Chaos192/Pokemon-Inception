@@ -31,9 +31,18 @@ public:
 	UFUNCTION()
 	void InitPokemon(UDataTable* PokemonDatatable, int Level, TArray<UDataTable*> MoveTables);
 
+	void ShowQuestion();
+	void ShowAlert();
+
 private:
 	UPROPERTY(EditDefaultsOnly)
 	FName PokemonID;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UNiagaraSystem* Question = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UNiagaraSystem* Alert = nullptr;
 
 	UFUNCTION()
 	void Collide(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

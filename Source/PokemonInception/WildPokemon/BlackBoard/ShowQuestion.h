@@ -4,15 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "StopInvestigating.generated.h"
+#include "ShowQuestion.generated.h"
 
 
 UCLASS()
-class POKEMONINCEPTION_API UStopInvestigating : public UBTTask_BlackboardBase
+class POKEMONINCEPTION_API UShowQuestion : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 	
 public:
-	UStopInvestigating();
+	UShowQuestion();
 	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemory);
 };

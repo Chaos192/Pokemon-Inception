@@ -3,6 +3,7 @@
 
 #include "StaticOverworldPokemon.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraFunctionLibrary.h"
 
@@ -76,7 +77,9 @@ void AStaticOverworldPokemon::CastMove(FMoveBaseStruct Move)
 void AStaticOverworldPokemon::GetSplashed(FMoveBaseStruct Move)
 {
 	if (Move.Particle) {
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), Move.Particle, GetActorLocation());
+		FVector SplashLocation = GetActorLocation();
+		SplashLocation.Z -= GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), Move.Particle, SplashLocation);
 	}
 
 	if (Move.Sound) {

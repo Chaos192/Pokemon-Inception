@@ -10,6 +10,7 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "UObject/ConstructorHelpers.h"
+#include "NiagaraFunctionLibrary.h"
 
 
 AWildPokemon::AWildPokemon()
@@ -47,6 +48,24 @@ void AWildPokemon::InitPokemon(UDataTable* PokemonDatatable, int Level, TArray<U
 	if (PokemonSpecies) {
 		Pokemon.Init(Level, *PokemonSpecies);
 		Pokemon.InitMoves(MoveTables);
+	}
+}
+
+void AWildPokemon::ShowQuestion()
+{
+	if (Question) {
+		FVector SplashLocation = GetActorLocation();
+		SplashLocation.Z += GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), Question, SplashLocation, GetActorRotation());
+	}
+}
+
+void AWildPokemon::ShowAlert()
+{
+	if (Alert) {
+		FVector SplashLocation = GetActorLocation();
+		SplashLocation.Z += GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), Alert, SplashLocation, GetActorRotation());
 	}
 }
 

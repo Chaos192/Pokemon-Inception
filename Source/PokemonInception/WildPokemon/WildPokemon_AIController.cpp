@@ -6,6 +6,7 @@
 #include "BehaviorTree/BehaviorTreeComponent.h" 
 #include "BehaviorTree/BlackboardComponent.h"
 #include "UObject/ConstructorHelpers.h"
+#include "WildPokemon.h"
 #include "../Player/PokemonInceptionCharacter.h"
 #include "../GameModes/OverworldGameMode.h"
 #include "BlackBoard/BB_Keys.h"
@@ -62,13 +63,29 @@ void AWildPokemon_AIController::PlayerDetected(AActor* actor, FAIStimulus const 
 		return;
 	}
 
-	if (APokemonInceptionCharacter* const Player = Cast<APokemonInceptionCharacter>(actor)) {
-		getBlackboard()->SetValueAsBool(bb_keys::CanSeePlayer, stimulus.WasSuccessfullySensed());
+	APokemonInceptionCharacter* Player = Cast<APokemonInceptionCharacter>(actor);
+	if (!IsValid(Player)) {
+		return;
 	}
+
+	if (!getBlackboard()->GetValueAsBool(bb_keys::CanSeePlayer)) {
+		getBlackboard()->SetValueAsBool(bb_keys::PlayerJustSpotted, stimulus.WasSuccessfullySensed());
+	}
+
+	getBlackboard()->SetValueAsBool(bb_keys::CanSeePlayer, stimulus.WasSuccessfullySensed());
 }
 
 void AWildPokemon_AIController::OnUpdated(TArray<AActor*> const& UpdatedActors)
 {
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (!IsValid(GameMode)) {
+		return;
+	}
+
+	if (GameMode->bIsPeacefulModeOn) {
+		return;
+	}
+
 	for (AActor* Actor : UpdatedActors) {
 		FActorPerceptionBlueprintInfo Info;
 		GetPerceptionComponent()->GetActorsPerception(Actor, Info);
@@ -89,10 +106,11 @@ void AWildPokemon_AIController::OnUpdated(TArray<AActor*> const& UpdatedActors)
 
 void AWildPokemon_AIController::SetupPerception()
 {
+	SetPerceptionComponent(*CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("Perception Component")));
+
 	Sight = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
 	if (Sight) {
-		SetPerceptionComponent(*CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("Perception Component")));
-		Sight->SightRadius = 500.0f;
+		Sight->SightRadius = 1000.0f;
 		Sight->LoseSightRadius = Sight->SightRadius + 50.0f;
 		Sight->PeripheralVisionAngleDegrees = 135.0f;
 		Sight->SetMaxAge(5.0f);
