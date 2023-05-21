@@ -16,9 +16,8 @@ class POKEMONINCEPTION_API UChasePlayer : public UBTTask_BlackboardBase
 
 public:
 	UChasePlayer();
-	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemory);
+	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory);
 
-private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SearchRadius = 500.0f;
 };

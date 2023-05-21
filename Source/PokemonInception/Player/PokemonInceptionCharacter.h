@@ -22,7 +22,6 @@ private:
 	UAnimMontage* ThrowAnimMontage = nullptr;
 
 	class UAIPerceptionStimuliSourceComponent* Stimulus;
-
 	void SetupStimulus();
 
 public:
@@ -33,14 +32,9 @@ public:
 	void Throw();
 
 	void ChangePositionInWorld(FVector Location, FRotator Rotation);
-	FVector GetCameraLocation();
-	FRotator GetCameraRotation();
 
 	UFUNCTION(Blueprintcallable)
 	void MakeFootstep(USoundBase* Sound, float Volume);
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	class UPawnNoiseEmitterComponent* PawnNoiseEmitter;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Input)
 	float TurnRateGamepad;

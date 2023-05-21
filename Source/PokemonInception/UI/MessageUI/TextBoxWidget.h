@@ -15,7 +15,7 @@ class POKEMONINCEPTION_API UTextBoxWidget : public UUserWidget
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* Message;
+	UTextBlock* Message;
 
 public:
 	UFUNCTION()

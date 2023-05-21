@@ -14,7 +14,7 @@ class POKEMONINCEPTION_API UGuideMenuWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-private:
+protected:
 	UFUNCTION()
 	void OnExitClicked();
 
@@ -36,27 +36,26 @@ private:
 	UFUNCTION()
 	void OnTypesClicked();
 
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Island;
+	UButton* Island;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* NPCs;
+	UButton* NPCs;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Items;
+	UButton* Items;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* WildPokemon;
+	UButton* WildPokemon;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Battles;
+	UButton* Battles;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Types;
+	UButton* Types;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Exit;
+	UButton* Exit;
 
 public:
 	virtual void NativeOnInitialized() override;

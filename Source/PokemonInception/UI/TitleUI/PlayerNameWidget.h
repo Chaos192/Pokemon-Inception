@@ -16,19 +16,18 @@ class POKEMONINCEPTION_API UPlayerNameWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-private:
+protected:
 	UFUNCTION()
 	void OnPlayClicked();
 
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Play;
+	UButton* Play;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UEditableTextBox* NameText;
+	UEditableTextBox* NameText;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* ErrorText;
+	UTextBlock* ErrorText;
 
 public:
 	virtual void NativeOnInitialized() override;

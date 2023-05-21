@@ -19,28 +19,28 @@ class POKEMONINCEPTION_API UPokemonStatusWidget : public UUserWidget
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* PokemonName;
+	UTextBlock* PokemonName;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* PokemonLevel;
+	UTextBlock* PokemonLevel;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* PokemonHP;
+	UTextBlock* PokemonHP;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UProgressBar* HPBar;
+	UProgressBar* HPBar;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UImage* AttackStatus;
+	UImage* AttackStatus;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UImage* DefenceStatus;
+	UImage* DefenceStatus;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UImage* SpeedStatus;
+	UImage* SpeedStatus;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UWrapBox* PokemonTeamBox;
+	UWrapBox* PokemonTeamBox;
 
 	UPROPERTY(EditDefaultsOnly)
 	UTexture2D* AlivePokemonIcon;
@@ -52,16 +52,9 @@ protected:
 	UTexture2D* EmptyPokemonIcon;
 
 public:
-	UFUNCTION()
 	void SetPokemonName(FText Name);
-
-	UFUNCTION()
 	void SetPokemonLevel(int Level);
-
-	UFUNCTION()
 	void SetPokemonHP(int CurrHP, int MaxHP);
-
-	UFUNCTION()
 	void SetPokemonStatus(TArray<EEffect> Effects);
 
 	void SetPokemonTeamBox(TArray<EPokemonStatus> PokemonStatuses);

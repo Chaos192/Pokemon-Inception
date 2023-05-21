@@ -42,6 +42,7 @@ void ABattleController::ObtainPokemon(FPokemonStruct Pokemon)
 	if (PokemonParty.Num() == 6) {
 		PokemonStorage.Add(Pokemon);
 	}
+
 	else PokemonParty.Add(Pokemon);
 }
 
@@ -57,5 +58,6 @@ bool ABattleController::bIsRegisteredInPokedex(FName ID)
 			return true;
 		}
 	}
+
 	return false;
 }

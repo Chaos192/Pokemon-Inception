@@ -10,30 +10,34 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 #include "BB_Keys.h"
 
-UFindRandomLocation::UFindRandomLocation(FObjectInitializer const& object_initializer)
+UFindRandomLocation::UFindRandomLocation()
 {
 	NodeName = TEXT("Find a random location");
 }
 
-EBTNodeResult::Type UFindRandomLocation::ExecuteTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemory)
+EBTNodeResult::Type UFindRandomLocation::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	auto const Controller = Cast<AWildPokemon_AIController>(ownerComp.GetAIOwner());
-	auto const NPC = Controller->GetPawn();
-
-	AWildPokemon* PossesedPokemon = Cast<AWildPokemon>(Controller->GetPawn());
-	if (IsValid(PossesedPokemon)) {
-		PossesedPokemon->GetCharacterMovement()->MaxWalkSpeed = PossesedPokemon->NormalSpeed;
+	AWildPokemon_AIController* Controller = Cast<AWildPokemon_AIController>(OwnerComp.GetAIOwner());
+	if (!IsValid(Controller)) {
+		return EBTNodeResult::Failed;
 	}
 
-	FVector const Origin = NPC->GetActorLocation();
-	FNavLocation Location;
+	AWildPokemon* PossesedPokemon = Cast<AWildPokemon>(Controller->GetPawn());
+	if (!IsValid(PossesedPokemon)) {
+		return EBTNodeResult::Failed;
+	}
+
+	PossesedPokemon->GetCharacterMovement()->MaxWalkSpeed = PossesedPokemon->NormalSpeed;
+
+	FVector OriginLocation = PossesedPokemon->GetActorLocation();
+	FNavLocation NewLocation;
 
 	UNavigationSystemV1* const NavigationSystem = UNavigationSystemV1::GetCurrent(GetWorld());
 
-	if (NavigationSystem->GetRandomPointInNavigableRadius(Origin, SearchRadius, Location, nullptr)) {
-		Controller->getBlackboard()->SetValueAsVector(bb_keys::targetLocation, Location.Location);
+	if (NavigationSystem->GetRandomPointInNavigableRadius(OriginLocation, SearchRadius, NewLocation, nullptr)) {
+		Controller->GetBlackboard()->SetValueAsVector(bb_keys::targetLocation, NewLocation.Location);
 	}
 
-	FinishLatentTask(ownerComp, EBTNodeResult::Succeeded);
+	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	return EBTNodeResult::Succeeded;
 }

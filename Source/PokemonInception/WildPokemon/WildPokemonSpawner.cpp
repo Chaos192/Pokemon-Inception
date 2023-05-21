@@ -95,6 +95,5 @@ void AWildPokemonSpawner::ManualGenerate(FWildPokemonData SaveData)
 
 		GameMode->PokemonInLevel.Add(SpawnedPokemon);
 	}
-	
 }
 

@@ -18,13 +18,13 @@ APokemonPickup::APokemonPickup()
 
 void APokemonPickup::Interact(APlayerController* Controller)
 {
-	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Controller);
-	if (!IsValid(PlayerController)) {
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
-	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
-	if (!IsValid(GameMode)) {
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Controller);
+	if (!IsValid(PlayerController)) {
 		return;
 	}
 

@@ -25,21 +25,21 @@ protected:
 	void OnCancelClicked();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Action;
+	UButton* Action;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Cancel;
+	UButton* Cancel;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* ActionText;
+	UTextBlock* ActionText;
 
 public:
 	virtual void NativeOnInitialized() override;
 
 	void SetActionText(FText Text);
+	
+	void SetId(int InId);
 
 	FElementIDSignature ActionClicked;
 	FButtonClicked CancelClicked;
-
-	void SetId(int InId);
 };

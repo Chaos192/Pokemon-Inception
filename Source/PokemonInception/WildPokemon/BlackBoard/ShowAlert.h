@@ -14,5 +14,5 @@ class POKEMONINCEPTION_API UShowAlert : public UBTTask_BlackboardBase
 	
 public:
 	UShowAlert();
-	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemory);
+	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory);
 };

@@ -49,14 +49,15 @@ public:
 
 	void SetFoundInteractable(AActor* Interactable);
 
+	int GetItemCount(FName ItemID);
+
+	bool bIsRegisteredInPokedex(FName ID);
+
 	UFUNCTION()
 	void ObtainItem(FItemBaseStruct Item);
 
 	UFUNCTION()
 	void LoseItem(FItemBaseStruct Item);
-
-	UFUNCTION()
-	int GetItemCount(FName ItemID);
 
 	UFUNCTION()
 	void ObtainPokemon(FPokemonStruct Pokemon);
@@ -83,9 +84,6 @@ public:
 	void RegisterToPokedex(FPokemonBaseStruct Species);
 
 	UFUNCTION()
-	bool bIsRegisteredInPokedex(FName ID);
-
-	UFUNCTION()
 	void FullRestoreAllPokemon();
 
 	FPauseSignature PauseDelegate;
@@ -96,9 +94,7 @@ protected:
 	AActor* FoundInteractable;
 
 	void Interact();
-
 	void ToggleMainMenu();
-
 	void TogglePeacefulMode();
 
 	virtual void SetupInputComponent() override;

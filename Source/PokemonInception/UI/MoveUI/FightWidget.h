@@ -17,11 +17,10 @@ class POKEMONINCEPTION_API UFightWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-private:
+protected:
 	UFUNCTION()
 	void OnBackClicked();
 
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* Back;
 
@@ -36,12 +35,10 @@ public:
 
 	UFUNCTION()
 	void AddToWrapBox(UMoveButtonWidget* MoveButton);
-
 	UFUNCTION()
 	void ShowMoveInfo(UMoveInfoWidget* MoveInfo);
 
 	void ClearWrapBox();
-
 	void ClearInfoBox();
 
 	FButtonClicked BackClicked;

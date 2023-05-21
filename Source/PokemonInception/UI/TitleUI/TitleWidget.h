@@ -14,7 +14,7 @@ class POKEMONINCEPTION_API UTitleWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-private:
+protected:
 	UFUNCTION()
 	void OnPlayClicked();
 
@@ -27,18 +27,17 @@ private:
 	UFUNCTION()
 	void OnResetClicked();
 
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Play;
+	UButton* Play;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Controlls;
+	UButton* Controlls;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Quit;
+	UButton* Quit;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Reset;
+	UButton* Reset;
 
 public:
 	virtual void NativeOnInitialized() override;

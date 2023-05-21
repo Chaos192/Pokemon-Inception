@@ -14,5 +14,5 @@ class POKEMONINCEPTION_API UStopInvestigating : public UBTTask_BlackboardBase
 	
 public:
 	UStopInvestigating();
-	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemory);
+	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory);
 };

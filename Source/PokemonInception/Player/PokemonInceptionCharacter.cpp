@@ -58,8 +58,6 @@ APokemonInceptionCharacter::APokemonInceptionCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	PawnNoiseEmitter = CreateDefaultSubobject<UPawnNoiseEmitterComponent>(TEXT("PawnNoiseEmitterComponent"));
-
 	SetupStimulus();
 	SetTickableWhenPaused(true);
 }
@@ -100,16 +98,6 @@ void APokemonInceptionCharacter::ChangePositionInWorld(FVector Location, FRotato
 	SetActorRotation(Rotation);
 
 	PlayerController->SetControlRotation(Rotation);
-}
-
-FVector APokemonInceptionCharacter::GetCameraLocation()
-{
-	return FollowCamera->GetComponentLocation();
-}
-
-FRotator APokemonInceptionCharacter::GetCameraRotation()
-{
-	return FollowCamera->GetComponentRotation();
 }
 
 void APokemonInceptionCharacter::MakeFootstep(USoundBase* Sound, float Volume)

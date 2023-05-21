@@ -25,7 +25,6 @@ private:
 	FTimerHandle ChangeSizeTimer;
 	FTimerDelegate ChangeSizeDelegate;
 
-protected:
 	UPROPERTY(EditDefaultsOnly)
 	UAnimMontage* RoarAnimMontage = nullptr;
 

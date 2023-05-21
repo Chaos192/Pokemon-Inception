@@ -16,6 +16,9 @@ class POKEMONINCEPTION_API ATitleGameMode : public AGameModeBase
 protected:
 	bool bIsNameValid(FString PlayerName);
 
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FString> BannedWords;
+
 public:
 	FErrorSignature ErrorDelegate;
 	FString ErrorMessage;

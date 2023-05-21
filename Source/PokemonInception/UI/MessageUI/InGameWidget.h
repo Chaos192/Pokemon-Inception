@@ -17,10 +17,10 @@ class POKEMONINCEPTION_API UInGameWidget : public UUserWidget
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* Message;
+	UTextBlock* Message;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UWrapBox* PickupMessageBox;
+	UWrapBox* PickupMessageBox;
 
 public:
 	UFUNCTION()

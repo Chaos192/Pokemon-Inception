@@ -19,5 +19,5 @@ public:
 	virtual void Interact(APlayerController* PlayerController) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int money;
+	int Money;
 };

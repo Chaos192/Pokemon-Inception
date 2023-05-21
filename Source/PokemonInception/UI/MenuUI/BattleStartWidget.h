@@ -14,7 +14,7 @@ class POKEMONINCEPTION_API UBattleStartWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-private:
+protected:
 	UFUNCTION()
 	void OnFightClicked();
 
@@ -27,18 +27,17 @@ private:
 	UFUNCTION()
 	void OnRunClicked();
 
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Fight;
+	UButton* Fight;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Pokemon;
+	UButton* Pokemon;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Bag;
+	UButton* Bag;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Run;
+	UButton* Run;
 
 public:
 	virtual void NativeOnInitialized() override;
@@ -47,5 +46,4 @@ public:
 	FButtonClicked PokemonClicked;
 	FButtonClicked BagClicked;
 	FButtonClicked RunClicked;
-	
 };

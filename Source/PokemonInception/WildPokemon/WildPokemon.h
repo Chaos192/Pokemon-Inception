@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameFramework/Character.h"
 #include "../Pokemon/PokemonBaseStruct.h"
 #include "../Pokemon/PokemonStruct.h"
-#include "../Pokemon/StaticOverworldPokemon.h"
 #include "WildPokemon.generated.h"
 
 
 UCLASS()
-class POKEMONINCEPTION_API AWildPokemon : public AStaticOverworldPokemon
+class POKEMONINCEPTION_API AWildPokemon : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -46,5 +46,4 @@ private:
 
 	UFUNCTION()
 	void Collide(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
 };

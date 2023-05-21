@@ -17,37 +17,31 @@ class POKEMONINCEPTION_API UItemSlotWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-private:
+protected:
+	int ItemID;
+
 	UFUNCTION()
 	void OnItemClicked();
 
-	int ItemID;
-
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* ItemButton;
+	UButton* ItemButton;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* ItemName;
+	UTextBlock* ItemName;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UImage* ItemImage;
+	UImage* ItemImage;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* ItemCount;
+	UTextBlock* ItemCount;
 
 public:
 	virtual void NativeOnInitialized() override;
 
 	void SetItemID(int InID);
 
-	UFUNCTION()
 	void SetItemName(FText Name);
-
-	UFUNCTION()
 	void SetItemImage(UTexture2D* Image);
-
-	UFUNCTION()
 	void SetItemCount(int Count);
 
 	FElementIDSignature ItemClicked;

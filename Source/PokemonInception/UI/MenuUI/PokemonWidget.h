@@ -17,31 +17,28 @@ class POKEMONINCEPTION_API UPokemonWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-private:
+protected:
 	UFUNCTION()
 	void OnBackClicked();
 
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Back;
+	UButton* Back;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UWrapBox* WrapBox;
+	UWrapBox* WrapBox;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UWrapBox* InfoWrapBox;
+	UWrapBox* InfoWrapBox;
 
 public:
 	virtual void NativeOnInitialized() override;
 
 	UFUNCTION()
 	void AddToWrapBox(UPokemonSlotWidget* PokemonWidget);
-
 	UFUNCTION()
 	void AddToInfoWrapBox(UPokemonSummaryWidget* PokemonSummaryWidget);
 
 	void ClearWrapBox();
-
 	void ClearSummaryBox();
 
 	FButtonClicked BackClicked;

@@ -17,31 +17,28 @@ class POKEMONINCEPTION_API UPokedexWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-private:
+protected:
 	UFUNCTION()
 	void OnBackClicked();
 
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Back;
+	UButton* Back;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UWrapBox* PokedexSlotBox;
+	UWrapBox* PokedexSlotBox;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UWrapBox* InfoBox;
+	UWrapBox* InfoBox;
 
 public:
 	virtual void NativeOnInitialized() override;
 
 	UFUNCTION()
 	void AddPokedexSlotToBox(UPokedexSlotWidget* PokedexSlot);
-
 	UFUNCTION()
 	void AddPokedexInfoToBox(UPokedexInfoWidget* PokedexInfo);
 
 	void ClearSlotBox();
-
 	void ClearInfoBox();
 
 	FButtonClicked BackClicked;

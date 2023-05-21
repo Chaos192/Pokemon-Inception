@@ -16,8 +16,6 @@ class POKEMONINCEPTION_API ANPCBase : public ACharacter, public IInteractableInt
 	GENERATED_BODY()
 
 public:
-	class UWidgetComponent* OverheadNameWidget;
-
 	UPROPERTY(EditDefaultsOnly)
 	FString Name;
 

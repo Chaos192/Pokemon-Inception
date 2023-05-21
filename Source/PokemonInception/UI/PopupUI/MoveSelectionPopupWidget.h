@@ -16,16 +16,15 @@ class POKEMONINCEPTION_API UMoveSelectionPopupWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-private:
+protected:
 	UFUNCTION()
 	void OnBackClicked();
 
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Back;
+	UButton* Back;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UWrapBox* WrapBox;
+	UWrapBox* WrapBox;
 
 public:
 	virtual void NativeOnInitialized() override;

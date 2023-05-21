@@ -15,20 +15,27 @@ UFindPlayerLocation::UFindPlayerLocation()
 	NodeName = TEXT("Find Player Location");
 }
 
-EBTNodeResult::Type UFindPlayerLocation::ExecuteTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemory)
+EBTNodeResult::Type UFindPlayerLocation::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	AWildPokemon_AIController* Controller = Cast<AWildPokemon_AIController>(ownerComp.GetAIOwner());
-	ACharacter* const Player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	AWildPokemon_AIController* Controller = Cast<AWildPokemon_AIController>(OwnerComp.GetAIOwner());
+	if (!IsValid(Controller)) {
+		return EBTNodeResult::Failed;
+	}
 
-	FVector const PlayerLocation = Player->GetActorLocation();
-	FNavLocation Location;
+	ACharacter* Player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	if (!IsValid(Player)) {
+		return EBTNodeResult::Failed;
+	}
+
+	FVector PlayerLocation = Player->GetActorLocation();
+	FNavLocation NewLocation;
 
 	UNavigationSystemV1* NavigationSystem = UNavigationSystemV1::GetCurrent(GetWorld());
 
-	if (NavigationSystem->GetRandomPointInNavigableRadius(PlayerLocation, SearchRadius, Location, nullptr)) {
-		Controller->getBlackboard()->SetValueAsVector(bb_keys::targetLocation, Location.Location);
+	if (NavigationSystem->GetRandomPointInNavigableRadius(PlayerLocation, SearchRadius, NewLocation, nullptr)) {
+		Controller->GetBlackboard()->SetValueAsVector(bb_keys::targetLocation, NewLocation.Location);
 	}
 
-	FinishLatentTask(ownerComp, EBTNodeResult::Succeeded);
+	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	return EBTNodeResult::Succeeded;
 }

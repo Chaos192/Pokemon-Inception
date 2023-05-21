@@ -12,11 +12,10 @@ class POKEMONINCEPTION_API UStorageOperationPopup : public UPopupSelectionWidget
 {
 	GENERATED_BODY()
 	
-private:
+protected:
 	UFUNCTION()
 	void OnOperationClicked();
 
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* Operation;
 

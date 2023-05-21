@@ -15,40 +15,35 @@ class POKEMONINCEPTION_API UTrainerCardWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-private:
+protected:
 	UFUNCTION()
 	void OnBackClicked();
 
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Back;
+	UButton* Back;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* PlayerName;
+	UTextBlock* PlayerName;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* SpeciesRegistered;
+	UTextBlock* SpeciesRegistered;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* PokemonCaught;
+	UTextBlock* PokemonCaught;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* MoneyObtained;
+	UTextBlock* MoneyObtained;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* TrainersDefeated;
+	UTextBlock* TrainersDefeated;
 
 public:
 	virtual void NativeOnInitialized() override;
 
 	void SetPlayerName(FString Name);
-
 	void SetRegisteredSpecies(int Num);
-
 	void SetPokemonCaught(int Num);
-
 	void SetMoneyObtained(int Num);
-
 	void SetTrainersDefeated(int Num);
 
 	FButtonClicked BackClicked;

@@ -143,6 +143,7 @@ void APlayerCharacterController::ObtainPokemon(FPokemonStruct Pokemon)
 	if (PokemonParty.Num() == 6) {
 		PokemonStorage.Add(Pokemon);
 	}
+
 	else PokemonParty.Add(Pokemon);
 }
 
@@ -158,8 +159,6 @@ void APlayerCharacterController::MovePokemonToParty(int PokemonID)
 		Hud->OnScreenMessage("Can't add more pokemon to your party!");
 		return;
 	}
-
-	GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "Adding " + PokemonStorage[PokemonID].SpeciesData.Name.ToString() + " to the party!");
 
 	PokemonParty.Add(PokemonStorage[PokemonID]);
 	PokemonStorage.RemoveAt(PokemonID);
@@ -180,8 +179,6 @@ void APlayerCharacterController::MovePokemonToStorage(int PokemonID)
 		return;
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "Adding " + PokemonParty[PokemonID].SpeciesData.Name.ToString() + " to the storage!");
-
 	PokemonStorage.Add(PokemonParty[PokemonID]);
 	PokemonParty.RemoveAt(PokemonID);
 
@@ -201,8 +198,6 @@ void APlayerCharacterController::ReleasePokemonFromParty(int PokemonID)
 		return;
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "Releasing " + PokemonParty[PokemonID].SpeciesData.Name.ToString() + ", who was in the party!");
-
 	PokemonParty.RemoveAt(PokemonID);
 
 	Hud->ShowPokemonStorage();
@@ -214,8 +209,6 @@ void APlayerCharacterController::ReleasePokemonFromStorage(int PokemonID)
 	if (!IsValid(Hud)) {
 		return;
 	}
-
-	GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, "Releasing " + PokemonStorage[PokemonID].SpeciesData.Name.ToString() + ", who was in the storage!");
 
 	PokemonStorage.RemoveAt(PokemonID);
 
@@ -275,8 +268,8 @@ void APlayerCharacterController::FullRestoreAllPokemon()
 {
 	for (int i = 0; i < PokemonParty.Num(); i++) {
 		PokemonParty[i].FullRestore();
-		GEngine->AddOnScreenDebugMessage(1, 1, FColor::Green, TEXT("RESTORED!"));
 	}
+
 	for (int i = 0; i < PokemonStorage.Num(); i++) {
 		PokemonStorage[i].FullRestore();
 	}

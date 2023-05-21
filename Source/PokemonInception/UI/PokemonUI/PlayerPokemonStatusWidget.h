@@ -14,9 +14,8 @@ class POKEMONINCEPTION_API UPlayerPokemonStatusWidget : public UPokemonStatusWid
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UProgressBar* EXPBar;
+	UProgressBar* EXPBar;
 
 public:
-	UFUNCTION()
 	void SetPokemonEXP(int CurrEXP, int MaxEXP);
 };

@@ -14,11 +14,10 @@ class POKEMONINCEPTION_API UControlsWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-private:
+protected:
 	UFUNCTION()
 	void OnBackClicked();
 
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* Back;
 

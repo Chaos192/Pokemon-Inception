@@ -19,25 +19,24 @@ public:
 
 	void OnPossess(APawn* const pawn) override;
 
-	class UBlackboardComponent* getBlackboard() const;
+	class UBlackboardComponent* GetBlackboard();
 
-private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UBehaviorTreeComponent* BTreeComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UBehaviorTree* BTree;
 
+private:
 	class UBlackboardComponent* BlackBoard;
 	class UAISenseConfig_Sight* Sight;
 	class UAISenseConfig_Hearing* Hearing;
+
+	void SetupPerception();
 
 	UFUNCTION()
 	void PlayerDetected(AActor* Actor, FAIStimulus const Stimulus);
 
 	UFUNCTION()
 	void OnUpdated(TArray<AActor*> const& UpdatedActors);
-
-	void SetupPerception();
-	
 };

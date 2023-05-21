@@ -15,7 +15,7 @@ class POKEMONINCEPTION_API UPickupMessageWidget : public UTextBoxWidget
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UImage* Image;
+	UImage* Image;
 
 public:
 	UFUNCTION()

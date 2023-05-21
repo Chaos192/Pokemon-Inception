@@ -85,7 +85,6 @@ int UPokemonInceptionGameInstance::GetGraphicsQuality()
 	}
 
 	return UserSettings->GetOverallScalabilityLevel();
-	//return -1;
 }
 
 float UPokemonInceptionGameInstance::GetSEVolume()
@@ -96,7 +95,6 @@ float UPokemonInceptionGameInstance::GetSEVolume()
 	}
 
 	return UserSettings->SEVolume;
-	//return -1;
 }
 
 float UPokemonInceptionGameInstance::GetPokemonCryVolume()
@@ -107,7 +105,6 @@ float UPokemonInceptionGameInstance::GetPokemonCryVolume()
 	}
 
 	return UserSettings->PokemonCryVolume;
-	//return -1;
 }
 
 float UPokemonInceptionGameInstance::GetBGMVolume()
@@ -118,6 +115,5 @@ float UPokemonInceptionGameInstance::GetBGMVolume()
 	}
 
 	return UserSettings->BGMVolume;
-	//return -1;
 }
 

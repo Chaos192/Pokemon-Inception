@@ -18,7 +18,7 @@ class POKEMONINCEPTION_API USettingsWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-private:
+protected:
 	UFUNCTION()
 	void OnBackClicked();
 
@@ -34,21 +34,20 @@ private:
 	UFUNCTION()
 	void OnBGMVolumeChanged(float InValue);
 
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Back;
+	UButton* Back;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class USlider* GraphicsQualitySlider;
+	USlider* GraphicsQualitySlider;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class USlider* SEVolumeSlider;
+	USlider* SEVolumeSlider;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class USlider* PokemonCryVolumeSlider;
+	USlider* PokemonCryVolumeSlider;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class USlider* BGMVolumeSlider;
+	USlider* BGMVolumeSlider;
 
 	virtual void NativeConstruct() override;
 

@@ -19,31 +19,28 @@ class POKEMONINCEPTION_API UBagWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-private:
+protected:
 	UFUNCTION()
 	void OnBackClicked();
 
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Back;
+	UButton* Back;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UScrollBox* ItemBox;
+	UScrollBox* ItemBox;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UWrapBox* InfoBox;
+	UWrapBox* InfoBox;
 
 public:
 	virtual void NativeOnInitialized() override;
 
 	UFUNCTION()
 	void AddToItemBox(UItemSlotWidget* ItemWidget);
-
-	void ClearItemBox();
-
 	UFUNCTION()
 	void ShowInfo(UItemInfoWidget* ItemInfoWidget);
-
+	
+	void ClearItemBox();
 	void ClearInfoBox();
 
 	FButtonClicked BackClicked;

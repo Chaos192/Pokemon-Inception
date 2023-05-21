@@ -17,27 +17,23 @@ class POKEMONINCEPTION_API UPokedexSlotWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-private:
+protected:
+	FName ID;
+
 	UFUNCTION()
 	void OnSlotClicked();
 
-	FName ID;
-
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* SlotButton;
+	UButton* SlotButton;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UImage* PokemonImage;
+	UImage* PokemonImage;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* PokemonID;
+	UTextBlock* PokemonID;
 
 public:
-	UFUNCTION()
 	void InitEmptySlot(FName InID);
-
-	UFUNCTION()
 	void InitFilledSlot(FPokemonBaseStruct PokedexData);
 	
 	FPokedexIDSignature SlotClicked;

@@ -20,51 +20,43 @@ class POKEMONINCEPTION_API UPokemonSummaryWidget : public UUserWidget
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UImage* PokemonImage;
+	UImage* PokemonImage;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* PokemonName;
+	UTextBlock* PokemonName;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* PokemonID;
+	UTextBlock* PokemonID;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* PokemonType;
+	UTextBlock* PokemonType;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* PokemonLevel;
+	UTextBlock* PokemonLevel;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* EXPRequired;
+	UTextBlock* EXPRequired;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* PokemonHP;
+	UTextBlock* PokemonHP;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* PokemonAttack;
+	UTextBlock* PokemonAttack;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* PokemonDefence;
+	UTextBlock* PokemonDefence;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* PokemonSpeed;
+	UTextBlock* PokemonSpeed;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UWrapBox* MoveWrapBox;
+	UWrapBox* MoveWrapBox;
 
 public:
-	UFUNCTION()
 	void SetImage(UTexture2D* Image);
-
-	UFUNCTION()
 	void SetGeneralInfo(FText Name, FName Id, FString Type, int Level, int RequiredEXP);
-
-	UFUNCTION()
 	void SetStats(FString HP, int Attack, int Defence, int Speed, TArray<EEffect> Effects);
-
-	UFUNCTION()
 	void AddMove(UMoveButtonWidget* Move);
-
-	UFUNCTION()
+	
 	void ClearMoves();
 };

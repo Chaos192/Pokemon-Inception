@@ -19,21 +19,20 @@ public:
 	class AWildPokemon* SpawnedPokemon = nullptr;
 
 	virtual void Tick(float DeltaTime) override;
-	virtual void Generate();
-
+	
+	void Generate();
 	void ManualGenerate(FWildPokemonData SaveData);
 
 	UFUNCTION()
 	void ClearPokemonReference(AActor* Pokemon);
 
-protected:
+private:
 	UPROPERTY(EditAnywhere)
 	int MinLevel = 1;
 
 	UPROPERTY(EditAnywhere)
 	int MaxLevel = 1;
 
-private:
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<class AWildPokemon>> PokemonToSpawn;
 };

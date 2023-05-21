@@ -15,39 +15,32 @@ class POKEMONINCEPTION_API UItemShopInfoWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-private:
+protected:
 	int ItemID;
 
 	UFUNCTION()
 	void OnOperationClicked();
 
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Operation;
+	UButton* Operation;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* OperationText;
+	UTextBlock* OperationText;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* DescriptionText;
+	UTextBlock* DescriptionText;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* PriceText;
+	UTextBlock* PriceText;
 
 public:
 	virtual void NativeOnInitialized() override;
 
-	UFUNCTION()
-	void SetOperation(FString OperationName);
-
-	UFUNCTION()
-	void SetDescription(FText Description);
-
-	UFUNCTION()
-	void SetPrice(int Price);
-
-	UFUNCTION()
 	void SetID(int InItemID);
+
+	void SetOperation(FString OperationName);
+	void SetDescription(FText Description);
+	void SetPrice(int Price);
 
 	FElementIDSignature OperationClicked;
 };

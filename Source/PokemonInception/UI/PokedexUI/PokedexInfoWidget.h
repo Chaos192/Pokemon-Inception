@@ -17,21 +17,20 @@ class POKEMONINCEPTION_API UPokedexInfoWidget : public UUserWidget
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UImage* PokemonImage;
+	UImage* PokemonImage;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* PokemonName;
+	UTextBlock* PokemonName;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* PokemonID;
+	UTextBlock* PokemonID;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* PokemonType;
+	UTextBlock* PokemonType;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* DescriptionText;
+	UTextBlock* DescriptionText;
 
 public:
-	UFUNCTION()
 	void SetPokedexInfo(FPokemonBaseStruct SpeciesData, FString Type);
 };

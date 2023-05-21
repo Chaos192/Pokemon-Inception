@@ -697,15 +697,6 @@ void AOverworldGameMode::PlayEncounterSequence()
 
 	if (SequencePlayer && EncounterSequence){	
 		SequencePlayer->Play();
-
-		TArray<AActor*> CameraActorsToFind;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), CameraClass, CameraActorsToFind);
-
-		for (AActor* CameraActor : CameraActorsToFind) {
-			GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, "Camera change possition");
-			CameraActor->SetActorLocation(PlayerPawn->GetCameraLocation());
-			CameraActor->SetActorRotation(PlayerPawn->GetCameraRotation());
-		}
 	}
 }
 

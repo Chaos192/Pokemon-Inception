@@ -13,9 +13,9 @@ UShowAlert::UShowAlert()
 	NodeName = TEXT("Show Alert");
 }
 
-EBTNodeResult::Type UShowAlert::ExecuteTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemory)
+EBTNodeResult::Type UShowAlert::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	AWildPokemon_AIController* Controller = Cast<AWildPokemon_AIController>(ownerComp.GetAIOwner());
+	AWildPokemon_AIController* Controller = Cast<AWildPokemon_AIController>(OwnerComp.GetAIOwner());
 	if (!IsValid(Controller)) {
 		return EBTNodeResult::Failed;
 	}
@@ -26,7 +26,7 @@ EBTNodeResult::Type UShowAlert::ExecuteTask(UBehaviorTreeComponent& ownerComp, u
 	}
 
 	PossesedPokemon->ShowAlert();
-	Controller->getBlackboard()->SetValueAsBool(bb_keys::PlayerJustSpotted, false);
-	FinishLatentTask(ownerComp, EBTNodeResult::Succeeded);
+	Controller->GetBlackboard()->SetValueAsBool(bb_keys::PlayerJustSpotted, false);
+	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	return EBTNodeResult::Succeeded;
 }

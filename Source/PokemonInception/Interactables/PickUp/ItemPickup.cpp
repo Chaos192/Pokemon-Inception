@@ -20,18 +20,18 @@ AItemPickup::AItemPickup()
 
 void AItemPickup::Interact(APlayerController* Controller)
 {
-	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Controller);
-	if (PlayerController == nullptr) {
+	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
+	if (!IsValid(GameMode)) {
 		return;
 	}
 
-	AOverworldGameMode* GameMode = Cast<AOverworldGameMode>(GetWorld()->GetAuthGameMode());
-	if (GameMode == nullptr) {
+	APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Controller);
+	if (!IsValid(PlayerController)) {
 		return;
 	}
-	
+
 	AOverworldHUD* Hud = Cast<AOverworldHUD>(PlayerController->GetHUD());
-	if (Hud == nullptr) {
+	if (!IsValid(Hud)) {
 		return;
 	}
 		

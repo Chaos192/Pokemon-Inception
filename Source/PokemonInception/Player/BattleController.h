@@ -36,21 +36,13 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	int TrainersDefeated;
 
-	UFUNCTION()
+	
 	bool bIsPartyDefeated();
-
-	UFUNCTION()
 	bool bCanObtainMorePokemon();
+	bool bIsRegisteredInPokedex(FName ID);
 
-	UFUNCTION()
 	int GetLeadPokemon();
 
-	UFUNCTION()
 	void ObtainPokemon(FPokemonStruct Pokemon);
-
-	UFUNCTION()
 	void RegisterToPokedex(FPokemonBaseStruct Species);
-
-	UFUNCTION()
-	bool bIsRegisteredInPokedex(FName ID);
 };

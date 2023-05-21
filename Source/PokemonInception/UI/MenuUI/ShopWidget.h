@@ -19,7 +19,7 @@ class POKEMONINCEPTION_API UShopWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-private:
+protected:
 	UFUNCTION()
 	void OnExitClicked();
 
@@ -29,35 +29,32 @@ private:
 	UFUNCTION()
 	void OnSellModeClicked();
 
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Exit;
+	UButton* Exit;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* BuyMode;
+	UButton* BuyMode;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* SellMode;
+	UButton* SellMode;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UScrollBox* ItemBox;
+	UScrollBox* ItemBox;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UWrapBox* InfoBox;
+	UWrapBox* InfoBox;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* Money;
+	UTextBlock* Money;
 
 public:
 	virtual void NativeOnInitialized() override;
 
 	UFUNCTION()
 	void DisplayInShop(UItemSlotWidget* ItemWidget);
-
 	UFUNCTION()
 	void ShowShopInfo(UItemShopInfoWidget* InfoWidget);
 
-	UFUNCTION()
 	void ShowMoney(FString Message);
 
 	void ClearShop();

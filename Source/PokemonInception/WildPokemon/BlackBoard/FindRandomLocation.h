@@ -17,11 +17,9 @@ class POKEMONINCEPTION_API UFindRandomLocation : public UBTTask_BlackboardBase
 	GENERATED_BODY()
 
 public:
-	UFindRandomLocation(FObjectInitializer const& object_initializer);
-	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemory);
+	UFindRandomLocation();
+	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory);
 
-private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SearchRadius = 1500.0f;
-	
 };

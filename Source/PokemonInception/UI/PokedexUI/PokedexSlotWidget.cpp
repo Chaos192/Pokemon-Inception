@@ -18,6 +18,7 @@ void UPokedexSlotWidget::InitFilledSlot(FPokemonBaseStruct PokedexData)
 	ID = PokedexData.PokemonID;
 	PokemonID->SetText(FText::FromName(PokedexData.PokemonID));
 	PokemonImage->SetBrushFromTexture(PokedexData.Image);
+
 	SlotButton->OnClicked.AddDynamic(this, &UPokedexSlotWidget::OnSlotClicked);
 }
 

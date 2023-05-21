@@ -47,7 +47,7 @@ void AWildPokemon_AIController::OnPossess(APawn* const pawn)
 	}
 }
 
-UBlackboardComponent* AWildPokemon_AIController::getBlackboard() const
+UBlackboardComponent* AWildPokemon_AIController::GetBlackboard()
 {
 	return BlackBoard;
 }
@@ -68,11 +68,11 @@ void AWildPokemon_AIController::PlayerDetected(AActor* actor, FAIStimulus const 
 		return;
 	}
 
-	if (!getBlackboard()->GetValueAsBool(bb_keys::CanSeePlayer)) {
-		getBlackboard()->SetValueAsBool(bb_keys::PlayerJustSpotted, stimulus.WasSuccessfullySensed());
+	if (!BlackBoard->GetValueAsBool(bb_keys::CanSeePlayer)) {
+		BlackBoard->SetValueAsBool(bb_keys::PlayerJustSpotted, stimulus.WasSuccessfullySensed());
 	}
 
-	getBlackboard()->SetValueAsBool(bb_keys::CanSeePlayer, stimulus.WasSuccessfullySensed());
+	BlackBoard->SetValueAsBool(bb_keys::CanSeePlayer, stimulus.WasSuccessfullySensed());
 }
 
 void AWildPokemon_AIController::OnUpdated(TArray<AActor*> const& UpdatedActors)
@@ -94,11 +94,11 @@ void AWildPokemon_AIController::OnUpdated(TArray<AActor*> const& UpdatedActors)
 			FAIStimulus const Stimuli = Info.LastSensedStimuli[i];
 
 			if (Stimuli.Tag == AI_Tags::NoiseTag) {
-				getBlackboard()->SetValueAsBool(bb_keys::IsInvestigating, Stimuli.WasSuccessfullySensed());
-				getBlackboard()->SetValueAsVector(bb_keys::targetLocation, Stimuli.StimulusLocation);
+				BlackBoard->SetValueAsBool(bb_keys::IsInvestigating, Stimuli.WasSuccessfullySensed());
+				BlackBoard->SetValueAsVector(bb_keys::targetLocation, Stimuli.StimulusLocation);
 			}
 			else {
-				getBlackboard()->SetValueAsBool(bb_keys::CanSeePlayer, Stimuli.WasSuccessfullySensed());
+				BlackBoard->SetValueAsBool(bb_keys::CanSeePlayer, Stimuli.WasSuccessfullySensed());
 			}
 		}
 	}

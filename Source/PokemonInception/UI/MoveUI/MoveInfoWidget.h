@@ -17,33 +17,25 @@ class POKEMONINCEPTION_API UMoveInfoWidget : public UUserWidget
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* MoveName;
+	UTextBlock* MoveName;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* MoveType;
+	UTextBlock* MoveType;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* MovePower;
+	UTextBlock* MovePower;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* MoveDescription;
+	UTextBlock* MoveDescription;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UBorder* WidgetBorder;
+	UBorder* WidgetBorder;
 
 public:
-	UFUNCTION()
 	void SetMoveName(FText Name);
-
-	UFUNCTION()
 	void SetMoveType(FText Type);
-
-	UFUNCTION()
 	void SetMovePower(FText Power);
-
-	UFUNCTION()
 	void SetMoveDescription(FText Description);
 
-	UFUNCTION()
 	void SetWidgetColor(ETypes Type);
 };

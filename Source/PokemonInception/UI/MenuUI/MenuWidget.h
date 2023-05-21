@@ -14,7 +14,7 @@ class POKEMONINCEPTION_API UMenuWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-private:
+protected:
 	UFUNCTION()
 	void OnPokedexClicked();
 
@@ -33,28 +33,27 @@ private:
 	UFUNCTION()
 	void OnSaveClicked();
 
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Pokedex;
+	UButton* Pokedex;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Pokemon;
+	UButton* Pokemon;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Bag;
+	UButton* Bag;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* TrainerCard;
+	UButton* TrainerCard;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Settings;
+	UButton* Settings;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Save;
-
-	void NativeOnInitialized() override;
+	UButton* Save;
 
 public:
+	void NativeOnInitialized() override;
+
 	FButtonClicked PokedexClicked;
 	FButtonClicked PokemonClicked;
 	FButtonClicked BagClicked;

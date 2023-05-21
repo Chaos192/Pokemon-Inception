@@ -14,13 +14,12 @@ class POKEMONINCEPTION_API UGuideTopicWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-private:
+protected:
 	UFUNCTION()
 	void OnBackClicked();
 
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Back;
+	UButton* Back;
 
 public:
 	virtual void NativeOnInitialized() override;

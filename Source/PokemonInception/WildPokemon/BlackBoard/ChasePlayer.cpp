@@ -14,18 +14,23 @@ UChasePlayer::UChasePlayer()
 	NodeName = TEXT("Chase Player");
 }
 
-EBTNodeResult::Type UChasePlayer::ExecuteTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemory)
+EBTNodeResult::Type UChasePlayer::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	AWildPokemon_AIController* Controller = Cast<AWildPokemon_AIController>(ownerComp.GetAIOwner());
-	FVector const PlayerLocation = Controller->getBlackboard()->GetValueAsVector(bb_keys::targetLocation);
+	AWildPokemon_AIController* Controller = Cast<AWildPokemon_AIController>(OwnerComp.GetAIOwner());
+	if (!IsValid(Controller)) {
+		return EBTNodeResult::Failed;
+	}
 
 	AWildPokemon* PossesedPokemon = Cast<AWildPokemon>(Controller->GetPawn());
-	if (IsValid(PossesedPokemon)) {
-		PossesedPokemon->GetCharacterMovement()->MaxWalkSpeed = PossesedPokemon->RunningSpeed;
+	if (!IsValid(PossesedPokemon)) {
+		return EBTNodeResult::Failed;
 	}
+
+	FVector PlayerLocation = Controller->GetBlackboard()->GetValueAsVector(bb_keys::targetLocation);
+	PossesedPokemon->GetCharacterMovement()->MaxWalkSpeed = PossesedPokemon->RunningSpeed;
 
 	UAIBlueprintHelperLibrary::SimpleMoveToLocation(Controller, PlayerLocation);
 
-	FinishLatentTask(ownerComp, EBTNodeResult::Succeeded);
+	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	return EBTNodeResult::Succeeded;
 }

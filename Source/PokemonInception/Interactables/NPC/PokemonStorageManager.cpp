@@ -14,7 +14,7 @@ APokemonStorageManager::APokemonStorageManager()
 void APokemonStorageManager::Interact(APlayerController* PlayerController)
 {
 	AOverworldHUD* Hud = Cast<AOverworldHUD>(PlayerController->GetHUD());
-	if (Hud == nullptr) {
+	if (!IsValid(Hud)) {
 		return;
 	}
 

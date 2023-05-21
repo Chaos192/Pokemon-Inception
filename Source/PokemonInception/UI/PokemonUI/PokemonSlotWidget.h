@@ -17,54 +17,43 @@ class POKEMONINCEPTION_API UPokemonSlotWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-private:
+protected:
+	int PokemonID;
+
 	UFUNCTION()
 	void OnPokemonClicked();
 
-	int PokemonID;
-
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* PokemonButton;
+	UButton* PokemonButton;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UImage* PokemonImage;
+	UImage* PokemonImage;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* PokemonName;
+	UTextBlock* PokemonName;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* PokemonLevel;
+	UTextBlock* PokemonLevel;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* PokemonHP;
+	UTextBlock* PokemonHP;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UProgressBar* HPBar;
+	UProgressBar* HPBar;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UProgressBar* EXPBar;
+	UProgressBar* EXPBar;
 
 public:
 	virtual void NativeOnInitialized() override;
 
-	UFUNCTION()
-	void SetPokemonName(FText Name);
-
-	UFUNCTION()
-	void SetPokemonLevel(int Level);
-
-	UFUNCTION()
-	void SetPokemonImage(UTexture2D* Image);
-
-	UFUNCTION()
-	void SetPokemonHP(int CurrHP, int MaxHP);
-
-	UFUNCTION()
-	void SetPokemonEXP(int CurrExp, int MaxExp);
-
-	UFUNCTION()
 	void SetPokemon(int InPokemonID);
+
+	void SetPokemonName(FText Name);
+	void SetPokemonLevel(int Level);
+	void SetPokemonImage(UTexture2D* Image);
+	void SetPokemonHP(int CurrHP, int MaxHP);
+	void SetPokemonEXP(int CurrExp, int MaxExp);
 
 	FElementIDSignature PokemonClick;
 };

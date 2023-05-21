@@ -22,6 +22,14 @@ bool ATitleGameMode::bIsNameValid(FString PlayerName)
 		return false;
 	}
 
+	for (FString Word : BannedWords) {
+		if (PlayerName.Contains(Word)) {
+			ErrorMessage = "This name contains inappropriate language!";
+			ErrorDelegate.Broadcast(ErrorMessage);
+			return false;
+		}
+	}
+
 	return true;
 }
 

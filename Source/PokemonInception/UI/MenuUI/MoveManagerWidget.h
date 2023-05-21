@@ -18,35 +18,31 @@ class POKEMONINCEPTION_API UMoveManagerWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-private:
+protected:
 	UFUNCTION()
 	void OnBackClicked();
 
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Back;
+	UButton* Back;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UWrapBox* CurrentMovesBox;
+	UWrapBox* CurrentMovesBox;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UScrollBox* AvailableMovesBox;
+	UScrollBox* AvailableMovesBox;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UWrapBox* MoveDescriptionBox;
+	UWrapBox* MoveDescriptionBox;
 
 public:
 	virtual void NativeOnInitialized() override;
 
 	UFUNCTION()
 	void AddToCurrentMoves(UMoveButtonWidget* MoveInfo);
-
 	UFUNCTION()
 	void AddToAvailableMoves(UMoveButtonWidget* MoveButton);
 
-	UFUNCTION()
 	void ShowMoveInfo(UMoveInfoWidget* MoveButton);
-
 	void Clear();
 
 	FButtonClicked BackClicked;

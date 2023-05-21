@@ -11,9 +11,9 @@ UShowQuestion::UShowQuestion()
 	NodeName = TEXT("Show Question");
 }
 
-EBTNodeResult::Type UShowQuestion::ExecuteTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemory)
+EBTNodeResult::Type UShowQuestion::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	AWildPokemon_AIController* Controller = Cast<AWildPokemon_AIController>(ownerComp.GetAIOwner());
+	AWildPokemon_AIController* Controller = Cast<AWildPokemon_AIController>(OwnerComp.GetAIOwner());
 	if (!IsValid(Controller)) {
 		return EBTNodeResult::Failed;
 	}
@@ -24,6 +24,6 @@ EBTNodeResult::Type UShowQuestion::ExecuteTask(UBehaviorTreeComponent& ownerComp
 	}
 
 	PossesedPokemon->ShowQuestion();
-	FinishLatentTask(ownerComp, EBTNodeResult::Succeeded);
+	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	return EBTNodeResult::Succeeded;
 }

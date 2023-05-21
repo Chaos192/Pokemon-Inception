@@ -15,29 +15,24 @@ class POKEMONINCEPTION_API UItemInfoWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-private:
+protected:
 	int ItemID;
 
 	UFUNCTION()
 	void OnUseClicked();
 
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* Use;
+	UButton* Use;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* DescriptionText;
+	UTextBlock* DescriptionText;
 
 public:
 	virtual void NativeOnInitialized() override;
 
-	UFUNCTION()
-	void SetDescription(FText Description);
-
-	UFUNCTION()
 	void SetID(int InItemID);
 
-	UFUNCTION()
+	void SetDescription(FText Description);
 	void SetUseButton(bool bUsable);
 
 	FElementIDSignature UseClicked;

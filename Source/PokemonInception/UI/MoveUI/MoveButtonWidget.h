@@ -17,7 +17,9 @@ class POKEMONINCEPTION_API UMoveButtonWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-private:
+protected:
+	int MoveId;
+
 	UFUNCTION()
 	void OnButtonClicked();
 
@@ -27,32 +29,25 @@ private:
 	UFUNCTION()
 	void OnButtonUnHovered();
 
-	int MoveId;
-
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* MoveName;
+	UTextBlock* MoveName;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* MoveEffectiveness;
+	UTextBlock* MoveEffectiveness;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* MovePP;
+	UTextBlock* MovePP;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* MoveButton;
+	UButton* MoveButton;
 
 public:
 	virtual void NativeOnInitialized() override;
 
-	UFUNCTION()
-	void InitButton(FText Name, int CurrPP, int MaxPP, ETypes MoveType);
-
-	UFUNCTION()
-	void SetEffectiveness(FString Effectiveness);
-
-	UFUNCTION()
 	void SetMove(int InMoveId);
+
+	void InitButton(FText Name, int CurrPP, int MaxPP, ETypes MoveType);
+	void SetEffectiveness(FString Effectiveness);
 
 	FElementIDSignature ButtonClicked;
 	FElementIDSignature ButtonHovered;

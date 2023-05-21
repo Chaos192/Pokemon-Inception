@@ -11,11 +11,15 @@ UStopInvestigating::UStopInvestigating()
 	NodeName = TEXT("Stop Investigating");
 }
 
-EBTNodeResult::Type UStopInvestigating::ExecuteTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemory)
+EBTNodeResult::Type UStopInvestigating::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	AWildPokemon_AIController* Controller = Cast<AWildPokemon_AIController>(ownerComp.GetAIOwner());
-	Controller->getBlackboard()->SetValueAsBool(bb_keys::IsInvestigating, false);
+	AWildPokemon_AIController* Controller = Cast<AWildPokemon_AIController>(OwnerComp.GetAIOwner());
+	if (!IsValid(Controller)) {
+		return EBTNodeResult::Failed;
+	}
 
-	FinishLatentTask(ownerComp, EBTNodeResult::Succeeded);
+	Controller->GetBlackboard()->SetValueAsBool(bb_keys::IsInvestigating, false);
+
+	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	return EBTNodeResult::Succeeded;
 }
