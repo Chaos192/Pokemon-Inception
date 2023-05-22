@@ -47,7 +47,7 @@ void ABattleGameMode::BeginPlay()
 	}
 
 	TArray<AActor*> CamerasInLevel;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), CameraClass, CamerasInLevel);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACameraActor::StaticClass(), CamerasInLevel);
 
 	for (AActor* Actor : CamerasInLevel) {
 		ACameraActor* CameraActor = Cast<ACameraActor>(Actor);
@@ -630,6 +630,7 @@ void ABattleGameMode::UseBall()
 		GetWorldTimerManager().SetTimer(CatchTimer, this, &ABattleGameMode::CatchSuccess, CurrentBattleTime, false);
 		CurrentBattleTime += 2;
 		GetWorldTimerManager().SetTimer(BattleEndTimer, this, &ABattleGameMode::BattleEnd, CurrentBattleTime, false);
+		CurrentBattleTime += 0.1;
 
 		return;
 	}

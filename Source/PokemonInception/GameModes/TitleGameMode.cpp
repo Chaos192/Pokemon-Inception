@@ -7,6 +7,34 @@
 #include "../UI/HUD/TitleHUD.h"
 #include "../SaveGame/PlayerSaveData.h"
 #include "../SaveGame/LevelSaveData.h"
+#include "../Settings/PokemonInceptionGameInstance.h"
+
+
+void ATitleGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+	UPokemonInceptionGameInstance* GameInstance = Cast<UPokemonInceptionGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (!IsValid(GameInstance)) {
+		return;
+	}
+
+	if (UGameplayStatics::DoesSaveGameExist("WorldSaveSlot", 0)) {
+		ULevelSaveData* LevelSaveData = Cast<ULevelSaveData>(UGameplayStatics::CreateSaveGameObject(ULevelSaveData::StaticClass()));
+		LevelSaveData = Cast<ULevelSaveData>(UGameplayStatics::LoadGameFromSlot("WorldSaveSlot", 0));
+
+		GameInstance->ChangeBGMVolume(LevelSaveData->BGMVolume);
+		GameInstance->ChangeSEVolume(LevelSaveData->SEVolume);
+		GameInstance->ChangePokemonCryVolume(LevelSaveData->PokemonCryVolume);
+
+		UGameplayStatics::SaveGameToSlot(LevelSaveData, "WorldSaveSlot", 0);
+	}
+	else {
+		GameInstance->ChangeBGMVolume(0.8f);
+		GameInstance->ChangeSEVolume(0.8f);
+		GameInstance->ChangePokemonCryVolume(0.8f);
+	}
+}
 
 bool ATitleGameMode::bIsNameValid(FString PlayerName)
 {

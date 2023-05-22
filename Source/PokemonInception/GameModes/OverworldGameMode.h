@@ -26,7 +26,7 @@ class AOverworldGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
-private:
+protected:
 	bool bIsPaused = false;
 
 	UPROPERTY()
@@ -50,17 +50,7 @@ private:
 	UFUNCTION()
 	void SwapPositionWith(int NewPositionId);
 
-protected:
 	virtual void BeginPlay() override;
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class AWildPokemonSpawner> SpawnerClass;
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class ATrainer> TrainerClass;
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<ACameraActor> CameraClass;
 
 	UPROPERTY(EditDefaultsOnly)
 	class UDataTable* BallsDT;

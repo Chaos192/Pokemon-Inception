@@ -44,4 +44,13 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FName> PickUpsToDestroy;
+
+	UPROPERTY(EditDefaultsOnly)
+	float SEVolume;
+
+	UPROPERTY(EditDefaultsOnly)
+	float PokemonCryVolume;
+
+	UPROPERTY(EditDefaultsOnly)
+	float BGMVolume;
 };

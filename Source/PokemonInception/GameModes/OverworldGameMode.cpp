@@ -48,7 +48,7 @@ void AOverworldGameMode::BeginPlay()
 	}
 
 	TArray<AActor*> Trainers;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), TrainerClass, Trainers);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATrainer::StaticClass(), Trainers);
 	
 	for (AActor* i : Trainers) {
 		ATrainer* Trainer = Cast<ATrainer>(i);
@@ -149,20 +149,27 @@ void AOverworldGameMode::SaveLevelData(AWildPokemon* PokemonToIgnore)
 		return;
 	}
 
-	ULevelSaveData* LevelSaveData = Cast<ULevelSaveData>(UGameplayStatics::CreateSaveGameObject(ULevelSaveData::StaticClass()));
-
-	if (!UGameplayStatics::DoesSaveGameExist("WorldSaveSlot", 0)) {
+	UPokemonInceptionGameInstance* GameInstance = Cast<UPokemonInceptionGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (!IsValid(GameInstance)) {
 		return;
 	}
-	LevelSaveData = Cast<ULevelSaveData>(UGameplayStatics::LoadGameFromSlot("WorldSaveSlot", 0));
 
-	LevelSaveData->PokemonSpawners.Empty();
+	ULevelSaveData* LevelSaveData = Cast<ULevelSaveData>(UGameplayStatics::CreateSaveGameObject(ULevelSaveData::StaticClass()));
+
+	if (UGameplayStatics::DoesSaveGameExist("WorldSaveSlot", 0)) {
+		LevelSaveData = Cast<ULevelSaveData>(UGameplayStatics::LoadGameFromSlot("WorldSaveSlot", 0));
+		LevelSaveData->PokemonSpawners.Empty();
+	}
+
 	LevelSaveData->PlayerLocation = PlayerPawn->GetActorLocation();
 	LevelSaveData->PlayerRotation = PlayerPawn->GetActorRotation();
+	LevelSaveData->SEVolume = GameInstance->GetSEVolume();
+	LevelSaveData->PokemonCryVolume = GameInstance->GetPokemonCryVolume();
+	LevelSaveData->BGMVolume = GameInstance->GetBGMVolume();
 
 	if (!PokemonInLevel.IsEmpty()) {
 		TArray<AActor*> Spawners;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), SpawnerClass, Spawners);
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AWildPokemonSpawner::StaticClass(), Spawners);
 
 		for (AActor* Spawner : Spawners) {
 			AWildPokemonSpawner* PokemonSpawner = Cast<AWildPokemonSpawner>(Spawner);
@@ -658,7 +665,7 @@ void AOverworldGameMode::PauseGame(EPause PauseType)
 
 	if (!PokemonInLevel.IsEmpty()) {
 		TArray<AActor*> Spawners;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), SpawnerClass, Spawners);
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AWildPokemonSpawner::StaticClass(), Spawners);
 
 		for (AActor* Spawner : Spawners) {
 			AWildPokemonSpawner* PokemonSpawner = Cast<AWildPokemonSpawner>(Spawner);

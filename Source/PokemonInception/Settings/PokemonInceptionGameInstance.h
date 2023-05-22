@@ -23,6 +23,15 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	USoundClass* BGMClass;
 
+	UPROPERTY()
+	float SEVolume = 0.8f;
+
+	UPROPERTY()
+	float PokemonCryVolume = 0.8f;
+
+	UPROPERTY()
+	float BGMVolume = 0.8f;
+
 public:
 	UFUNCTION()
 	void ChangeScalability(float NewValue);

@@ -14,6 +14,8 @@ class POKEMONINCEPTION_API ATitleGameMode : public AGameModeBase
 	GENERATED_BODY()
 	
 protected:
+	virtual void BeginPlay() override;
+
 	bool bIsNameValid(FString PlayerName);
 
 	UPROPERTY(EditDefaultsOnly)

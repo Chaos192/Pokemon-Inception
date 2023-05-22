@@ -34,13 +34,16 @@ class POKEMONINCEPTION_API ABattleGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
-private:
+protected:
+	UPROPERTY()
 	float CurrentBattleTime = 0;
+	UPROPERTY()
 	int EXPGained = 0;
 
+	UPROPERTY()
+	ATrainer* TrainerActor = nullptr;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ATrainer> TrainerClass;
-	ATrainer* TrainerActor = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)
 	class USoundBase* BGM = nullptr;
@@ -53,16 +56,23 @@ private:
 	bool bDoesPlayerHaveToSwitch = false;
 	bool bHasTurnEnded;
 
+	UPROPERTY()
 	TArray<FPokemonStruct> OpponentTeam;
+
 	int GetCurrentOpponent();
 	bool bIsOpponentDefeated();
 
+	UPROPERTY()
 	int PlayerPokemonId;
+	UPROPERTY()
 	int OpponentPokemonId;
 
+	UPROPERTY()
 	AStaticOverworldPokemon* PlayerPokemonActor = nullptr;
+	UPROPERTY()
 	AStaticOverworldPokemon* OpponentPokemonActor = nullptr;
 
+	UPROPERTY()
 	ABallActor* ThrownBallActor = nullptr;
 
 	int SelectedMoveID;
@@ -110,7 +120,6 @@ private:
 	UFUNCTION()
 	int SelectOpponentMove();
 
-protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
@@ -128,13 +137,15 @@ protected:
 	UFUNCTION()
 	void ExitBattleMap();
 
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<ACameraActor> CameraClass;
-
+	UPROPERTY()
 	ACameraActor* SceneCamera;
+	UPROPERTY()
 	ACameraActor* PlayerPokemonCamera;
+	UPROPERTY()
 	ACameraActor* OpponentCamera;
+	UPROPERTY()
 	ACameraActor* PlayerCamera;
+	UPROPERTY()
 	ACameraActor* TrainerCamera;
 
 	UPROPERTY(EditDefaultsOnly)

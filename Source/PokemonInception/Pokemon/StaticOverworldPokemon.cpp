@@ -110,5 +110,5 @@ void AStaticOverworldPokemon::Faint(float Scale, bool bIsTrainerPokemon)
 	SetActorScale3D(FVector(Scale, Scale, Scale));
 
 	ChangeSizeDelegate.BindUFunction(this, FName("Faint"), Scale -= 0.05, bIsTrainerPokemon);
-	GetWorldTimerManager().SetTimer(ChangeSizeTimer, ChangeSizeDelegate, 0.00001, false);
+	GetWorldTimerManager().SetTimer(ChangeSizeTimer, ChangeSizeDelegate, 0.001, false);
 }
